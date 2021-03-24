@@ -13,6 +13,7 @@ label = pyglet.text.Label(
 
 @window.event
 def on_draw():
+    window.clear()
     label.draw()
 
 pyglet.app.run()
