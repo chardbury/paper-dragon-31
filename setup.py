@@ -4,7 +4,6 @@ from setuptools import setup
 
 setup(
     name = 'applib',
-    package_dir = {'': '.'},
     install_requires = [
         'pyglet',
     ],
@@ -14,7 +13,6 @@ setup(
             'ipython',
             'pyinstaller',
             'pytest',
-            'wheel',
         ],
     },
 )

@@ -6,7 +6,7 @@ set PYTHON=%APPDATA%\..\Local\Programs\Python\Python39\python
 
 if not exist venv (%PYTHON% -m venv venv)
 
-venv\Scripts\python -m pip install -U pip
+venv\Scripts\python -m pip install -U pip wheel
 
 venv\Scripts\pip install -e .[development]
 
