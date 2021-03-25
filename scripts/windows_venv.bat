@@ -2,9 +2,7 @@
 
 cd %~p0..
 
-set PYTHON=%APPDATA%\..\Local\Programs\Python\Python39\python
-
-if not exist venv (%PYTHON% -m venv venv)
+if not exist venv (%LOCALAPPDATA%\Programs\Python\Python39\python -m venv venv)
 
 venv\Scripts\python -m pip install -U pip wheel
 
