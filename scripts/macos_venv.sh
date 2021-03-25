@@ -12,4 +12,4 @@ venv/bin/pip install -e .[development];
 
 source venv/bin/activate;
 
-exec bash;
+exec "${SHELL}";
