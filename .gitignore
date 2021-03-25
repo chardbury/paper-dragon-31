@@ -1,3 +1,11 @@
-/**/__pycache__/
-/**/*.egg-info/
+# Per-user workspace configuration
+.vscode/
+
+# Python package bytecode directories
+__pycache__/
+
+# Python virtualenv directory
 /venv/
+
+# Build- and distribution-related directories
+*.egg-info/
