@@ -6,7 +6,8 @@ import applib
 import pyglet
 
 from applib import app
-from applib.engine.panel import Panel
+from applib.engine import panel
+from applib.constants import ITEM_SCALE
 
 
 def create_sprite(filename, size):
@@ -22,9 +23,10 @@ class LevelScene(object):
 
     def __init__(self, level=None):
         self.level = level or applib.model.level.Level()
+
         self.set_cursor('cursors/default.png')
 
-        self.interface = Panel(
+        self.interface = panel.Panel(
             aspect = (16, 9),
             background = (100, 100, 220, 255),
         )
@@ -32,19 +34,34 @@ class LevelScene(object):
         self.counter = self.interface.add(
             align_y = 0.0,
             width = 1.0,
-            height = 0.65,
+            height = 0.5,
             background = (53, 20, 2, 255),
-            sprites = [
-                create_sprite('items/batter.png', 100),
-                create_sprite('items/doughnut.png', 100),
-            ],
+            sprites = [],
         )
 
-        self.counter.sprites[0].x = 200
-        self.counter.sprites[0].y = 200
-        self.counter.sprites[1].x = 400
-        self.counter.sprites[1].y = 200
+        self.sprite_index = {}
+        self.create_counter_sprite(applib.model.item.get('batter'))
+        self.create_counter_sprite(applib.model.item.get('doughnut'), 0.4)
+        self.create_counter_sprite(applib.model.item.get('better_doughnut'), 0.8)
+        self.create_counter_sprite(applib.model.item.get('doughnut_cooked'), 1.2)
 
+    def create_counter_sprite(self, target, offset_x=0.0, offset_y=0.0):
+
+        if isinstance(target, applib.model.item.Item):
+            target.image.anchor_x = target.image.width // 2
+            target.image.anchor_y = target.image.height // 2
+            sprite = pyglet.sprite.Sprite(target.image)
+            sprite.scale = (app.window.height * ITEM_SCALE) / target.image.height
+
+        else:
+            sprite = None
+
+        counter_width, counter_height = self.counter.get_size()
+        sprite.x = offset_x * counter_height + counter_width / 2
+        sprite.y = offset_y * counter_height + counter_height / 2
+        self.sprite_index[target] = sprite
+        self.counter.sprites.append(sprite)
+        return sprite
 
     def set_cursor(self, filename):
         cursor_image = pyglet.resource.image(filename)
@@ -60,11 +77,7 @@ class LevelScene(object):
 
     def on_mouse_release(self, x, y, button, modifiers):
         pass
-        #if clicked_on_batter_box:
-        #    self.level.pick_up_batter()
 
     def on_draw(self):
         app.window.clear()
         self.interface.draw()
-
-        #self.cursor_sprite.image = 'batter.png'

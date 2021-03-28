@@ -29,6 +29,9 @@ class Item(object):
     def __eq__(self, other):
         return self.name == other.name
 
+    def __hash__(self):
+        return hash(self.name)
+
     @classmethod
     def get(cls, name):
         name = _normalise(name)
@@ -44,6 +47,7 @@ get = Item.get
 for _item_name in [
     'batter',
     'doughnut',
+    'doughnut_cooked',
     'better doughnut',
 ]:
     Item.get(_item_name)

@@ -38,3 +38,8 @@ SETTINGS_DEFAULTS = {
     'start_scene': 'applib.scenes.default.DefaultScene',
     'volume': 0.5,
 }
+
+
+## GRAPHICS
+
+ITEM_SCALE = 0.1
