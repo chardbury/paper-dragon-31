@@ -7,8 +7,6 @@ import re
 import applib
 import pyglet
 
-from applib.constants import TICK_LENGTH
-
 
 def _normalize(string):
     string = string.strip().lower()
@@ -34,6 +32,8 @@ class Item(object):
         if name not in cls._all:
             cls._all[name] = cls(name)
         return cls._all[name]
+
+get = Item.get
 
 
 ## Actual Items
