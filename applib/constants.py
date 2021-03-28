@@ -27,3 +27,14 @@ TICK_LENGTH = 1.0 / TICK_RATE
 MUSIC_FADE_RATE = 0.35
 
 MUSIC_FADE_GRACE = 0.5
+
+
+## Settings
+
+SETTINGS_FILE = 'settings.json'
+
+SETTINGS_DEFAULTS = {
+    'fullscreen': False,
+    'start_scene': 'applib.scenes.default.DefaultScene',
+    'volume': 0.5,
+}

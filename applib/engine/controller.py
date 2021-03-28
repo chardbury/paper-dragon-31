@@ -30,6 +30,7 @@ class Controller(pyglet.event.EventDispatcher):
     event_graph = (
         ('window', ('scene', 'keystate')),
         ('controller', ('scene', 'animation', 'music')),
+        ('settings', ('scene', 'music')),
     )
 
     def __init__(self):
@@ -40,13 +41,13 @@ class Controller(pyglet.event.EventDispatcher):
         #: The main application window.
         app.window = pyglet.window.Window(
             caption=f'{APPLICATION_NAME} v{APPLICATION_VERSION}',
-            fullscreen=False,
+            fullscreen=app.settings.fullscreen,
         )
 
         #: The global key state handler.
         app.keystate = pyglet.window.key.KeyStateHandler()
         #: The global music manager.
-        app.music = music.MusicManager(volume=0.5)
+        app.music = music.MusicManager(volume=app.settings.volume)
         #: The global animation manager.
         app.animation = animation.AnimationManager()
 
@@ -91,7 +92,7 @@ class Controller(pyglet.event.EventDispatcher):
 
         # Switch to the start scene if we are not currently in a scene.
         if app.scene is None:
-            app.controller.switch_scene('applib.scenes.default.DefaultScene')
+            app.controller.switch_scene(app.settings.start_scene)
 
         # Process enough ticks to catch up to the present.
         self.next_tick -= delta

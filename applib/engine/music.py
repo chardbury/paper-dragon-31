@@ -60,3 +60,9 @@ class MusicManager(object):
                 self.player = self.next.play()
                 self.player.volume = self.volume
                 self.next = None
+
+    def on_setting_change(self, name, value):
+        if name == 'volume':
+            self.volume = value
+            if self.state == 'normal':
+                self.player.volume = value

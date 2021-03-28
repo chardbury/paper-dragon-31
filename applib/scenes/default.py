@@ -36,8 +36,7 @@ class DefaultScene(object):
             animation.WaitAnimation(1.0),
         ).start()
 
-        rawr_sound = pyglet.resource.media(f'sounds/rawr{random.randint(1, 3)}.wav')
-        #rawr_sound.play()
+        pyglet.resource.media(f'sounds/rawr{random.randint(1, 3)}.mp3').play()
 
         background_music = pyglet.resource.media('music/ketsa_love.mp3')
         app.music.switch(background_music)
@@ -55,8 +54,12 @@ class DefaultScene(object):
         )
 
     def on_key_press(self, symbol, modifiers):
-        background_music = pyglet.resource.media('music/ketsa_love.mp3')
-        app.music.switch(background_music)
+        if symbol == pyglet.window.key.MINUS:
+            new_volume = max(0.0, app.settings.volume - 0.05)
+            app.settings.save_settings(volume=new_volume)
+        if symbol == pyglet.window.key.PLUS:
+            new_volume = min(1.0, app.settings.volume + 0.05)
+            app.settings.save_settings(volume=new_volume)
 
     def on_draw(self):
         app.window.clear()
