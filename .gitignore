@@ -9,3 +9,6 @@ __pycache__/
 
 # Build- and distribution-related directories
 *.egg-info/
+
+# Automated testing-related directories
+.pytest_cache/
