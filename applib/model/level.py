@@ -27,6 +27,9 @@ class Customer(object):
 class Level(object):
 
     def __init__(self):
+        '''Construct a `Level` object.
+
+        '''
         self.held_item = None
         self.devices = [
             device.BatterBox(),
@@ -35,11 +38,17 @@ class Level(object):
         self.customers = []
 
     def get_device(self, name):
+        '''Return the first device with the given name.
+
+        '''
         for device in self.devices:
             if device.name == name:
                 return device
 
     def get_devices(self, name):
+        '''Return all devices with the given name.
+
+        '''
         devices = []
         for device in self.devices:
             if device.name == name:
@@ -47,9 +56,15 @@ class Level(object):
         return devices
 
     def interact(self, device):
+        '''Interact with the given device, possibly changing the held item.
+
+        '''
         self.held_item = device.interact(self.held_item)
     
     def tick(self):
+        '''Advance the level state by a single tick.
+
+        '''
         for device in self.devices:
             device.tick()
         for customer in self.customers:

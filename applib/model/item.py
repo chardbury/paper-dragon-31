@@ -8,7 +8,10 @@ import applib
 import pyglet
 
 
-def _normalize(string):
+def _normalise(string):
+    '''Normalise the given string.
+
+    '''
     string = string.strip().lower()
     string = re.sub(r'\s+', '_', string)
     string = re.sub(r'[^a-z_]', '', string)
@@ -20,7 +23,7 @@ class Item(object):
     _all = {}
 
     def __init__(self, name):
-        self.name = _normalize(name)
+        self.name = _normalise(name)
         self.image = pyglet.resource.image(f'items/{self.name}.png')
 
     def __eq__(self, other):
@@ -28,7 +31,7 @@ class Item(object):
 
     @classmethod
     def get(cls, name):
-        name = _normalize(name)
+        name = _normalise(name)
         if name not in cls._all:
             cls._all[name] = cls(name)
         return cls._all[name]

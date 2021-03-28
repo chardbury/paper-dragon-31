@@ -10,13 +10,6 @@ from applib.constants import TICK_LENGTH
 from applib.model import item
 
 
-def _normalize(string):
-    string = string.strip().lower()
-    string = re.sub(r'\s+', '_', string)
-    string = re.sub(r'[^a-z_]', '', string)
-    return string
-
-
 class Device(object):
 
     name = None
