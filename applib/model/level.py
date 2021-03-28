@@ -24,7 +24,6 @@ class Customer(object):
         pass
 
 
-
 class Level(object):
 
     def __init__(self):
@@ -35,8 +34,17 @@ class Level(object):
         ]
         self.customers = []
 
+    def get_device(self, name):
+        for device in self.devices:
+            if device.name == name:
+                return device
+
     def get_devices(self, name):
-        return [device for device in self.devices if device.name == name]
+        devices = []
+        for device in self.devices:
+            if device.name == name:
+                devices.append(device)
+        return devices
 
     def interact(self, device):
         self.held_item = device.interact(self.held_item)

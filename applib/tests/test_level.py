@@ -44,6 +44,41 @@ def test_doughnut_improve_runs_when_doughnut_inserted(level):
     assert device.is_running
     assert level.held_item is None
 
+def test_doughnut_improver_makes_better_doughnut_when_finished(level):
+    for device in level.devices:
+        if isinstance(device, DoughnutImprover):
+            break
+    for _ in range(1000):
+        level.tick()
+    level.held_item = Item.get('doughnut')
+    level.interact(device)
+    while not device.is_finished:
+        for _ in range(1000):
+            level.tick()
+    level.interact(device)
+    assert level.held_item.name == 'better_doughnut'
 
+def test_doughnut_improver_will_not_take_doughnut_while_running(level):
+    for device in level.devices:
+        if isinstance(device, DoughnutImprover):
+            break
+    for _ in range(1000):
+        level.tick()
+    level.held_item = Item.get('doughnut')
+    level.interact(device)
+    for _ in range(1000):
+        level.tick()
+    level.held_item = Item.get('doughnut')
+    level.interact(device)
+    assert level.held_item.name == 'doughnut'
 
-    
+def test_doughtnut_improver_cannot_take_batter(level):
+    for device in level.devices:
+        if isinstance(device, DoughnutImprover):
+            break
+    for _ in range(1000):
+        level.tick()
+    level.held_item = Item.get('batter')
+    level.interact(device)
+    assert level.held_item.name == 'batter'
+    assert not device.is_running
