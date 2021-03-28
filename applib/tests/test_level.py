@@ -68,7 +68,7 @@ def test_doughnut_improver_will_not_take_doughnut_while_running(level):
     level.interact(device)
     assert level.held_item.name == 'doughnut'
 
-def test_doughtnut_improver_cannot_take_batter(level):
+def test_doughnut_improver_cannot_take_batter(level):
     device = level.get_device('doughnut_improver')
     for _ in range(1000):
         level.tick()

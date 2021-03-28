@@ -17,14 +17,13 @@ def create_sprite(filename, size):
     sprite.y = app.window.height // 2
     sprite.scale = size / image.height
     return sprite
-    
+
 
 class LevelScene(object):
 
     def __init__(self, level=None):
         self.level = level or applib.model.level.Level()
         self.set_cursor('cursors/default.png')
-
 
     def set_cursor(self, filename):
         cursor_image = pyglet.resource.image(filename)
