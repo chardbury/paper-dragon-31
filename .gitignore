@@ -12,3 +12,4 @@ __pycache__/
 
 # Automated testing-related directories
 .pytest_cache/
+data/.DS_Store
