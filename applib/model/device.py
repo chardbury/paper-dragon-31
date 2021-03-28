@@ -14,7 +14,7 @@ class Device(object):
 
     name = None
 
-    duration = 10.0
+    duration = int(10.0 // TICK_LENGTH)
 
     def __init__(self):
         self.current_input = None
@@ -57,12 +57,13 @@ class Device(object):
 
     def tick(self):
         if self.time_remaining is not None:
-            self.time_remaining -= TICK_LENGTH
+            self.time_remaining -= 1
 
 
 class AutomaticDevice(Device):
 
     product = None
+    duration = 0
 
     def __init__(self):
         super().__init__()

@@ -16,10 +16,20 @@ def test_batter_box_gives_you_batter(level):
         level.tick()
     level.interact(device)
     assert level.held_item.name == 'batter'
-    assert not device.is_finished
+    assert device.is_finished
+
+def test_batter_box_gives_you_batter_and_then_you_can_get_another(level):
+    device = level.get_device('batter_box')
+    for _ in range(1000):
+        level.tick()
+    level.interact(device)
+    level.held_item is None
+    level.interact(device)
+    assert level.held_item.name == 'batter'
+    assert device.is_finished
 
 
-def test_batter_box_cannot_give_you_more_batter(level):
+def test_batter_box_cannot_give_you_more_batter_if_holding_batter(level):
     device = level.get_device('batter_box')
     for _ in range(1000):
         level.tick()
@@ -85,3 +95,26 @@ def test_doughnut_improver_cannot_take_batter(level):
     level.interact(device)
     assert level.held_item.name == 'batter'
     assert not device.is_running
+
+def test_doughnut_improver_duration(level):
+    device = level.get_device('doughnut_improver')
+    for _ in range(1000):
+        level.tick()
+    level.held_item = Item.get('doughnut')
+    level.interact(device)
+    for _ in range(device.duration - 1):
+        level.tick()
+    assert not device.is_finished
+    level.tick()
+    assert device.is_finished
+
+
+def test_doughnut_improver_duration_is_10_seconds(level):
+    device = level.get_device('doughnut_improver')
+    for _ in range(1000):
+        level.tick()
+    level.held_item = Item.get('doughnut')
+    level.interact(device)
+    for _ in range(int(10 // TICK_LENGTH)):
+        level.tick()
+    assert device.is_finished
