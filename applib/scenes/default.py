@@ -9,6 +9,7 @@ import pyglet
 
 from applib import app
 from applib.engine import animation
+from applib.engine import music
 
 _logger = logging.getLogger(__name__)
 

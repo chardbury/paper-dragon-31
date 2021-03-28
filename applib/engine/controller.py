@@ -14,6 +14,7 @@ from applib.constants import APPLICATION_VERSION
 from applib.constants import DEBUG
 from applib.constants import TICK_LENGTH
 from applib.engine import animation
+from applib.engine import music
 
 _logger = logging.getLogger(__name__)
 
@@ -50,7 +51,7 @@ class Controller(pyglet.event.EventDispatcher):
         
         # Prepare the event stacks.
         self.scene_dispatchers = [self, app.window]
-        self.controller_listeners = [animation.animation_manager]
+        self.controller_listeners = [animation.animation_manager, music.music_manager]
         self.window_listeners = [app.keystate]
 
         # Switch to the initial scene.
