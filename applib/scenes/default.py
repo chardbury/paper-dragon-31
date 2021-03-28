@@ -3,6 +3,7 @@
 '''
 
 import logging
+import random
 
 import applib
 import pyglet
@@ -26,6 +27,8 @@ class DefaultScene(object):
         self.logo_sprite.y = app.window.height // 2
         self.logo_sprite.scale = (app.window.width // 2) / self.logo_image.width
         self.logo_sprite.opacity = 0.0
+
+        pyglet.resource.media(f'sounds/rawr{random.randint(1, 3)}.wav').play()
         
         animation.QueuedAnimation(
             animation.WaitAnimation(1.0),
