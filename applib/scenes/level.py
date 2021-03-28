@@ -6,6 +6,7 @@ import applib
 import pyglet
 
 from applib import app
+from applib.engine.panel import Panel
 
 
 def create_sprite(filename, size):
@@ -13,8 +14,6 @@ def create_sprite(filename, size):
     image.anchor_x = image.width // 2
     image.anchor_y = image.height // 2
     sprite = pyglet.sprite.Sprite(image)
-    sprite.x = app.window.width // 2
-    sprite.y = app.window.height // 2
     sprite.scale = size / image.height
     return sprite
 
@@ -24,6 +23,28 @@ class LevelScene(object):
     def __init__(self, level=None):
         self.level = level or applib.model.level.Level()
         self.set_cursor('cursors/default.png')
+
+        self.interface = Panel(
+            aspect = (16, 9),
+            background = (100, 100, 220, 255),
+        )
+
+        self.counter = self.interface.add(
+            align_y = 0.0,
+            width = 1.0,
+            height = 0.65,
+            background = (53, 20, 2, 255),
+            sprites = [
+                create_sprite('items/batter.png', 100),
+                create_sprite('items/doughnut.png', 100),
+            ],
+        )
+
+        self.counter.sprites[0].x = 200
+        self.counter.sprites[0].y = 200
+        self.counter.sprites[1].x = 400
+        self.counter.sprites[1].y = 200
+
 
     def set_cursor(self, filename):
         cursor_image = pyglet.resource.image(filename)
@@ -44,4 +65,6 @@ class LevelScene(object):
 
     def on_draw(self):
         app.window.clear()
+        self.interface.draw()
+
         #self.cursor_sprite.image = 'batter.png'

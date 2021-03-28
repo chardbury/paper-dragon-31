@@ -30,7 +30,7 @@ class DefaultScene(object):
             animation.AttributeAnimation(self.logo_sprite, 'opacity', 255.0, 100.0),
             animation.WaitAnimation(2.0),
             animation.AttributeAnimation(self.logo_sprite, 'opacity', 0.0, 100.0),
-            animation.WaitAnimation(1.0),
+            animation.WaitAnimation(1.0, app.controller.switch_scene, applib.scenes.level.LevelScene),
         ).start()
 
         pyglet.resource.media(f'sounds/rawr{random.randint(1, 3)}.mp3').play()
