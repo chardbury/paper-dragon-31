@@ -5,19 +5,7 @@
 import applib
 
 from applib.constants import TICK_LENGTH
-
-
-class Item(object):
-
-    def __init__(self, name):
-        self.name = name
-
-    def __eq__(self, other):
-        return self.name == other.name
-
-batter = Item('batter')
-doughnut = Item('doughnut')
-better_doughnut = Item('better doughnut')
+from applib.model.item import Item
 
 
 class Order(object):
@@ -95,14 +83,14 @@ class AutomaticDevice(Device):
 
 class BatterBox(AutomaticDevice):
 
-    product = batter
+    product = item.Item.get('batter')
 
 
 class DoughnutImprover(Device):
     
     def get_output_item(self, input_item):
         if input_item == 'doughnut':
-            return better_doughnut
+            return item.Item.get('better_doughnut')
 
 
 class Level(object):
@@ -120,11 +108,3 @@ class Level(object):
             device.tick()
         for customer in self.customers:
             customer.tick()
-
-
-Customer(
-    order = Order(
-        doughnut,
-        doughnut,
-    )
-)

@@ -1,6 +1,7 @@
 import pytest
 
 from applib.model.level import *
+from applib.model.item import Item
 
 
 @pytest.fixture
@@ -26,6 +27,6 @@ def test_batter_box_cannot_give_you_more_batter(level):
             break
     for _ in range(1000):
         level.tick()
-    level.held_item = batter
+    level.held_item = Item.get('batter')
     level.interact(device)
     assert device.is_finished

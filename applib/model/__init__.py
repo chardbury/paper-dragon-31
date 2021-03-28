@@ -2,4 +2,5 @@
 
 '''
 
+from . import item
 from . import level
