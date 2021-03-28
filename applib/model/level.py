@@ -2,6 +2,8 @@
 
 '''
 
+import random
+
 import applib
 
 from applib.constants import TICK_LENGTH
@@ -17,11 +19,30 @@ class Order(object):
 
 class Customer(object):
 
-    def __init__(self, order):
+    def __init__(self, order, level):
         self.order = order
+        self.patience = self.compute_patience()
+        self.level = level
+
+    def compute_patience(self):
+        '''Return the patience in ticks
+
+        '''
+        return int(random.randint(10, 30) // TICK_LENGTH)
+
+    def interact(self, held_item):
+        if held_item in self.order.items:
+            self.order.items.remove(held_item)
+        else:
+            return held_item
 
     def tick(self):
-        pass
+        if len(self.order.items) == 0:
+            self.level.remove_customer(self, True)
+        self.patience -= 1
+        if (self.patience <= 0):
+            self.level.remove_customer(self, False)
+    
 
 
 class Level(object):
@@ -36,6 +57,8 @@ class Level(object):
             device.DoughnutImprover(),
         ]
         self.customers = []
+        self.happy_customer = 0
+        self.sad_customer = 0
 
     def get_device(self, name):
         '''Return the first device with the given name.
@@ -55,17 +78,41 @@ class Level(object):
                 devices.append(device)
         return devices
 
-    def interact(self, device):
-        '''Interact with the given device, possibly changing the held item.
+    def interact(self, interactable):
+        '''Interact with the given object, possibly changing the held item.
 
         '''
-        self.held_item = device.interact(self.held_item)
+        if isinstance(interactable, device.Device):
+            self.held_item = interactable.interact(self.held_item)
+        elif isinstance(interactable, Customer):
+            self.held_item = interactable.interact(self.held_item)
+
+
+    def add_customer(self, customer):
+        '''Add a customer to the level
+
+        '''
+        self.customers.append(customer)
+
+    def remove_customer(self, customer, success):
+        '''Remove a customer from level
+
+        '''
+        self.customers.remove(customer)
+        if success == True:
+            self.happy_customer += 1
+        else:
+            self.sad_customer += 1
+
     
     def tick(self):
         '''Advance the level state by a single tick.
 
         '''
+        if (len(self.customers) == 0):
+            self.add_customer(Customer(Order(item.get('doughnut')), self))
         for device in self.devices:
             device.tick()
         for customer in self.customers:
             customer.tick()
+        

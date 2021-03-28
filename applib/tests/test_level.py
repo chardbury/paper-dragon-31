@@ -118,3 +118,33 @@ def test_doughnut_improver_duration_is_10_seconds(level):
     for _ in range(int(10 // TICK_LENGTH)):
         level.tick()
     assert device.is_finished
+
+def test_customer_added(level):
+    level.add_customer(Customer(Order(item.get('doughnut')), level))
+    assert len(level.customers) == 1
+
+def test_customer_removed(level):
+    level.add_customer(Customer(Order(item.get('doughnut')), level))
+    for _ in range (level.customers[0].patience):
+        level.tick()
+    assert len(level.customers) == 0 and level.sad_customer == 1
+
+def test_customer_added_with_one_item_order(level):
+    level.add_customer(Customer(Order(item.get('doughnut')), level))
+    assert len(level.customers[0].order.items) == 1
+
+def test_customer_serve_right_item(level):
+    level.add_customer(Customer(Order(item.get('doughnut')), level))
+    level.held_item = Item.get('doughnut')
+    level.interact(level.customers[0])
+    assert len(level.customers[0].order.items) == 0
+    level.tick()
+    assert level.happy_customer == 1 and level.sad_customer == 0
+
+def test_customer_serve_wrong_item(level):
+    level.add_customer(Customer(Order(item.get('doughnut')), level))
+    level.held_item = Item.get('batter')
+    level.interact(level.customers[0])
+    assert len(level.customers[0].order.items) == 1
+    level.tick()
+    assert level.happy_customer == 0 and level.sad_customer == 0
