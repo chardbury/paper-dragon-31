@@ -7,6 +7,7 @@ import pyglet
 
 from applib import app
 
+from pyglet.gl import *
 
 class Panel(object):
 
@@ -17,6 +18,7 @@ class Panel(object):
         height = 1.0,
         aspect = None,
         background = None,
+        sprites = (),
         ):
 
         # Attributes
@@ -26,6 +28,7 @@ class Panel(object):
         self.height = height
         self.aspect = aspect
         self.background = background
+        self.sprites = list(sprites)
 
         # Hierarchy
         self._parent = None
@@ -33,7 +36,8 @@ class Panel(object):
 
     # Hierarchy
 
-    def add(self, panel, **kwargs):
+    def add(self, panel=None, **kwargs):
+        panel = Panel if (panel is None) else panel
         if not isinstance(panel, Panel):
             panel = panel(**kwargs)
         self._children.append(panel)
@@ -72,8 +76,13 @@ class Panel(object):
 
     # Rendering
 
-    def draw_content(self, draw_x=0.0, draw_y=0.0):
+    def draw(self, draw_x=0.0, draw_y=0.0):
+        offset_x, offset_y = self.get_offset()
         width, height = self.get_size()
+        draw_x += offset_x
+        draw_y += offset_y
+
+        # Render background
         if self.background is not None:
             pyglet.graphics.draw(4, pyglet.gl.GL_TRIANGLE_STRIP,
                 ('v2f', [
@@ -85,10 +94,14 @@ class Panel(object):
                 ('c4B', list(self.background) * 4),
             )
 
-    def draw(self, draw_x=0.0, draw_y=0.0):
-        offset_x, offset_y = self.get_offset()
-        draw_x += offset_x
-        draw_y += offset_y
-        self.draw_content(draw_x, draw_y)
+        # Render sprites
+        if len(self.sprites) > 0:
+            glPushMatrix()
+            glTranslatef(draw_x, draw_y, 0.0)
+            for sprite in self.sprites:
+                sprite.draw()
+            glPopMatrix()
+
+        # Render children
         for child in self._children:
             child.draw(draw_x, draw_y)

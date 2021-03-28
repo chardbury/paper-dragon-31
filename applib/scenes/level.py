@@ -29,12 +29,22 @@ class LevelScene(object):
             background = (100, 100, 220, 255),
         )
 
-        self.counter = self.interface.add(Panel,
+        self.counter = self.interface.add(
             align_y = 0.0,
             width = 1.0,
             height = 0.65,
             background = (53, 20, 2, 255),
+            sprites = [
+                create_sprite('items/batter.png', 100),
+                create_sprite('items/doughnut.png', 100),
+            ],
         )
+
+        self.counter.sprites[0].x = 200
+        self.counter.sprites[0].y = 200
+        self.counter.sprites[1].x = 400
+        self.counter.sprites[1].y = 200
+
 
     def set_cursor(self, filename):
         cursor_image = pyglet.resource.image(filename)
