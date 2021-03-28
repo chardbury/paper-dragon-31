@@ -83,14 +83,14 @@ class AutomaticDevice(Device):
 
 class BatterBox(AutomaticDevice):
 
-    product = item.Item.get('batter')
+    product = Item.get('batter')
 
 
 class DoughnutImprover(Device):
     
     def get_output_item(self, input_item):
-        if input_item == 'doughnut':
-            return item.Item.get('better_doughnut')
+        if input_item == Item.get('doughnut'):
+            return Item.get('better_doughnut')
 
 
 class Level(object):
