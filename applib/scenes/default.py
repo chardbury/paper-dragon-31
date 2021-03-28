@@ -28,8 +28,6 @@ class DefaultScene(object):
         self.logo_sprite.scale = (app.window.width // 2) / self.logo_image.width
         self.logo_sprite.opacity = 0.0
 
-        pyglet.resource.media(f'sounds/rawr{random.randint(1, 3)}.wav').play()
-        
         animation.QueuedAnimation(
             animation.WaitAnimation(1.0),
             animation.AttributeAnimation(self.logo_sprite, 'opacity', 255.0, 100.0),
@@ -37,6 +35,12 @@ class DefaultScene(object):
             animation.AttributeAnimation(self.logo_sprite, 'opacity', 0.0, 100.0),
             animation.WaitAnimation(1.0),
         ).start()
+
+        rawr_sound = pyglet.resource.media(f'sounds/rawr{random.randint(1, 3)}.wav')
+        #rawr_sound.play()
+
+        background_music = pyglet.resource.media('music/ketsa_love.mp3')
+        app.music.switch(background_music)
 
         self.loading_label = pyglet.text.Label(
             text = 'Loading...',
@@ -48,6 +52,9 @@ class DefaultScene(object):
             anchor_x = 'center',
             anchor_y = 'bottom',
         )
+
+    def on_key_press(self, symbol, modifiers):
+        app.music.switch()
 
     def on_draw(self):
         app.window.clear()

@@ -7,6 +7,7 @@ class app(object):
     __slots__ = [
         'controller',
         'keystate',
+        'music',
         'window',
     ]
 

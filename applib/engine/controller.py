@@ -39,11 +39,14 @@ class Controller(pyglet.event.EventDispatcher):
         window_caption = f'{APPLICATION_NAME} v{APPLICATION_VERSION}'
         app.window = pyglet.window.Window(
             caption=window_caption,
-            fullscreen=True,
+            fullscreen=False,
         )
 
         # Create the global key state handler.
         app.keystate = pyglet.window.key.KeyStateHandler()
+
+        # Create the global music manager.
+        app.music = music.MusicManager(volume=0.5)
 
         # Install the main update function.
         self.next_tick = 0.0
@@ -51,7 +54,7 @@ class Controller(pyglet.event.EventDispatcher):
         
         # Prepare the event stacks.
         self.scene_dispatchers = [self, app.window]
-        self.controller_listeners = [animation.animation_manager, music.music_manager]
+        self.controller_listeners = [animation.animation_manager, app.music]
         self.window_listeners = [app.keystate]
 
         # Switch to the initial scene.
