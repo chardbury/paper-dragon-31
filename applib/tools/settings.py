@@ -9,7 +9,6 @@ for this invocation.
 
 import copy
 import json
-import logging
 import os
 
 import applib
@@ -19,8 +18,6 @@ from applib import app
 from applib.constants import APPLICATION_NAME
 from applib.constants import SETTINGS_FILE
 from applib.constants import SETTINGS_DEFAULTS
-
-_logger = logging.getLogger(__name__)
 
 
 class Settings(pyglet.event.EventDispatcher):
@@ -102,8 +99,6 @@ def load_settings():
     '''Create and populate the settings namespace.
 
     '''
-
-    _logger.info('loading application settings')
 
     # Create the default settings.
     app.settings = Settings()

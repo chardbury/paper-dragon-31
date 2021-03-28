@@ -2,7 +2,6 @@
 
 '''
 
-import logging
 import random
 
 import applib
@@ -11,8 +10,6 @@ import pyglet
 from applib import app
 from applib.engine import animation
 from applib.engine import music
-
-_logger = logging.getLogger(__name__)
 
 
 class DefaultScene(object):
@@ -57,7 +54,7 @@ class DefaultScene(object):
         if symbol == pyglet.window.key.MINUS:
             new_volume = max(0.0, app.settings.volume - 0.05)
             app.settings.save_settings(volume=new_volume)
-        if symbol == pyglet.window.key.PLUS:
+        if symbol == pyglet.window.key.EQUAL:
             new_volume = min(1.0, app.settings.volume + 0.05)
             app.settings.save_settings(volume=new_volume)
 

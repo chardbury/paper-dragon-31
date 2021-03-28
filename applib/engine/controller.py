@@ -3,7 +3,6 @@
 '''
 
 import importlib
-import logging
 
 import applib
 import pyglet
@@ -14,8 +13,6 @@ from applib.constants import APPLICATION_VERSION
 from applib.constants import TICK_LENGTH
 from applib.engine import animation
 from applib.engine import music
-
-_logger = logging.getLogger(__name__)
 
 
 class Controller(pyglet.event.EventDispatcher):

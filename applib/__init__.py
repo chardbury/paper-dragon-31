@@ -2,7 +2,6 @@
 
 '''
 
-@type.__call__
 class app(object):
     animation = None
     arguments = None

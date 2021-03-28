@@ -6,7 +6,6 @@ the resulting namespace as `applib.app.arguments`.
 '''
 
 import argparse
-import logging
 import sys
 
 import applib
@@ -17,15 +16,11 @@ from applib.constants import APPLICATION_NAME
 from applib.constants import APPLICATION_VERSION
 from applib.constants import DEBUG
 
-_logger = logging.getLogger(__name__)
-
 
 def parse_arguments():
     '''Parse the command line arguments and store the argument namespace.
 
     '''
-
-    _logger.info('parsing command line arguments')
 
     parser = argparse.ArgumentParser()
 

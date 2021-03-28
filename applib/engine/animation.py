@@ -2,15 +2,11 @@
 
 '''
 
-import logging
-
 import applib
 import pyglet
 
 from applib import app
 from applib.constants import TICK_LENGTH
-
-_logger = logging.getLogger(__name__)
 
 
 class Animation(object):
