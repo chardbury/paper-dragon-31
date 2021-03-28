@@ -1,3 +1,5 @@
+import time
+
 import applib
 import pyglet
 
@@ -7,3 +9,5 @@ applib.tools.settings.load_settings()
 applib.tools.resources.prepare_resources()
 applib.engine.controller.prepare_controller()
 pyglet.app.run()
+
+time.sleep(0.5)
