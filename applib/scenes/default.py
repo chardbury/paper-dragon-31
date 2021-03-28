@@ -46,15 +46,17 @@ class DefaultScene(object):
             text = 'Loading...',
             font_name = 'Lato',
             font_size = 0.08 * app.window.height,
+            bold = True,
             color = (255, 255, 255, 255),
             x = app.window.width // 2,
-            y = app.window.width // 40,
+            y = app.window.height // 40,
             anchor_x = 'center',
             anchor_y = 'bottom',
         )
 
     def on_key_press(self, symbol, modifiers):
-        app.music.switch()
+        background_music = pyglet.resource.media('music/ketsa_love.mp3')
+        app.music.switch(background_music)
 
     def on_draw(self):
         app.window.clear()

@@ -1,4 +1,4 @@
-'''applib.resources -- application resource management
+'''applib.tools.resources -- resource path configuration
 
 '''
 

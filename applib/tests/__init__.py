@@ -1,3 +1,3 @@
-'''applib.tests -- automated test modules
+'''applib.tests -- test modules
 
 '''

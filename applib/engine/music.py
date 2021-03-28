@@ -6,7 +6,8 @@ import applib
 import pyglet
 
 from applib import app
-from applib.constants import FADE_RATE
+from applib.constants import MUSIC_FADE_GRACE
+from applib.constants import MUSIC_FADE_RATE
 from applib.constants import TICK_LENGTH
 
 
@@ -20,9 +21,10 @@ class MusicManager(object):
 
         '''
         self.volume = volume
+        self.state = 'normal'
         self.player = None
         self.next = None
-        self.state = 'normal'
+        self.grace = None
 
     def switch(self, source):
         '''Switch the music manager to a different source.
@@ -33,25 +35,28 @@ class MusicManager(object):
         self.next = source
 
     def on_tick(self):
+        '''Update the player based on the manager's state.
 
-        # While in 'fadein', adjust volume up each tick...
-        if self.state == 'fadein':
-            self.player.volume = min(self.volume, self.player.volume + FADE_RATE * TICK_LENGTH)
-            # Until we reach the target volume, then move to 'normal'.
-            if self.player.volume == self.volume:
-                self.state = 'normal'
-
+        '''
         # While in 'fadeout', adjust the volume down each tick...
-        elif self.state == 'fadeout':
-            self.player.volume = max(0.0, self.player.volume - FADE_RATE * TICK_LENGTH)
-            # Until we reach the target volume, then move to 'normal' and remove the player.
+        if self.state == 'fadeout':
+            self.player.volume = max(0.0, self.player.volume - MUSIC_FADE_RATE * TICK_LENGTH)
+            # Until we reach the target volume, then move to 'fadegrace'.
             if self.player.volume == 0.0:
+                self.state = 'fadegrace'
+                self.grace = MUSIC_FADE_GRACE
+
+        # While in 'fadegrace', adjust the grace down each tick...
+        elif self.state == 'fadegrace':
+            self.grace = max(0.0, self.grace - TICK_LENGTH)
+            # Until we reach zero, then move to 'normal' and remove the player.
+            if self.grace == 0.0:
                 self.state = 'normal'
                 self.player = None
 
-        # If in 'normal', move to 'fadein' and open the next source
+        # If in 'normal', try to open the next source
         elif self.state == 'normal':
             if self.next is not None:
-                self.state = 'fadein'
                 self.player = self.next.play()
+                self.player.volume = self.volume
                 self.next = None
