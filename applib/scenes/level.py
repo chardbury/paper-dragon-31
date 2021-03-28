@@ -26,19 +26,14 @@ class LevelScene(object):
 
         self.interface = Panel(
             aspect = (16, 9),
-            background = (200, 200, 200, 255),
+            background = (100, 100, 220, 255),
         )
 
-        p1 = self.interface.add(Panel,
-            width = 0.8,
-            height = 0.6,
-            background = (255, 0, 0, 255),
-        )
-        
-        p2 = p1.add(Panel,
-            width = 0.5,
-            height = 0.2,
-            background = (0, 255, 0, 255),
+        self.counter = self.interface.add(Panel,
+            align_y = 0.0,
+            width = 1.0,
+            height = 0.65,
+            background = (53, 20, 2, 255),
         )
 
     def set_cursor(self, filename):

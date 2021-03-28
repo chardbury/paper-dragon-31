@@ -2,5 +2,6 @@
 
 '''
 
+from . import device
 from . import item
 from . import level

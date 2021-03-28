@@ -65,17 +65,22 @@ class AttributeAnimation(Animation):
 
 
 class WaitAnimation(Animation):
-    '''Animation class to wait for a period of time.
+    '''Animation class to wait for a period of time and call a function.
 
     '''
 
-    def __init__(self, duration):
+    def __init__(self, duration, callback=None, *args, **kwargs):
         self.duration = duration
         self.remaining = duration
+        self.callback = callback
+        self.args = args
+        self.kwargs = kwargs
 
     def tick(self):
         self.remaining -= TICK_LENGTH
         if self.remaining <= 0.0:
+            if self.callback is not None:
+                self.callback(*self.args, **self.kwargs)
             self.stop()
 
 
