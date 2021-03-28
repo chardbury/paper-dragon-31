@@ -101,7 +101,7 @@ class BatterBox(AutomaticDevice):
 class DoughnutImprover(Device):
     
     def get_output_item(self, input_item):
-        if input_item == 'doughnut':
+        if input_item == doughnut:
             return better_doughnut
 
 
