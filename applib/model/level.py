@@ -61,15 +61,18 @@ class Device(object):
             self.time_remaining = self.duration
 
     def remove_item(self):
-        output_item = self.get_output_item(input_item)
+        output_item = self.get_output_item(self.current_input)
         self.current_input = None
         self.time_remaining = None
         return output_item
 
     def interact(self, held_item):
         if self.is_running:
-            if held_item is None and self.is_finished:
-                return self.remove_item()
+            if held_item is None:
+                if self.is_finished:
+                    return self.remove_item()
+            else:
+                return held_item
         else:
             self.add_item(held_item)
             if not self.is_running:
