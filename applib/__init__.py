@@ -14,5 +14,6 @@ class app(object):
 
 from . import constants
 from . import engine
+from . import model
 from . import scenes
 from . import tools
