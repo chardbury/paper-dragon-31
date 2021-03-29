@@ -45,8 +45,12 @@ class Device(entity.Entity):
         lookup = type(input_item), type(self.current_input)
         if lookup in self.recipes:
             return self.recipes[lookup]
+        # we already checked the device is not running or finished
+        # so if we have nothing
+        # we can return the current item to the cursor (may be none)
         elif input_item is None:
             return (type(self.current_input), type(None))
+        # otherwise input was invalid, nothing changes
         else:
             return (type(input_item), type(None))
 
@@ -55,6 +59,7 @@ class Device(entity.Entity):
         out, current = self.get_output_item(input_item)
         
         changed = out is not type(input_item) or current is not type(self.current_input)
+        
         self.current_input = current(self.level) if (current is not type(None)) else None
 
         if changed:
@@ -91,13 +96,16 @@ class AutomaticDevice(Device):
         self.ticks_remaining = self.duration
 
     def add_item(self, held_item):
-        if held_item is None and self.product is not None:
+        # bin
+        if self.Product is None:
+            return None
+        # non-bins will give you their product if you aren't hold anything
+        elif held_item is None:
             self.ticks_remaining = self.duration
             return self.product(self.level)
-        elif held_item is not None and self.product is not None:
-            return held_item
+        # otherwise you get to keep what you are holding
         else:
-            return None
+            return held_item
 
 
 ## Actual Devices
