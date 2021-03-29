@@ -95,7 +95,7 @@ class LevelScene(object):
         else:
             return
 
-        view_width, view_height = self.interface.get_size()
+        view_width, view_height = self.interface.get_content_size()
         texture.anchor_x = texture.width // 2
         texture.anchor_y = texture.height // 2
         sprite = pyglet.sprite.Sprite(texture)
@@ -128,7 +128,7 @@ class LevelScene(object):
             if customer not in reverse_map:
                 self.create_sprite(customer, CUSTOMER_SCALE, relative_x, 0.0, 9)
             else:
-                view_width, view_height = self.interface.get_size()
+                view_width, view_height = self.interface.get_content_size()
                 reverse_map[customer].x = relative_x * view_height + view_width / 2
 
 
@@ -231,7 +231,7 @@ class LevelScene(object):
 
         # Create and cache the cursor object.
         if cursor_texture not in self._cursor_cache:
-            view_width, view_height = self.interface.get_size()
+            view_width, view_height = self.interface.get_content_size()
             cursor_height = CURSOR_SCALE * view_height
             cursor_x = cursor_texture.width / 2
             cursor_y = cursor_texture.width / 2
