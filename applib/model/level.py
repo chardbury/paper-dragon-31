@@ -7,8 +7,9 @@ import random
 import applib
 
 from applib.constants import TICK_LENGTH
-from applib.model import item
 from applib.model import device
+from applib.model import entity
+from applib.model import item
 
 
 class Order(object):
@@ -59,7 +60,7 @@ class Level(object):
         self.devices = []
         self.device_locations = {}
         for device, location_x, location_y in self.device_specification:
-            new_device = device()
+            new_device = device(self)
             self.devices.append(new_device)
             self.device_locations[new_device] = (location_x, location_y)
 
@@ -117,7 +118,7 @@ class Level(object):
 
         '''
         if (len(self.customers) == 0):
-            self.add_customer(Customer(Order(item.get('doughnut')), self))
+            self.add_customer(Customer(Order(item.Doughnut(self)), self))
         for device in self.devices:
             device.tick()
         for customer in self.customers:

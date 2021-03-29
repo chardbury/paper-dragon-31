@@ -7,16 +7,13 @@ import applib
 import pyglet
 
 from applib.constants import TICK_LENGTH
+from applib.model import entity
 from applib.model import item
 
 
-class Device(object):
+class Device(entity.Entity):
 
-    #: The internal name used to refer to devices of this class.
-    name = None
-
-    #: The texture used to render devices of this class (computed automatically).
-    texture = None
+    group = 'devices'
 
     #: The duration (in seconds) of one cycle of this device.
     duration = 10.0
@@ -25,11 +22,11 @@ class Device(object):
     duration_ticks = None
 
     def __init_subclass__(cls):
-        if cls.name is not None:
-            cls.texture = pyglet.resource.texture(f'devices/{cls.name}.png')
+        super().__init_subclass__()
         cls.duration_ticks = int(cls.duration // TICK_LENGTH)
 
-    def __init__(self):
+    def __init__(self, level):
+        super().__init__(level)
         self.current_input = None
         self.ticks_remaining = None
 
@@ -54,7 +51,7 @@ class Device(object):
         output_item = self.get_output_item(self.current_input)
         self.current_input = None
         self.ticks_remaining = None
-        return output_item
+        return output_item(self.level)
 
     def interact(self, held_item):
         if self.is_running:
@@ -69,6 +66,7 @@ class Device(object):
                 return held_item
 
     def tick(self):
+        super().tick()
         if self.ticks_remaining is not None:
             self.ticks_remaining -= 1
 
@@ -76,15 +74,16 @@ class Device(object):
 class AutomaticDevice(Device):
 
     product = None
+
     duration = 0
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, level):
+        super().__init__(level)
         self.ticks_remaining = self.duration
 
     def remove_item(self):
         self.ticks_remaining = self.duration
-        return self.product
+        return self.product(self.level)
 
 
 ## Actual Devices
@@ -104,7 +103,7 @@ class BatterBox(AutomaticDevice):
 
     name = 'batter_box'
 
-    product = item.Item.get('batter')
+    product = item.Batter
 
 
 class DoughnutImprover(Device):
@@ -112,5 +111,5 @@ class DoughnutImprover(Device):
     name = 'doughnut_improver'
     
     def get_output_item(self, input_item):
-        if input_item == item.get('doughnut'):
-            return item.get('better_doughnut')
+        if isinstance(input_item, item.Doughnut):
+            return item.BetterDoughnut

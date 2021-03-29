@@ -7,47 +7,31 @@ import re
 import applib
 import pyglet
 
-
-def _normalise(string):
-    '''Normalise the given string.
-
-    '''
-    string = string.strip().lower()
-    string = re.sub(r'\s+', '_', string)
-    string = re.sub(r'[^a-z_]', '', string)
-    return string
+from applib.model import entity
 
 
-class Item(object):
+class Item(entity.Entity):
 
-    _all = {}
-
-    def __init__(self, name):
-        self.name = _normalise(name)
-        self.image = pyglet.resource.image(f'items/{self.name}.png')
+    group = 'items'
 
     def __eq__(self, other):
-        return self.name == other.name
-
+        return type(self) == type(other)
+    
     def __hash__(self):
-        return hash(self.name)
+        return hash(type(self))
 
-    @classmethod
-    def get(cls, name):
-        name = _normalise(name)
-        if name not in cls._all:
-            cls._all[name] = cls(name)
-        return cls._all[name]
+class Batter(Item):
 
-get = Item.get
+    name = 'batter'
 
+class Doughnut(Item):
 
-## Actual Items
+    name = 'doughnut'
 
-for _item_name in [
-    'batter',
-    'doughnut',
-    'doughnut_cooked',
-    'better doughnut',
-]:
-    Item.get(_item_name)
+class BetterDoughnut(Item):
+
+    name = 'better_doughnut'
+
+class DoughnutCooked(Item):
+
+    name = 'doughnut_cooked'
