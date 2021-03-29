@@ -12,8 +12,8 @@ from applib.model import level
 class ExampleLevel(level.Level):
 
     device_specification = [
-        (device.BatterBox, 0.0, 0.0),
-        (device.DoughnutImprover, 0.0, 0.0),
+        (device.BatterTray, 0.0, 0.0),
+        (device.DoughnutFryer, 0.0, 0.0),
     ]
 
 
@@ -23,16 +23,16 @@ def level():
     return example_level
 
 
-def test_batter_box_gives_you_batter(level):
-    device = level.get_device('batter_box')
+def test_batter_tray_gives_you_batter(level):
+    device = level.get_device('batter_tray')
     for _ in range(1000):
         level.tick()
     level.interact(device)
     assert level.held_item.name == 'batter'
     assert device.is_finished
 
-def test_batter_box_gives_you_batter_and_then_you_can_get_another(level):
-    device = level.get_device('batter_box')
+def test_batter_tray_gives_you_batter_and_then_you_can_get_another(level):
+    device = level.get_device('batter_tray')
     for _ in range(1000):
         level.tick()
     level.interact(device)
@@ -42,8 +42,8 @@ def test_batter_box_gives_you_batter_and_then_you_can_get_another(level):
     assert device.is_finished
 
 
-def test_batter_box_cannot_give_you_more_batter_if_holding_batter(level):
-    device = level.get_device('batter_box')
+def test_batter_tray_cannot_give_you_more_batter_if_holding_batter(level):
+    device = level.get_device('batter_tray')
     for _ in range(1000):
         level.tick()
     level.held_item = item.Batter(level)
@@ -51,15 +51,15 @@ def test_batter_box_cannot_give_you_more_batter_if_holding_batter(level):
     assert device.is_finished
 
 
-def test_doughnut_improver_starts_off(level):
-    device = level.get_device('doughnut_improver')
+def test_doughnut_fryer_starts_off(level):
+    device = level.get_device('doughnut_fryer')
     for _ in range(1000):
         level.tick()
     assert not device.is_running
 
 
 def test_doughnut_improve_runs_when_doughnut_inserted(level):
-    device = level.get_device('doughnut_improver')
+    device = level.get_device('doughnut_fryer')
     for _ in range(1000):
         level.tick()
     level.held_item = item.Doughnut(level)
@@ -67,8 +67,8 @@ def test_doughnut_improve_runs_when_doughnut_inserted(level):
     assert device.is_running
     assert level.held_item is None
 
-def test_doughnut_improver_makes_better_doughnut_when_finished(level):
-    device = level.get_device('doughnut_improver')
+def test_doughnut_fryer_makes_doughnut_cooked_when_finished(level):
+    device = level.get_device('doughnut_fryer')
     for _ in range(1000):
         level.tick()
     level.held_item = item.Doughnut(level)
@@ -76,10 +76,10 @@ def test_doughnut_improver_makes_better_doughnut_when_finished(level):
     while not device.is_finished:
         level.tick()
     level.interact(device)
-    assert level.held_item.name == 'better_doughnut'
+    assert level.held_item.name == 'doughnut_cooked'
 
-def test_doughnut_improver_cannot_retrieve_before_finished(level):
-    device = level.get_device('doughnut_improver')
+def test_doughnut_fryer_cannot_retrieve_before_finished(level):
+    device = level.get_device('doughnut_fryer')
     for _ in range(1000):
         level.tick()
     level.held_item = item.Doughnut(level)
@@ -89,8 +89,8 @@ def test_doughnut_improver_cannot_retrieve_before_finished(level):
     assert device.is_running
     assert level.held_item is None
 
-def test_doughnut_improver_will_not_take_doughnut_while_running(level):
-    device = level.get_device('doughnut_improver')
+def test_doughnut_fryer_will_not_take_doughnut_while_running(level):
+    device = level.get_device('doughnut_fryer')
     for _ in range(1000):
         level.tick()
     level.held_item = item.Doughnut(level)
@@ -100,8 +100,8 @@ def test_doughnut_improver_will_not_take_doughnut_while_running(level):
     level.interact(device)
     assert level.held_item.name == 'doughnut'
 
-def test_doughnut_improver_cannot_take_batter(level):
-    device = level.get_device('doughnut_improver')
+def test_doughnut_fryer_cannot_take_batter(level):
+    device = level.get_device('doughnut_fryer')
     for _ in range(1000):
         level.tick()
     level.held_item = item.Batter(level)
@@ -109,8 +109,8 @@ def test_doughnut_improver_cannot_take_batter(level):
     assert level.held_item.name == 'batter'
     assert not device.is_running
 
-def test_doughnut_improver_duration(level):
-    device = level.get_device('doughnut_improver')
+def test_doughnut_fryer_duration(level):
+    device = level.get_device('doughnut_fryer')
     for _ in range(1000):
         level.tick()
     level.held_item = item.Doughnut(level)
@@ -122,8 +122,8 @@ def test_doughnut_improver_duration(level):
     assert device.is_finished
 
 
-def test_doughnut_improver_duration_is_10_seconds(level):
-    device = level.get_device('doughnut_improver')
+def test_doughnut_fryer_duration_is_10_seconds(level):
+    device = level.get_device('doughnut_fryer')
     for _ in range(1000):
         level.tick()
     level.held_item = item.Doughnut(level)

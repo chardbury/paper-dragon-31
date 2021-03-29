@@ -97,19 +97,16 @@ class TestLilac(Device):
 class TestMint(Device):
     name = 'mint'
 
+class BatterTray(AutomaticDevice):
 
-
-class BatterBox(AutomaticDevice):
-
-    name = 'batter_box'
+    name = 'batter_tray'
 
     product = item.Batter
 
+class DoughnutFryer(Device):
 
-class DoughnutImprover(Device):
-
-    name = 'doughnut_improver'
+    name = 'doughnut_fryer'
     
     def get_output_item(self, input_item):
         if isinstance(input_item, item.Doughnut):
-            return item.BetterDoughnut
+            return item.DoughnutCooked
