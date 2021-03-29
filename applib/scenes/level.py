@@ -8,6 +8,7 @@ import pyglet
 from applib import app
 from applib.engine import panel
 from applib.constants import ITEM_SCALE
+from applib.constants import DEVICE_SCALE
 
 
 def create_sprite(filename, size):
@@ -24,53 +25,47 @@ class LevelScene(object):
     def __init__(self, level=None):
         self.level = level or applib.model.level.TestLevel()
 
-        self.set_cursor('cursors/default.png')
+        #self.set_cursor('cursors/default.png')
 
         self.interface = panel.Panel(
             aspect = (16, 9),
             background = (100, 100, 220, 255),
         )
 
-        self.counter = self.interface.add(
-            align_y = 0.0,
-            width = 1.0,
-            height = 0.5,
-            background = (53, 20, 2, 255),
-            sprites = [],
-        )
-
         self.sprite_index = {}
+
+        self.create_sprite('scenery/counter.png', 0.5, 0.0, -0.25)
+
         for device in self.level.devices:
-            location_x, location_y = self.level.device_locations[device]
-            sprite = self.create_counter_sprite(device, location_x, location_y)
+            relative_x, relative_y = self.level.device_locations[device]
+            sprite = self.create_sprite(device, DEVICE_SCALE, relative_x, relative_y)
 
-        # self.create_counter_sprite(applib.model.item.get('batter'))
-        # self.create_counter_sprite(applib.model.item.get('doughnut'), 0.4)
-        # self.create_counter_sprite(applib.model.item.get('better_doughnut'), 0.8)
-        # self.create_counter_sprite(applib.model.item.get('doughnut_cooked'), 1.2)
-
-    def create_counter_sprite(self, target, offset_x=0.0, offset_y=0.0):
+    def create_sprite(self, target,
+        relative_height=0.1,
+        relative_x=0.0,
+        relative_y=0.0,
+        layer=0,
+        ):
 
         if isinstance(target, applib.model.item.Item):
-            target.image.anchor_x = target.image.width // 2
-            target.image.anchor_y = target.image.height // 2
-            sprite = pyglet.sprite.Sprite(target.image)
-            sprite.scale = (app.window.height * ITEM_SCALE) / target.image.height
-
+            texture = target.image
         elif isinstance(target, applib.model.device.Device):
-            target.texture.anchor_x = target.texture.width // 2
-            target.texture.anchor_y = target.texture.height // 2
-            sprite = pyglet.sprite.Sprite(target.texture)
-            sprite.scale = (app.window.height * ITEM_SCALE) / target.texture.height
-
+            texture = target.texture
+        elif isinstance(target, str):
+            texture = pyglet.resource.texture(target)
         else:
-            sprite = None
+            return
 
-        counter_width, counter_height = self.counter.get_size()
-        sprite.x = offset_x * counter_height + counter_width / 2
-        sprite.y = offset_y * counter_height + counter_height / 2
+        view_width, view_height = self.interface.get_size()
+        texture.anchor_x = texture.width // 2
+        texture.anchor_y = texture.height // 2
+        sprite = pyglet.sprite.Sprite(texture)
+        sprite.scale = (relative_height * view_height) / texture.height
+        sprite.x = relative_x * view_height + view_width / 2
+        sprite.y = relative_y * view_height + view_height / 2
+        sprite.layer = layer
         self.sprite_index[target] = sprite
-        self.counter.sprites.append(sprite)
+        self.interface.sprites.append(sprite)
         return sprite
 
     def set_cursor(self, filename):
@@ -89,5 +84,13 @@ class LevelScene(object):
         pass
 
     def on_draw(self):
+
+        # Clear the buffers.
         app.window.clear()
+
+        # Order the sprites for rendering.
+        layer_key = (lambda sprite: sprite.layer)
+        self.interface.sprites.sort(key=layer_key)
+
+        # Render the interface.
         self.interface.draw()

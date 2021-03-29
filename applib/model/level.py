@@ -62,7 +62,7 @@ class Level(object):
             new_device = device()
             self.devices.append(new_device)
             self.device_locations[new_device] = (location_x, location_y)
-            
+
         self.customers = []
         self.happy_customer = 0
         self.sad_customer = 0
@@ -127,12 +127,7 @@ class Level(object):
 class TestLevel(Level):
 
     device_specification = [
-        (device.BatterBox, -1.0, 0.0),
-        (device.DoughnutImprover, 1.0, 0.0),
-    ]
-
-    device_specification = [
-        (device.TestApricot, -1.0, 0.0),
-        (device.TestLilac, 0.0, 0.0),
-        (device.TestMint, 0.0, 0.0),
+        (device.TestApricot, -0.5, -0.25),
+        (device.TestLilac, 0.0, -0.25),
+        (device.TestMint, 0.5, -0.25),
     ]
