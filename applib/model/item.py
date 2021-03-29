@@ -20,18 +20,16 @@ class Item(entity.Entity):
     def __hash__(self):
         return hash(type(self))
 
-class Batter(Item):
 
-    name = 'batter'
+def load_items():
+    indexed_resources = list(pyglet.resource._default_loader._index)
+    for resource_name in indexed_resources:
+        if match := re.match(rf'{Item.group}/([a-z_]+)\.png', resource_name):
+            asset_name = match.group(1)
+            if asset_name not in entity.Entity.index[Item.group]:
+                class_name = ''.join(part.title() for part in re.split(r'_+', asset_name))
+                item_class = type(class_name, (Item,), {'name': asset_name})
+                globals()[class_name] = item_class
 
-class Doughnut(Item):
-
-    name = 'doughnut'
-
-class BetterDoughnut(Item):
-
-    name = 'better_doughnut'
-
-class DoughnutCooked(Item):
-
-    name = 'doughnut_cooked'
+load_items()
+del load_items

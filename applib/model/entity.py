@@ -38,11 +38,12 @@ class Entity(object):
         '''
         if cls.group is not None:
             cls.group = _normalise(cls.group)
+            cls.index.setdefault(cls.group, {})
         if cls.name is not None:
             cls.name = _normalise(cls.name)
+            cls.index[cls.group][cls.name] = cls
         if (cls.group is not None) and (cls.name is not None):
             cls.texture = pyglet.resource.texture(f'{cls.group}/{cls.name}.png')
-            cls.index[f'{cls.group}/{cls.name}'] = cls
 
     def __init__(self, level):
         '''Create an `Entity` object.
