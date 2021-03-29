@@ -11,7 +11,7 @@ from applib import app
 from applib.constants import CURSOR_SCALE
 from applib.constants import DEVICE_SCALE
 from applib.constants import ITEM_SCALE
-from applib.engine import panel
+from applib.engine import sound
 
 from pyglet.gl import *
 
@@ -23,11 +23,15 @@ class ScaledImageMouseCursor(pyglet.window.ImageMouseCursor):
         self.height = height
     
     def draw(self, x, y):
+
+        # Compute the coordinates of the cursor box.
         scale = self.height / self.texture.height
         x1 = x - (self.hot_x + self.texture.anchor_x) * scale
         y1 = y - (self.hot_y + self.texture.anchor_y) * scale
         x2 = x1 + self.texture.width * scale
         y2 = y1 + self.texture.height * scale
+
+        # Render the texture in the cursor box.
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -41,22 +45,37 @@ class ScaledImageMouseCursor(pyglet.window.ImageMouseCursor):
         )
         glPopAttrib()
 
+
 class LevelScene(object):
+    '''Class comprising the main interface to `applib.model.level.Level`.
+
+    '''
 
     def __init__(self, level=None):
-        self.level = level or applib.model.level.TestLevel()
+        '''Create a `LevelScene` object.
 
-        #self.set_cursor('cursors/default.png')
+        '''
 
-        self.interface = panel.Panel(
+        # Ensure we have an appropriate level.
+        self.level = level or self.create_test_level()
+
+        # Create the root interface panel.
+        self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
             background = (100, 100, 220, 255),
         )
 
-        self.sprite_index = {}
+        self.load_level_sprites()
 
+    ## Model
+    ## -----
+
+    def create_test_level(self):
+        return applib.model.level.TestLevel()
+
+    def load_level_sprites(self):
+        self.level_sprite_map = {}
         self.create_sprite('scenery/counter.png', 0.5, 0.0, -0.25)
-
         for device in self.level.devices:
             relative_x, relative_y = self.level.device_locations[device]
             sprite = self.create_sprite(device, DEVICE_SCALE, relative_x, relative_y)
@@ -85,8 +104,9 @@ class LevelScene(object):
         sprite.x = relative_x * view_height + view_width / 2
         sprite.y = relative_y * view_height + view_height / 2
         sprite.layer = layer
-        self.sprite_index[sprite] = target
+        self.level_sprite_map[sprite] = target
         self.interface.sprites.append(sprite)
+        self._texture_data[texture] = texture.get_image_data().get_data()
         return sprite
 
     def on_tick(self):
@@ -103,6 +123,9 @@ class LevelScene(object):
 
     #: The sprite that has been clicked on, but not yet released.
     _clicked_sprite = None
+
+    #: The cached texture data used in alpha based hit testing.
+    _texture_data = {}
 
     def _get_sprite_at(self, target_x, target_y):
         '''Return the sprite at the specified window coordinates.
@@ -127,9 +150,8 @@ class LevelScene(object):
             texture_y = int(sprite_y / scale_y + texture.anchor_y)
             # 4. Check if the texture is transparent at the computed position.
             if (0 <= texture_x < texture.width) and (0 <= texture_y < texture.height):
-                image_data = texture.get_image_data().get_data()
                 alpha_index = (texture_y * texture.width + texture_x) * 4 + 3
-                if image_data[alpha_index] > 0:
+                if self._texture_data[texture][alpha_index] > 0:
                     sprite.color = (0, 0, 0)
                     return sprite
     
@@ -149,6 +171,12 @@ class LevelScene(object):
     def on_mouse_motion(self, x, y, dx, dy):
         self._update_mouse_position(x, y)
 
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        self._update_mouse_position(x, y)
+
+    def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
+        self._update_mouse_position(x, y)
+
     def on_mouse_press(self, x, y, button, modifiers):
         self._update_mouse_position(x, y)
         self._clicked_sprite = self._target_sprite
@@ -158,12 +186,10 @@ class LevelScene(object):
         if self._clicked_sprite is not None:
             if self._target_sprite is self._clicked_sprite:
                 # Zhu Li, do the thing!
-                target = self.sprite_index[self._clicked_sprite]
+                target = self.level_sprite_map[self._clicked_sprite]
                 self.level.interact(target)
+                sound.pop()
             self._clicked_sprite = None
-
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        self._update_mouse_position(x, y)
 
     ## Rendering
     ## ---------
@@ -171,22 +197,28 @@ class LevelScene(object):
     _cursor_cache = {}
 
     def set_cursor(self, image):
-        
+        '''Use the texture from the given object as the mouse cursor.
+
+        '''
         # Acquire the texture from the input object.
         if isinstance(image, pyglet.sprite.Sprite):
             image = image._texture
-        cursor_texture = image.get_texture()
+        if isinstance(image, pyglet.image.AbstractImage):
+            cursor_texture = image.get_texture()
+        else:
+            app.window.set_mouse_cursor(None)
+            return
 
         # Create and cache the cursor object.
-        if cursor_texture.id not in self._cursor_cache:
+        if cursor_texture not in self._cursor_cache:
             view_width, view_height = self.interface.get_size()
             cursor_height = CURSOR_SCALE * view_height
             cursor_x = cursor_texture.width / 2
             cursor_y = cursor_texture.width / 2
             cursor = ScaledImageMouseCursor(cursor_texture, cursor_height, cursor_x, cursor_y)
-            self._cursor_cache[cursor_texture.id] = cursor
+            self._cursor_cache[cursor_texture] = cursor
         else:
-            cursor = self._cursor_cache[cursor_texture.id]
+            cursor = self._cursor_cache[cursor_texture]
 
         # Set the cursor on the window.
         app.window.set_mouse_cursor(cursor)
