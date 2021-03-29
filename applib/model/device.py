@@ -91,11 +91,22 @@ class AutomaticDevice(Device):
         self.ticks_remaining = self.duration
 
     def add_item(self, held_item):
-        self.ticks_remaining = self.duration
-        return self.product(self.level)
+        if held_item is None and self.product is not None:
+            self.ticks_remaining = self.duration
+            return self.product(self.level)
+        elif held_item is not None and self.product is not None:
+            return held_item
+        else:
+            return None
 
 
 ## Actual Devices
+
+class Bin(AutomaticDevice):
+    
+    name ='bin'
+
+    product = None
 
 class Plate(Device):
 

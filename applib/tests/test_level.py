@@ -15,6 +15,7 @@ class ExampleLevel(level.Level):
         (device.BatterTray, 0.0, 0.0),
         (device.DoughnutFryer, 0.0, 0.0),
         (device.Plate, 0.0, 0.0),
+        (device.Bin, 0.0, 0.0),
     ]
 
     
@@ -39,9 +40,10 @@ def test_batter_tray_gives_you_batter_and_then_you_can_get_another(level):
     for _ in range(1000):
         level.tick()
     level.interact(device)
-    level.held_item is None
-    level.interact(device)
     assert level.held_item.name == 'batter'
+    level.held_item = item.Doughnut(level)
+    level.interact(device)
+    assert level.held_item.name == 'doughnut'
     assert device.is_finished
 
 
@@ -174,14 +176,28 @@ def test_plate_recipes(level):
     from applib.model.level import Customer, Order
     device = level.get_device('plate')
     level.held_item = item.Doughnut(level)
-    level.tick()
     level.interact(device)
-    assert level.held_item == None
+    assert level.held_item is None
     assert isinstance(device.current_input, item.Doughnut)
     level.held_item = item.Glaze(level)
     level.interact(device)
-    assert level.held_item == None
+    assert level.held_item is None
     assert isinstance(device.current_input, item.DoughnutGlazed)
     level.interact(device)
     assert isinstance(level.held_item, item.DoughnutGlazed)
-    assert device.current_input == None
+    assert device.current_input is None
+
+def test_bin(level):
+    from applib.model.level import Customer, Order
+    device = level.get_device('bin')
+    level.tick()
+    level.held_item = item.Doughnut(level)
+    assert isinstance(level.held_item, item.Doughnut)
+    level.interact(device)
+    assert level.held_item is None
+    level.held_item = item.Doughnut(level)
+    level.interact(device)
+    assert level.held_item is None
+    level.interact(device)
+    assert level.held_item is None
+    assert device.current_input is None
