@@ -114,11 +114,12 @@ class LevelScene(object):
         # Check for old sprites to remove.
         reverse_map = {}
         for sprite, entity in list(self.level_sprite_map.items()):
-            if isinstance(entity, applib.model.level.Customer) and (entity not in self.level.customers):
-                del self.level_sprite_map[sprite]
-                self.interface.sprites.remove(sprite)
-            else:
-                reverse_map[entity] = sprite
+            if isinstance(entity, applib.model.level.Customer):
+                if entity not in self.level.customers:
+                    del self.level_sprite_map[sprite]
+                    self.interface.sprites.remove(sprite)    
+                    continue
+            reverse_map[entity] = sprite
 
         # Check for new sprites to add.
         for index, customer in enumerate(self.level.customers):
