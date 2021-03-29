@@ -97,7 +97,7 @@ class AutomaticDevice(Device):
 
     def add_item(self, held_item):
         # bin
-        if self.Product is None:
+        if self.product is None:
             return None
         # non-bins will give you their product if you aren't hold anything
         elif held_item is None:
