@@ -5,6 +5,7 @@
 import random
 
 import applib
+import pyglet
 
 from applib.constants import TICK_LENGTH
 from applib.model import device
@@ -18,12 +19,16 @@ class Order(object):
         self.items = list(items)
 
 
-class Customer(object):
+class Customer(entity.Entity):
 
-    def __init__(self, order, level):
+    group = 'customers'
+
+    name = 'default'
+
+    def __init__(self, level, order):
+        super().__init__(level)
         self.order = order
         self.patience = self.compute_patience()
-        self.level = level
 
     def compute_patience(self):
         '''Return the patience in ticks
@@ -40,9 +45,10 @@ class Customer(object):
     def tick(self):
         if len(self.order.items) == 0:
             self.level.remove_customer(self, True)
-        self.patience -= 1
-        if (self.patience <= 0):
-            self.level.remove_customer(self, False)
+        else:
+            self.patience -= 1
+            if self.patience <= 0:
+                self.level.remove_customer(self, False)
     
 
 
@@ -118,7 +124,7 @@ class Level(object):
 
         '''
         if (len(self.customers) == 0):
-            self.add_customer(Customer(Order(item.Doughnut(self)), self))
+            self.add_customer(Customer(self, Order(item.Doughnut(self))))
         for device in self.devices:
             device.tick()
         for customer in self.customers:

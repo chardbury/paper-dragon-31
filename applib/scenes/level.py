@@ -9,6 +9,7 @@ import pyglet
 
 from applib import app
 from applib.constants import CURSOR_SCALE
+from applib.constants import CUSTOMER_SCALE
 from applib.constants import DEVICE_SCALE
 from applib.constants import ITEM_SCALE
 from applib.engine import sound
@@ -84,12 +85,10 @@ class LevelScene(object):
         relative_height=0.1,
         relative_x=0.0,
         relative_y=0.0,
-        layer=0,
+        layer=10,
         ):
 
-        if isinstance(target, applib.model.item.Item):
-            texture = target.image
-        elif isinstance(target, applib.model.device.Device):
+        if isinstance(target, applib.model.entity.Entity):
             texture = target.texture
         elif isinstance(target, str):
             texture = pyglet.resource.texture(target)
@@ -111,6 +110,26 @@ class LevelScene(object):
 
     def on_tick(self):
         self.level.tick()
+
+        # Check for old sprites to remove.
+        reverse_map = {}
+        for sprite, entity in list(self.level_sprite_map.items()):
+            if isinstance(entity, applib.model.level.Customer) and (entity not in self.level.customers):
+                del self.level_sprite_map[sprite]
+                self.interface.sprites.remove(sprite)
+            else:
+                reverse_map[entity] = sprite
+
+        # Check for new sprites to add.
+        for index, customer in enumerate(self.level.customers):
+            customer_positions = [[], [0.0], [-0.3, 0.3], [-0.5, 0.0, 0.5], [-0.6, -0.2, 0.2, 0.6]]
+            relative_x = customer_positions[len(self.level.customers)][index]
+            if customer not in reverse_map:
+                self.create_sprite(customer, CUSTOMER_SCALE, relative_x, 0.0, 9)
+            else:
+                view_width, view_height = self.interface.get_size()
+                reverse_map[customer].x = relative_x * view_height + view_width / 2
+
 
     ## Clicking
     ## --------
