@@ -16,6 +16,8 @@ class ExampleLevel(level.Level):
         (device.DoughnutFryer, 0.0, 0.0),
     ]
 
+    
+
 
 @pytest.fixture
 def level():
@@ -134,24 +136,24 @@ def test_doughnut_fryer_duration_is_10_seconds(level):
 
 def test_customer_added(level):
     from applib.model.level import Customer, Order
-    level.add_customer(Customer(Order(item.Doughnut(level)), level))
+    level.add_customer(Customer(level, Order(item.Doughnut(level))))
     assert len(level.customers) == 1
 
 def test_customer_removed(level):
     from applib.model.level import Customer, Order
-    level.add_customer(Customer(Order(item.Doughnut(level)), level))
+    level.add_customer(Customer(level, Order(item.Doughnut(level))))
     for _ in range (level.customers[0].patience):
         level.tick()
     assert len(level.customers) == 0 and level.sad_customer == 1
 
 def test_customer_added_with_one_item_order(level):
     from applib.model.level import Customer, Order
-    level.add_customer(Customer(Order(item.Doughnut(level)), level))
+    level.add_customer(Customer(level, Order(item.Doughnut(level))))
     assert len(level.customers[0].order.items) == 1
 
 def test_customer_serve_right_item(level):
     from applib.model.level import Customer, Order
-    level.add_customer(Customer(Order(item.Doughnut(level)), level))
+    level.add_customer(Customer(level, Order(item.Doughnut(level))))
     level.held_item = item.Doughnut(level)
     level.interact(level.customers[0])
     assert len(level.customers[0].order.items) == 0
@@ -160,7 +162,7 @@ def test_customer_serve_right_item(level):
 
 def test_customer_serve_wrong_item(level):
     from applib.model.level import Customer, Order
-    level.add_customer(Customer(Order(item.Doughnut(level)), level))
+    level.add_customer(Customer(level, Order(item.Doughnut(level))))
     level.held_item = item.Batter(level)
     level.interact(level.customers[0])
     assert len(level.customers[0].order.items) == 1
