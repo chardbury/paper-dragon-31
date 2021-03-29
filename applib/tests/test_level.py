@@ -4,9 +4,17 @@ from applib.model.level import *
 from applib.model.item import Item
 
 
+class TestLevel(Level):
+
+    device_specification = [
+        (device.BatterBox, -1.0, 0.0),
+        (device.DoughnutImprover, 1.0, 0.0),
+    ]
+
+
 @pytest.fixture
 def level():
-    test_level = Level()
+    test_level = TestLevel()
     return test_level
 
 
@@ -102,7 +110,7 @@ def test_doughnut_improver_duration(level):
         level.tick()
     level.held_item = Item.get('doughnut')
     level.interact(device)
-    for _ in range(device.duration - 1):
+    for _ in range(device.duration_ticks - 1):
         level.tick()
     assert not device.is_finished
     level.tick()

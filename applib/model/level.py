@@ -47,15 +47,22 @@ class Customer(object):
 
 class Level(object):
 
+    device_specification = ()
+
     def __init__(self):
         '''Construct a `Level` object.
 
         '''
         self.held_item = None
-        self.devices = [
-            device.BatterBox(),
-            device.DoughnutImprover(),
-        ]
+
+        # Create devices.
+        self.devices = []
+        self.device_locations = {}
+        for device, location_x, location_y in self.device_specification:
+            new_device = device()
+            self.devices.append(new_device)
+            self.device_locations[new_device] = (location_x, location_y)
+            
         self.customers = []
         self.happy_customer = 0
         self.sad_customer = 0
@@ -115,4 +122,17 @@ class Level(object):
             device.tick()
         for customer in self.customers:
             customer.tick()
-        
+
+
+class TestLevel(Level):
+
+    device_specification = [
+        (device.BatterBox, -1.0, 0.0),
+        (device.DoughnutImprover, 1.0, 0.0),
+    ]
+
+    device_specification = [
+        (device.TestApricot, -1.0, 0.0),
+        (device.TestLilac, 0.0, 0.0),
+        (device.TestMint, 0.0, 0.0),
+    ]

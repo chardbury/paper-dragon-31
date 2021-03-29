@@ -9,6 +9,7 @@ from applib import app
 
 from pyglet.gl import *
 
+
 class Panel(object):
 
     def __init__(self,

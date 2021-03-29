@@ -12,21 +12,34 @@ from applib.model import item
 
 class Device(object):
 
+    #: The internal name used to refer to devices of this class.
     name = None
 
-    duration = int(10.0 // TICK_LENGTH)
+    #: The texture used to render devices of this class (computed automatically).
+    texture = None
+
+    #: The duration (in seconds) of one cycle of this device.
+    duration = 10.0
+
+    #: The duration (in ticks) of one cycle of this device (computed automatically).
+    duration_ticks = None
+
+    def __init_subclass__(cls):
+        if cls.name is not None:
+            cls.texture = pyglet.resource.texture(f'devices/{cls.name}.png')
+        cls.duration_ticks = int(cls.duration // TICK_LENGTH)
 
     def __init__(self):
         self.current_input = None
-        self.time_remaining = None
+        self.ticks_remaining = None
 
     @property
     def is_running(self):
-        return self.time_remaining is not None
+        return self.ticks_remaining is not None
 
     @property
     def is_finished(self):
-        return self.is_running and (self.time_remaining <= 0.0)
+        return self.is_running and (self.ticks_remaining <= 0.0)
 
     def get_output_item(self, input_item):
         pass
@@ -35,12 +48,12 @@ class Device(object):
         output_item = self.get_output_item(input_item)
         if output_item is not None:
             self.current_input = input_item
-            self.time_remaining = self.duration
+            self.ticks_remaining = self.duration_ticks
 
     def remove_item(self):
         output_item = self.get_output_item(self.current_input)
         self.current_input = None
-        self.time_remaining = None
+        self.ticks_remaining = None
         return output_item
 
     def interact(self, held_item):
@@ -56,8 +69,8 @@ class Device(object):
                 return held_item
 
     def tick(self):
-        if self.time_remaining is not None:
-            self.time_remaining -= 1
+        if self.ticks_remaining is not None:
+            self.ticks_remaining -= 1
 
 
 class AutomaticDevice(Device):
@@ -67,14 +80,24 @@ class AutomaticDevice(Device):
 
     def __init__(self):
         super().__init__()
-        self.time_remaining = self.duration
+        self.ticks_remaining = self.duration
 
     def remove_item(self):
-        self.time_remaining = self.duration
+        self.ticks_remaining = self.duration
         return self.product
 
 
 ## Actual Devices
+
+class TestApricot(Device):
+    name = 'apricot'
+
+class TestLilac(Device):
+    name = 'lilac'
+
+class TestMint(Device):
+    name = 'mint'
+
 
 
 class BatterBox(AutomaticDevice):
