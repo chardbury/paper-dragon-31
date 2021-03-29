@@ -9,18 +9,18 @@ from applib.model import item
 from applib.model import level
 
 
-class TestLevel(level.Level):
+class ExampleLevel(level.Level):
 
     device_specification = [
-        (device.BatterBox, -1.0, 0.0),
-        (device.DoughnutImprover, 1.0, 0.0),
+        (device.BatterBox, 0.0, 0.0),
+        (device.DoughnutImprover, 0.0, 0.0),
     ]
 
 
 @pytest.fixture
 def level():
-    test_level = TestLevel()
-    return test_level
+    example_level = ExampleLevel()
+    return example_level
 
 
 def test_batter_box_gives_you_batter(level):
