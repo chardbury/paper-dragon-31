@@ -95,51 +95,49 @@ class Panel(object):
     content_types = []
 
     def get_content_size(self):
-        for content_type, size_method, offset_method in self.content_types:
+        for content_type, size_method, draw_method in self.content_types:
             if getattr(self, content_type):
                 return getattr(self, size_method)()
         return self.get_default_size()
 
-    def get_content_offset(self):
-        for content_type, size_method, offset_method in self.content_types:
-            if getattr(self, content_type):
-                return getattr(self, offset_method)()
-        return self.get_default_offset()
-
     ## Content : Text
 
-    content_types.append(('text', 'get_text_size', 'get_text_offset'))
+    content_types.append(('text', 'get_text_size', 'draw_text'))
 
-    _text_document = None
-
-    _text_layout = None
+    _text_label = None
 
     def get_text_size(self):
-        self._text_document = pyglet.text.document.UnformattedDocument()
-        self._text_layout = pyglet.text.layout.IncrementalTextLayout(self._text_document, 0, 0)
-        self._text_layout.begin_update()
-        self._text_layout.content_width = 0 # Do not remove this line... seriously!
-        self._text_document.set_style(0, 0, {
-            "font_name" : self.font_name,
-            "font_size" : int(self.font_size * self.get_root_size()[1]),
-            "color" : [min(255, int(256 * channel)) for channel in self.text_color],
-            "align" : "center"})
-        self._text_document.text = self.text
-        self._text_layout.x = self._text_layout.y = 0
-        self._text_layout.width = self.get_default_size()[0]
-        self._text_layout.height = self.get_default_size()[1]
-        self._text_layout.content_valign = "bottom"
-        self._text_layout.multiline = False
-        self._text_layout.end_update()
-        self._text_layout.begin_update()
-        self._text_layout.width = self._text_layout.content_width
-        self._text_layout.height = self._text_layout.content_height
-        self._text_layout.end_update()
-        return (self._text_layout.content_width,
-                self._text_layout.content_height)
+        default_width, default_height = self.get_default_size()
+        root_width, root_height = self.get_root_size()
 
-    def get_text_offset(self):
-        pass
+        # Create and format the label.
+        self._text_label = pyglet.text.Label(
+            text=self.text,
+            font_name=self.font_name,
+            font_size=int(self.font_size * root_height),
+            color=self.text_color,
+            width=default_width,
+            height=default_height,
+            anchor_x = 'left',
+            anchor_y = 'baseline',
+            align='center',
+            multiline=True,
+        )
+
+        # Constrain the label dimensions to its content.
+        self._text_label.width = self._text_label.content_width + 1
+        self._text_label.height = self._text_label.content_height + 1
+
+        # Return the label's content dimensions.
+        return (
+            self._text_label.content_width,
+            self._text_label.content_height,
+        )
+
+    def draw_text(self, draw_x, draw_y):
+        self._text_label.x = draw_x
+        self._text_label.y = draw_y
+        self._text_label.draw()
 
 
     # Rendering
@@ -170,10 +168,9 @@ class Panel(object):
                 sprite.draw()
             glPopMatrix()
 
-        if self.text:
-            self._text_layout.x = draw_x
-            self._text_layout.y = draw_y
-            self._text_layout.draw()
+        for content_type, size_method, draw_method in self.content_types:
+            if getattr(self, content_type):
+                getattr(self, draw_method)(draw_x, draw_y)
 
         # Render children
         for child in self._children:
