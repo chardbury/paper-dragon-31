@@ -21,6 +21,9 @@ class Device(entity.Entity):
     #: The duration (in ticks) of one cycle of this device (computed automatically).
     duration_ticks = None
 
+     # input-item, current-item : held-item, new-current-item
+    recipes = {}
+
     def __init_subclass__(cls):
         super().__init_subclass__()
         cls.duration_ticks = int(cls.duration // TICK_LENGTH)
@@ -39,31 +42,37 @@ class Device(entity.Entity):
         return self.is_running and (self.ticks_remaining <= 0.0)
 
     def get_output_item(self, input_item):
-        pass
+        lookup = type(input_item), type(self.current_input)
+        if lookup in self.recipes:
+            return self.recipes[lookup]
+        elif input_item is None:
+            return (type(self.current_input), type(None))
+        else:
+            return (type(input_item), type(None))
 
     def add_item(self, input_item):
-        output_item = self.get_output_item(input_item)
-        if output_item is not None:
-            self.current_input = input_item
-            self.ticks_remaining = self.duration_ticks
+        # returns held-item class and new current-item class
+        out, current = self.get_output_item(input_item)
+        
+        changed = out is not type(input_item) or current is not type(self.current_input)
+        self.current_input = current(self.level) if (current is not type(None)) else None
 
-    def remove_item(self):
-        output_item = self.get_output_item(self.current_input)
-        self.current_input = None
-        self.ticks_remaining = None
-        return output_item(self.level)
+        if changed:
+            # if we added something and device not running then we need to start it
+            if current is not type(None):
+                self.ticks_remaining = self.duration_ticks
+            # if we removed the current item then device needs to be stopped
+            else:
+                self.ticks_remaining = None
+        
+        # set current item and return output item        
+        return out(self.level) if (out is not type(None)) else None
 
     def interact(self, held_item):
-        if self.is_running:
-            if held_item is None:
-                if self.is_finished:
-                    return self.remove_item()
-            else:
-                return held_item
+        if not self.is_running or self.is_finished:
+            return self.add_item(held_item)
         else:
-            self.add_item(held_item)
-            if not self.is_running:
-                return held_item
+            return held_item
 
     def tick(self):
         super().tick()
@@ -81,12 +90,25 @@ class AutomaticDevice(Device):
         super().__init__(level)
         self.ticks_remaining = self.duration
 
-    def remove_item(self):
+    def add_item(self, held_item):
         self.ticks_remaining = self.duration
         return self.product(self.level)
 
 
 ## Actual Devices
+
+class Plate(Device):
+
+    name = 'plate'
+
+    duration = 0
+
+    # input-item, current-item : held-item, new-current-item
+    recipes = {
+        (item.Glaze, item.Doughnut): (type(None), item.DoughnutGlazed),
+        (item.Sprinkles, item.Doughnut): (type(None), item.DoughnutSprinkles),
+        (item.Doughnut, type(None)): (type(None), item.Doughnut),
+        }
 
 
 class TestApricot(AutomaticDevice):
@@ -99,19 +121,22 @@ class TestApricot(AutomaticDevice):
 class TestLilac(Device):
 
     name = 'lilac'
-    
-    def get_output_item(self, input_item):
-        if isinstance(input_item, item.Batter):
-            return item.Doughnut
 
+    # input-item, current-item : held-item, new-current-item
+    recipes = {
+        (item.Batter, type(None)): (type(None), item.Batter),
+        (type(None), item.Batter): (item.Doughnut, type(None)),
+        }
 
 class TestMint(Device):
 
     name = 'mint'
-    
-    def get_output_item(self, input_item):
-        if isinstance(input_item, item.Doughnut):
-            return item.DoughnutCooked
+
+    # input-item, current-item : held-item, new-current-item
+    recipes = {
+        (item.Doughnut, type(None)): (type(None), item.Doughnut),
+        (type(None), item.Doughnut): (item.DoughnutCooked, type(None)),
+        }
 
 
 class BatterTray(AutomaticDevice):
@@ -124,6 +149,8 @@ class DoughnutFryer(Device):
 
     name = 'doughnut_fryer'
     
-    def get_output_item(self, input_item):
-        if isinstance(input_item, item.Doughnut):
-            return item.DoughnutCooked
+    # input-item, current-item : held-item, new-current-item
+    recipes = {
+        (item.Batter, type(None)): (type(None), item.Batter),
+        (type(None), item.Batter): (item.Doughnut, type(None)),
+        }
