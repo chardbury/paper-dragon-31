@@ -47,15 +47,6 @@ def test_batter_tray_gives_you_batter_and_then_you_can_get_another(level):
     assert device.is_finished
 
 
-def test_batter_tray_cannot_give_you_more_batter_if_holding_batter(level):
-    device = level.get_device('batter_tray')
-    for _ in range(1000):
-        level.tick()
-    level.held_item = item.Batter(level)
-    level.interact(device)
-    assert device.is_finished
-
-
 def test_doughnut_fryer_starts_off(level):
     device = level.get_device('doughnut_fryer')
     for _ in range(1000):
