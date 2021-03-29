@@ -35,7 +35,7 @@ SETTINGS_FILE = 'settings.json'
 
 SETTINGS_DEFAULTS = {
     'fullscreen': False,
-    'start_scene': 'applib.scenes.default.DefaultScene',
+    'start_scene': 'applib.scenes.level.LevelScene',
     'volume': 0.5,
 }
 

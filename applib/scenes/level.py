@@ -2,6 +2,8 @@
 
 '''
 
+import math
+
 import applib
 import pyglet
 
@@ -9,6 +11,8 @@ from applib import app
 from applib.engine import panel
 from applib.constants import ITEM_SCALE
 from applib.constants import DEVICE_SCALE
+
+from pyglet.gl import *
 
 
 def create_sprite(filename, size):
@@ -80,8 +84,56 @@ class LevelScene(object):
     def on_tick(self):
         self.level.tick()
 
+    ## Mouse Events
+    ###############
+    
+    def _update_mouse_position(self, x, y):
+        print(self._get_sprite_at(x, y))
+
+    def _get_sprite_at(self, target_x, target_y):
+        offset_x, offset_y = self.interface.get_offset()
+        for sprite in self.interface.sprites: sprite.color = (255, 255, 255) # FOR TESTING
+        for sprite in reversed(self.interface.sprites):
+            texture = sprite._texture
+            # 1. Get the position of the target relative to the sprite in the window frame.
+            sprite_x = target_x - (sprite.x + offset_x)
+            sprite_y = target_y - (sprite.y + offset_y)
+            # 2. Get the position of the target relative to the sprite in the sprite frame.
+            rotation = math.radians(sprite._rotation)
+            sin, cos = math.sin(rotation), math.cos(rotation)
+            sprite_x = cos * sprite_x - sin * sprite_y
+            sprite_y = sin * sprite_x + cos * sprite_y
+            # 3. Get the position of the target relative to the texture in the texture frame.
+            scale_x = sprite._scale * sprite._scale_x
+            scale_y = sprite._scale * sprite._scale_y
+            texture_x = int(sprite_x / scale_x + texture.anchor_x)
+            texture_y = int(sprite_y / scale_y + texture.anchor_y)
+            # 4. Check if the texture is transparent at the computed position.
+            if (0 <= texture_x < texture.width) and (0 <= texture_y < texture.height):
+                image_data = texture.get_image_data().get_data()
+                alpha_index = (texture_y * texture.width + texture_x) * 4 + 3
+                if image_data[alpha_index] > 0:
+                    sprite.color = (0, 0, 0) # FOR TESTING
+                    return sprite
+
+
+    def on_mouse_enter(self, x, y):
+        self._update_mouse_position(x, y)
+
+    def on_mouse_leave(self, x, y):
+        self._update_mouse_position(x, y)
+
+    def on_mouse_press(self, x, y, button, modifiers):
+        self._update_mouse_position(x, y)
+
     def on_mouse_release(self, x, y, button, modifiers):
-        pass
+        self._update_mouse_position(x, y)
+
+    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        self._update_mouse_position(x, y)
+
+    def on_mouse_motion(self, x, y, dx, dy):
+        self._update_mouse_position(x, y)
 
     def on_draw(self):
 
