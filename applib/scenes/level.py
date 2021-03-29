@@ -8,21 +8,38 @@ import applib
 import pyglet
 
 from applib import app
-from applib.engine import panel
-from applib.constants import ITEM_SCALE
+from applib.constants import CURSOR_SCALE
 from applib.constants import DEVICE_SCALE
+from applib.constants import ITEM_SCALE
+from applib.engine import panel
 
 from pyglet.gl import *
 
 
-def create_sprite(filename, size):
-    image = pyglet.resource.image(filename)
-    image.anchor_x = image.width // 2
-    image.anchor_y = image.height // 2
-    sprite = pyglet.sprite.Sprite(image)
-    sprite.scale = size / image.height
-    return sprite
+class ScaledImageMouseCursor(pyglet.window.ImageMouseCursor):
 
+    def __init__(self, image, height, hot_x=0.0, hot_y=0.0):
+        super().__init__(image, hot_x, hot_y)
+        self.height = height
+    
+    def draw(self, x, y):
+        scale = self.height / self.texture.height
+        x1 = x - (self.hot_x + self.texture.anchor_x) * scale
+        y1 = y - (self.hot_y + self.texture.anchor_y) * scale
+        x2 = x1 + self.texture.width * scale
+        y2 = y1 + self.texture.height * scale
+        glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        glEnable(self.texture.target)
+        glBindTexture(self.texture.target, self.texture.id)
+        pyglet.graphics.draw_indexed(4, GL_TRIANGLES,
+            [0, 1, 2, 0, 2, 3],
+            ('v2f', [x1, y1, x2, y1, x2, y2, x1, y2]),
+            ('t3f', self.texture.tex_coords),
+            ('c4B', [255] * 16),
+        )
+        glPopAttrib()
 
 class LevelScene(object):
 
@@ -68,31 +85,31 @@ class LevelScene(object):
         sprite.x = relative_x * view_height + view_width / 2
         sprite.y = relative_y * view_height + view_height / 2
         sprite.layer = layer
-        self.sprite_index[target] = sprite
+        self.sprite_index[sprite] = target
         self.interface.sprites.append(sprite)
         return sprite
-
-    def set_cursor(self, filename):
-        cursor_image = pyglet.resource.image(filename)
-        cursor = pyglet.window.ImageMouseCursor(
-            cursor_image,
-            cursor_image.width // 2,
-            cursor_image.height // 2,
-        )
-        app.window.set_mouse_cursor(cursor)
 
     def on_tick(self):
         self.level.tick()
 
-    ## Mouse Events
-    ###############
-    
-    def _update_mouse_position(self, x, y):
-        print(self._get_sprite_at(x, y))
+    ## Clicking
+    ## --------
+
+    #: The most recent coordinates of the mouse cursor.
+    _mouse_x, _mouse_y = 0, 0
+
+    #: The sprite that is currently under the mouse cursor.
+    _target_sprite = None
+
+    #: The sprite that has been clicked on, but not yet released.
+    _clicked_sprite = None
 
     def _get_sprite_at(self, target_x, target_y):
+        '''Return the sprite at the specified window coordinates.
+
+        '''
         offset_x, offset_y = self.interface.get_offset()
-        for sprite in self.interface.sprites: sprite.color = (255, 255, 255) # FOR TESTING
+        for sprite in self.interface.sprites: sprite.color = (255, 255, 255)
         for sprite in reversed(self.interface.sprites):
             texture = sprite._texture
             # 1. Get the position of the target relative to the sprite in the window frame.
@@ -113,9 +130,15 @@ class LevelScene(object):
                 image_data = texture.get_image_data().get_data()
                 alpha_index = (texture_y * texture.width + texture_x) * 4 + 3
                 if image_data[alpha_index] > 0:
-                    sprite.color = (0, 0, 0) # FOR TESTING
+                    sprite.color = (0, 0, 0)
                     return sprite
+    
+    def _update_mouse_position(self, mouse_x, mouse_y):
+        '''Update the mouse position and record the targeted sprite.
 
+        '''
+        self._mouse_x, self._mouse_y = mouse_x, mouse_y
+        self._target_sprite = self._get_sprite_at(mouse_x, mouse_y)
 
     def on_mouse_enter(self, x, y):
         self._update_mouse_position(x, y)
@@ -123,22 +146,60 @@ class LevelScene(object):
     def on_mouse_leave(self, x, y):
         self._update_mouse_position(x, y)
 
+    def on_mouse_motion(self, x, y, dx, dy):
+        self._update_mouse_position(x, y)
+
     def on_mouse_press(self, x, y, button, modifiers):
         self._update_mouse_position(x, y)
+        self._clicked_sprite = self._target_sprite
 
     def on_mouse_release(self, x, y, button, modifiers):
         self._update_mouse_position(x, y)
+        if self._clicked_sprite is not None:
+            if self._target_sprite is self._clicked_sprite:
+                # Zhu Li, do the thing!
+                target = self.sprite_index[self._clicked_sprite]
+                self.level.interact(target)
+            self._clicked_sprite = None
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         self._update_mouse_position(x, y)
 
-    def on_mouse_motion(self, x, y, dx, dy):
-        self._update_mouse_position(x, y)
+    ## Rendering
+    ## ---------
+
+    _cursor_cache = {}
+
+    def set_cursor(self, image):
+        
+        # Acquire the texture from the input object.
+        if isinstance(image, pyglet.sprite.Sprite):
+            image = image._texture
+        cursor_texture = image.get_texture()
+
+        # Create and cache the cursor object.
+        if cursor_texture.id not in self._cursor_cache:
+            view_width, view_height = self.interface.get_size()
+            cursor_height = CURSOR_SCALE * view_height
+            cursor_x = cursor_texture.width / 2
+            cursor_y = cursor_texture.width / 2
+            cursor = ScaledImageMouseCursor(cursor_texture, cursor_height, cursor_x, cursor_y)
+            self._cursor_cache[cursor_texture.id] = cursor
+        else:
+            cursor = self._cursor_cache[cursor_texture.id]
+
+        # Set the cursor on the window.
+        app.window.set_mouse_cursor(cursor)
 
     def on_draw(self):
 
         # Clear the buffers.
         app.window.clear()
+
+        if self.level.held_item:
+            self.set_cursor(self.level.held_item.sprite)
+        else:
+            app.window.set_mouse_cursor(None)
 
         # Order the sprites for rendering.
         layer_key = (lambda sprite: sprite.layer)

@@ -88,14 +88,31 @@ class AutomaticDevice(Device):
 
 ## Actual Devices
 
-class TestApricot(Device):
+
+class TestApricot(AutomaticDevice):
+
     name = 'apricot'
 
+    product = item.Batter
+
+
 class TestLilac(Device):
+
     name = 'lilac'
+    
+    def get_output_item(self, input_item):
+        if isinstance(input_item, item.Batter):
+            return item.Doughnut
+
 
 class TestMint(Device):
+
     name = 'mint'
+    
+    def get_output_item(self, input_item):
+        if isinstance(input_item, item.Doughnut):
+            return item.DoughnutCooked
+
 
 class BatterTray(AutomaticDevice):
 

@@ -123,6 +123,7 @@ class Level(object):
             device.tick()
         for customer in self.customers:
             customer.tick()
+        print(self.held_item)
 
 
 class TestLevel(Level):
