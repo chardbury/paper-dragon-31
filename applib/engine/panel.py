@@ -15,6 +15,8 @@ class Panel(object):
     def __init__(self,
         align_x = 0.5,
         align_y = 0.5,
+        anchor_x = None,
+        anchor_y = None,
         width = 1.0,
         height = 1.0,
         aspect = None,
@@ -29,6 +31,8 @@ class Panel(object):
         # Attributes
         self.align_x = align_x
         self.align_y = align_y
+        self.anchor_x = anchor_x
+        self.anchor_y = anchor_y
         self.width = width
         self.height = height
         self.aspect = aspect
@@ -85,9 +89,11 @@ class Panel(object):
     def get_offset(self):
         w, h = self.get_content_size()
         pw, ph = self.get_parent_size()
+        anchor_x = self.anchor_x if self.anchor_x is not None else self.align_x
+        anchor_y = self.anchor_y if self.anchor_y is not None else self.align_y
         return (
-            self.align_x * (pw - w),
-            self.align_y * (ph - h),
+            self.align_x * pw - anchor_x * w,
+            self.align_y * ph - anchor_y * h,
         )
 
     ## Content

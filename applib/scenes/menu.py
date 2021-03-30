@@ -39,18 +39,41 @@ class MenuScene(object):
             background = (50, 50, 50, 255),
         )
 
-        self.title = self.interface.add(
-            height = 0.2,
+        self.title_image = self.interface.add(
+            width = 1.0,
+            height = 0.84,
             align_y = 1.0,
-            background = (50, 200, 50, 255),
-            text = 'Cop, Cake, Caper!'
+            background = (200, 50, 50, 255),
         )
 
-        self.menu = self.interface.add(
-            width = 0.5,
-            height = 0.5,
-            align_y = 0.2,
-            background = (200, 50, 50, 255),
+        self.new_game_button = self.interface.add(
+            align_x = 0.17,
+            align_y = 0.08,
+            anchor_x = 0.5,
+            anchor_y = 0.5,
+            height = 0.1,
+            text = 'New Game',
+            font_size = 0.04,
+        )
+
+        self.continue_button = self.interface.add(
+            align_x = 0.5,
+            align_y = 0.08,
+            anchor_x = 0.5,
+            anchor_y = 0.5,
+            height = 0.1,
+            text = 'Continue',
+            font_size = 0.04,
+        )
+
+        self.quit_button = self.interface.add(
+            align_x = 0.83,
+            align_y = 0.08,
+            anchor_x = 0.5,
+            anchor_y = 0.5,
+            height = 0.1,
+            text = 'Quit',
+            font_size = 0.04,
         )
 
     def on_draw(self):
