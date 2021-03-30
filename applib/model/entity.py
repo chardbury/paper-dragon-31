@@ -50,9 +50,15 @@ class Entity(object):
 
         '''
         self.level = level
+        self.level.add_entity(self)
         self.create_sprite()
 
+    def destroy(self):
+        self.level.remove_entity(self)
+        self.level = None
+
     def create_sprite(self):
+        self.sprite = None
         if self.texture is not None:
             self.sprite = pyglet.sprite.Sprite(self.texture)
 
