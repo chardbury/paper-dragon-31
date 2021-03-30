@@ -16,28 +16,42 @@ class Animation(object):
 
     '''
 
+    next_animation = None
+    
     def start(self):
         '''Ensure that the animation is active.
 
         '''
-        self.start_state()
         if self not in app.animation:
             app.animation.append(self)
+            self.start_state()
+        return self
+
+    def stop(self):
+        '''Ensure that the animation is inactive.
+
+        '''
+        if self in app.animation:
+            app.animation.remove(self)
+            self.stop_state()
+            if self.next_animation:
+                self.next_animation.start()
+        return self
+
+    def queue(self, animation):
+        '''Queue another animation after this chain.
+
+        '''
+        if self.next_animation is None:
+            self.next_animation = animation
+        else:
+            self.next_animation.queue(animation)
         return self
 
     def start_state(self):
         '''Set the initial state of the animation.
 
         '''
-
-    def stop(self):
-        '''Ensure that the animation is inactive.
-
-        '''
-        self.stop_state()
-        if self in app.animation:
-            app.animation.remove(self)
-        return self
 
     def stop_state(self):
         '''Set the final state of the animation.
@@ -65,7 +79,6 @@ class AttributeAnimation(Animation):
         self.duration = duration
         self.easing = easing
         self.original = None
-        self.duration = None
         self.elapsed = None
 
     def interpolate(self):
@@ -107,11 +120,12 @@ class BounceAnimation(Animation):
 
     '''
 
-    def __init__(self, thing, name, distance, speed):
+    def __init__(self, thing, name, distance, speed, cycles):
         self.thing = thing
         self.name = name
         self.distance = distance
         self.speed = speed
+        self.cycles = cycles
         self.original = None
         self.elapsed = None
 
@@ -126,9 +140,13 @@ class BounceAnimation(Animation):
 
     def tick(self):
         self.elapsed += TICK_LENGTH
-        angular_distance = 2 * math.pi * self.speed * self.elapsed
-        linear_distance = self.distance * math.sin(angular_distance)
-        setattr(self.thing, self.name, self.original + linear_distance)
+        cycles_elapsed = self.speed * self.elapsed
+        if (self.cycles is not None) and (cycles_elapsed >= self.cycles):
+            self.stop()
+        else:
+            angular_distance = 2 * math.pi * cycles_elapsed
+            linear_distance = self.distance * abs(math.sin(angular_distance))
+            setattr(self.thing, self.name, self.original + linear_distance)
 
 
 class WaitAnimation(Animation):
@@ -162,6 +180,8 @@ class QueuedAnimation(Animation):
 
     def __init__(self, *animations):
         self.animations = list(animations)
+        self.remaining = None
+        self.current = None
 
     def start_state(self):
         self.remaining = list(self.animations)
@@ -170,9 +190,10 @@ class QueuedAnimation(Animation):
     def stop_state(self):
         if self.current is not None:
             self.current.stop()
-            self.current = None
-        while len(self.remaining) > 0:
-            self.remaining.pop(0).stop()
+        for animation in self.remaining:
+            animation.stop()
+        self.remaining = None
+        self.current = None
 
     def tick(self):
         if self.current not in app.animation:
@@ -183,6 +204,33 @@ class QueuedAnimation(Animation):
                 self.current.tick()
             else:
                 self.stop()
+
+
+class ParallelAnimation(Animation):
+    '''Animation class to run a collection of parallel animations.
+
+    '''
+
+    def __init__(self, *animations):
+        self.animations = list(animations)
+        self.remaining = None
+
+    def start_state(self):
+        self.remaining = list(self.animations)
+        for animation in self.remaining:
+            animation.start()
+
+    def stop_state(self):
+        for animation in self.remaining:
+            animation.stop()
+        self.remaining = None
+
+    def tick(self):
+        for animation in list(self.remaining):
+            if animation not in app.animation:
+                self.remaining.remove(animation)
+        if len(self.remaining) == 0:
+            self.stop()
 
 
 class AnimationManager(list):

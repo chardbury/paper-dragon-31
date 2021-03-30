@@ -66,7 +66,12 @@ class Customer(entity.Entity):
     
 
 
-class Level(object):
+class Level(pyglet.event.EventDispatcher):
+
+    event_types = (
+        'on_customer_arrives',
+        'on_customer_leaves',
+    )
 
     device_specification = ()
 
@@ -98,6 +103,7 @@ class Level(object):
         self.entities.append(entity)
         if isinstance(entity, Customer):
             self.customers.append(entity)
+            self.dispatch_event('on_customer_arrives', entity)
         if isinstance(entity, device.Device):
             self.devices.append(entity)
         if isinstance(entity, item.Item):
@@ -109,6 +115,7 @@ class Level(object):
         self.entities.remove(entity)
         if isinstance(entity, Customer):
             self.customers.remove(entity)
+            self.dispatch_event('on_customer_leaves', entity)
         if isinstance(entity, device.Device):
             self.devices.remove(entity)
         if isinstance(entity, item.Item):

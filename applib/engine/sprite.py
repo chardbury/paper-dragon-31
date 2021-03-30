@@ -2,11 +2,65 @@
 
 '''
 
+import math
+import random
+
 import applib
 import pyglet
 
 from applib import app
 from applib.engine import animation
+from applib.constants import TICK_LENGTH
+
+
+class WalkAnimation(animation.Animation):
+
+    def __init__(self, sprite, walk_speed, bounce_distance, bounce_speed):
+        self.sprite = sprite
+        self.walk_speed = walk_speed
+        self.bounce_distance = bounce_distance
+        self.bounce_speed = bounce_speed
+        self.bounce_cycles = None
+        self.elapsed_time = None
+
+    def start_state(self):
+        self.bounce_cycles = None
+        self.elapsed_time = 0.0
+
+    def stop_state(self):
+        self.bounce_cycles = None
+        self.elapsed_time = None
+
+    def tick(self):
+        self.elapsed_time += TICK_LENGTH
+
+        # Compute the horizontal offset.
+        current_x = self.sprite.animation_offset_x
+        target_x = self.sprite.walk_target
+        if target_x > current_x:
+            current_x += self.walk_speed * TICK_LENGTH
+            if target_x <= current_x:
+                current_x = target_x
+        elif target_x < current_x:
+            current_x -= self.walk_speed * TICK_LENGTH
+            if target_x >= current_x:
+                current_x = target_x
+        setattr(self.sprite, 'animation_offset_x', current_x)
+
+        # Compute the vertical offset.
+        cycles_elapsed = self.bounce_speed * self.elapsed_time
+        angular_distance = 2 * math.pi * cycles_elapsed
+        relative_distance = abs(math.sin(angular_distance))
+        linear_distance = self.bounce_distance * relative_distance
+        if target_x == current_x:
+            if self.bounce_cycles is None:
+                self.bounce_cycles = math.ceil(cycles_elapsed) + 1.0
+            elif self.bounce_cycles <= cycles_elapsed:
+                linear_distance = 0.0
+        else:
+            if self.bounce_cycles is not None:
+                self.bounce_cycles = None
+        setattr(self.sprite, 'animation_offset_y', linear_distance)
 
 
 class AnimatedSprite(pyglet.sprite.Sprite):
@@ -39,12 +93,18 @@ class AnimatedSprite(pyglet.sprite.Sprite):
 
     # Animation Methods
 
-    is_animating = False
+    current_animation = None
 
-    def animate_bounce(self, distance, speed=1.0):
-        if not self.is_animating:
-            animation.BounceAnimation(self, 'animation_offset_y', distance, speed).start()
-            self.is_animating = True
+    def queue_animation(self, animation):
+        if self.current_animation is None:
+            self.current_animation = animation.start()
+        else:
+            self.current_animation.queue(animation)
+
+    def stop_animation(self):
+        if self.current_animation is not None:
+            self.current_animation.stop()
+            self.current_animation = None
 
     # Update Position Method
 

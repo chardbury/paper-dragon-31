@@ -3,6 +3,7 @@
 '''
 
 import math
+import random
 
 import applib
 import pyglet
@@ -10,8 +11,11 @@ import pyglet
 from applib import app
 from applib.constants import COUNTER_EDGE_ADJUSTMENT
 from applib.constants import CURSOR_SCALE
-from applib.constants import CUSTOMER_SCALE
+from applib.constants import CUSTOMER_BOUNCE_DISTANCE
+from applib.constants import CUSTOMER_BOUNCE_SPEED
 from applib.constants import CUSTOMER_POSITIONS
+from applib.constants import CUSTOMER_SCALE
+from applib.constants import CUSTOMER_WALK_SPEED
 from applib.constants import DEBUG
 from applib.constants import DEVICE_SCALE
 from applib.constants import ITEM_SCALE
@@ -64,6 +68,7 @@ class LevelScene(object):
 
         # Ensure we have an appropriate level.
         self.level = level or self.create_test_level()
+        self.level.push_handlers(self)
 
         # Create the root interface panel.
         self.interface = applib.engine.panel.Panel(
@@ -84,12 +89,12 @@ class LevelScene(object):
     def load_level_sprites(self):
         self.sprites_by_entity = {}
         self.entities_by_sprite = {}
+        self.persisting_sprites = {}
         #self.create_sprite('scenery/counter.png', 0.5, 0.0, -0.25)
         for entity in self.level.entities:
             self.update_sprite(entity)
         for device in self.level.devices:
-            relative_x, relative_y = self.level.device_locations[device]
-            sprite = self.update_sprite(device, relative_x, relative_y)
+            sprite = self.update_sprite(device)
 
     _entity_properties = [
         (applib.model.level.Customer, CUSTOMER_SCALE, -1),
@@ -98,11 +103,13 @@ class LevelScene(object):
         (applib.model.scenery.Scenery, SCENERY_SCALE, 0),
     ]
 
-    def update_sprite(self, entity, move_x=None, move_y=None):
+    def update_sprite(self, entity):
         if entity.sprite is not None:
-            view_width, view_height = self.interface.get_content_size()
             sprite = entity.sprite
             texture = sprite._texture
+
+            view_width, view_height = self.interface.get_content_size()
+            move_x, move_y = self.compute_position(entity)
 
             # Update the sprite indexes.
             self.sprites_by_entity[entity] = sprite
@@ -128,44 +135,80 @@ class LevelScene(object):
                 if sprite_layer is not None:
                     sprite.layer = sprite_layer
 
-                # Position in the centre by default.
-                if move_x is None:
-                    move_x = 0.0
-                if move_y is None:
-                    move_y = 0.0
+                # Position the sprite.
+                if move_x is not None:
+                    sprite.x = view_width / 2 + move_x * view_height
+                if move_y is not None:
+                    sprite.y = view_height / 2 + move_y * view_height
 
-            # Reposition the sprite if requested.
-            if move_x is not None:
-                sprite.x = view_width / 2 + (move_x if isinstance(move_x, int) else move_x * view_height)
-            if move_y is not None:
-                sprite.y = view_height / 2 + (move_y if isinstance(move_y, int) else move_y * view_height)
-
-    def get_position(self, entity):
-        move_x, move_y = None, None
+    def compute_position(self, entity):
+        move_x, move_y = 0.0, 0.0
 
         # Position customers based on how many there are.
         if isinstance(entity, applib.model.level.Customer):
             customer_count = len(self.level.customers)
             customer_index = self.level.customers.index(entity)
             aspect = entity.sprite._texture.width / entity.sprite._texture.height
-            move_x = CUSTOMER_POSITIONS[customer_count][customer_index]
+            move_x = 0.0 # CUSTOMER_POSITIONS[customer_count][customer_index]
             move_y = CUSTOMER_SCALE * (aspect - 0.5) + COUNTER_EDGE_ADJUSTMENT
-            # view_width, view_height = self.interface.get_content_size()
-            # entity.sprite.animate_bounce(0.01 * view_height)
+
+        if isinstance(entity, applib.model.device.Device):
+            move_x, move_y = self.level.device_locations[entity]
 
         return move_x, move_y
+
+    def on_customer_arrives(self, customer):
+        view_width, view_height = self.interface.get_content_size()
+        # Create and animate the sprite.
+        self.update_sprite(customer)
+        customer.sprite.queue_animation(
+            applib.engine.sprite.WalkAnimation(
+                sprite = customer.sprite,
+                walk_speed = CUSTOMER_WALK_SPEED * view_height,
+                bounce_distance = CUSTOMER_BOUNCE_DISTANCE * view_height,
+                bounce_speed = CUSTOMER_BOUNCE_SPEED,
+            )
+        )
+        # Have all the customers reposition.
+        customer_count = len(self.level.customers)
+        for index, other_customer in enumerate(self.level.customers):
+            move_x = CUSTOMER_POSITIONS[customer_count][index]
+            other_customer.sprite.walk_target = move_x * view_height
+            if other_customer is customer:
+                direction = 1 if (random.random() * view_width < move_x * view_height) else -1
+                customer.sprite.animation_offset_x = direction * view_width / 2
+
+    def on_customer_leaves(self, customer):
+        view_width, view_height = self.interface.get_content_size()
+        # Have the leaving customer walk off.
+        direction = 1 if (random.random() * view_width < customer.sprite.x) else -1
+        customer.sprite.walk_target = direction * view_width
+        self.persisting_sprites[customer.sprite] = (lambda:
+            abs(customer.sprite.animation_offset_x) > view_width / 2)
+        # Have the remaining customers reposition.
+        customer_count = len(self.level.customers)
+        for index, other_customer in enumerate(self.level.customers):
+            move_x = CUSTOMER_POSITIONS[customer_count][index]
+            other_customer.sprite.walk_target = move_x * view_height
 
     def on_tick(self):
         self.level.tick()
 
         # Update the sprites for all entities in the level.
         for entity in self.level.entities:
-            move_x, move_y = self.get_position(entity)
-            self.update_sprite(entity, move_x, move_y)
+            self.update_sprite(entity)
+
+        # Depersist any persisting sprites whose check passes.
+        for sprite, persist_check in list(self.persisting_sprites.items()):
+            if persist_check():
+                del self.persisting_sprites[sprite]
         
         # Remove sprites for missing entities from the scene.
-        found_sprites = set(entity.sprite for entity in self.level.entities)
-        self.interface.sprites = [sprite for sprite in self.interface.sprites if sprite in found_sprites]
+        found_sprites = set(entity.sprite for entity in self.level.entities) | set(self.persisting_sprites)
+        for sprite in self.interface.sprites:
+            if sprite not in found_sprites:
+                sprite.stop_animation()
+                self.interface.sprites.remove(sprite)
 
     ## Clicking
     ## --------
@@ -193,8 +236,8 @@ class LevelScene(object):
         for sprite in reversed(self.interface.sprites):
             texture = sprite._texture
             # 1. Get the position of the target relative to the sprite in the window frame.
-            sprite_x = target_x - (sprite.x + offset_x)
-            sprite_y = target_y - (sprite.y + offset_y)
+            sprite_x = target_x - (sprite.x + sprite.animation_offset_x + offset_x)
+            sprite_y = target_y - (sprite.y + sprite.animation_offset_y + offset_y)
             # 2. Get the position of the target relative to the sprite in the sprite frame.
             rotation = math.radians(sprite._rotation)
             sin, cos = math.sin(rotation), math.cos(rotation)

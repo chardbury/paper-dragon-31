@@ -52,8 +52,8 @@ class Entity(object):
 
         '''
         self.level = level
-        self.level.add_entity(self)
         self.create_sprite()
+        self.level.add_entity(self)
 
     def destroy(self):
         '''Remove the entity from its level.
