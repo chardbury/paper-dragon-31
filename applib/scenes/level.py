@@ -159,6 +159,7 @@ class LevelScene(object):
 
     def on_customer_arrives(self, customer):
         view_width, view_height = self.interface.get_content_size()
+
         # Create and animate the sprite.
         self.update_sprite(customer)
         customer.sprite.queue_animation(
@@ -169,6 +170,7 @@ class LevelScene(object):
                 bounce_speed = CUSTOMER_BOUNCE_SPEED,
             )
         )
+
         # Have all the customers reposition.
         customer_count = len(self.level.customers)
         for index, other_customer in enumerate(self.level.customers):
@@ -180,11 +182,13 @@ class LevelScene(object):
 
     def on_customer_leaves(self, customer):
         view_width, view_height = self.interface.get_content_size()
+
         # Have the leaving customer walk off.
         direction = 1 if (random.random() * view_width < customer.sprite.x) else -1
         customer.sprite.walk_target = direction * view_width
         self.persisting_sprites[customer.sprite] = (lambda:
             abs(customer.sprite.animation_offset_x) > view_width / 2)
+
         # Have the remaining customers reposition.
         customer_count = len(self.level.customers)
         for index, other_customer in enumerate(self.level.customers):
@@ -225,14 +229,22 @@ class LevelScene(object):
     #: The cached texture data used in alpha based hit testing.
     _texture_data = {}
 
+    def _is_interactable(self, entity):
+        return hasattr(entity, 'interact')
+
+    def _change_sprite_focus(self, new_sprite, old_sprite):
+        if new_sprite is not None:
+            target = self.entities_by_sprite[new_sprite]
+            if self._is_interactable(target):
+                new_sprite.opacity = 127
+        if old_sprite is not None:
+            old_sprite.opacity = 255
+
     def _get_sprite_at(self, target_x, target_y):
         '''Return the sprite at the specified window coordinates.
 
         '''
         offset_x, offset_y = self.interface.get_offset()
-        if DEBUG:
-            for sprite in self.interface.sprites:
-                sprite.opacity = 255
         for sprite in reversed(self.interface.sprites):
             texture = sprite._texture
             # 1. Get the position of the target relative to the sprite in the window frame.
@@ -252,8 +264,6 @@ class LevelScene(object):
             if (0 <= texture_x < texture.width) and (0 <= texture_y < texture.height):
                 alpha_index = (texture_y * texture.width + texture_x) * 4 + 3
                 if self._texture_data[texture][alpha_index] > 0:
-                    if DEBUG:
-                        sprite.opacity = 127
                     return sprite
     
     def _update_mouse_position(self, mouse_x, mouse_y):
@@ -261,7 +271,10 @@ class LevelScene(object):
 
         '''
         self._mouse_x, self._mouse_y = mouse_x, mouse_y
-        self._target_sprite = self._get_sprite_at(mouse_x, mouse_y)
+        new_target_sprite = self._get_sprite_at(mouse_x, mouse_y)
+        if new_target_sprite != self._target_sprite:
+            self._change_sprite_focus(new_target_sprite, self._target_sprite)
+            self._target_sprite = new_target_sprite
 
     def on_mouse_enter(self, x, y):
         self._update_mouse_position(x, y)
@@ -288,8 +301,9 @@ class LevelScene(object):
             if self._target_sprite is self._clicked_sprite:
                 # Zhu Li, do the thing!
                 target = self.entities_by_sprite[self._clicked_sprite]
-                self.level.interact(target)
-                sound.pop()
+                if self._is_interactable(target):
+                    self.level.interact(target)
+                    sound.pop()
             self._clicked_sprite = None
 
     ## Rendering

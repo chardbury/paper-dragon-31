@@ -24,6 +24,8 @@ class WalkAnimation(animation.Animation):
         self.elapsed_time = None
 
     def start_state(self):
+        if not hasattr(self.sprite, 'walk_target'):
+            self.sprite.walk_target = self.sprite.animation_offset_x
         self.bounce_cycles = None
         self.elapsed_time = 0.0
 
@@ -91,6 +93,21 @@ class AnimatedSprite(pyglet.sprite.Sprite):
         self._animation_offset_y = value
         self._update_position()
 
+    # # Property: `border_size`
+
+    # _border_sprite = None
+
+    # _border_size = 0.0
+    
+    # @property
+    # def border_size(self):
+    #     self._border_size
+
+    # @border_size.setter
+    # def border_size(self, value):
+    #     self._border_size = value
+    #     self._update_position()
+
     # Animation Methods
 
     current_animation = None
@@ -151,3 +168,22 @@ class AnimatedSprite(pyglet.sprite.Sprite):
                         int(vertices[4]), int(vertices[5]),
                         int(vertices[6]), int(vertices[7]))
         self._vertex_list.vertices[:] = vertices
+        # if self._border_size > 0.0:
+        #     if self._border_sprite is None:
+        #         self._border_sprite = AnimatedSprite(self._texture)
+        #     self._border_sprite._x = self._x
+        #     self._border_sprite._y = self._y
+        #     self._border_sprite._rotation = self._rotation
+        #     self._border_sprite._scale = self._scale
+        #     self._border_sprite._scale_x = self._scale_x + self._border_size / (self._texture.width * self._scale)
+        #     self._border_sprite._scale_y = self._scale_y + self._border_size / (self._texture.height * self._scale)
+        #     self._border_sprite._animation_offset_x = self._animation_offset_x
+        #     self._border_sprite._animation_offset_y = self._animation_offset_y
+        #     self._border_sprite._rgb = (0, 0, 0)
+        #     self._border_sprite._update_position()
+        #     self._border_sprite._update_color()
+
+    def draw(self):
+        # if self._border_size > 0.0:
+        #     self._border_sprite.draw()
+        super().draw()
