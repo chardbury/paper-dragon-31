@@ -142,9 +142,9 @@ class LevelScene(object):
         if isinstance(entity, applib.model.level.Customer):
             customer_count = len(self.level.customers)
             customer_index = self.level.customers.index(entity)
+            aspect = entity.sprite._texture.width / entity.sprite._texture.height
             move_x = CUSTOMER_POSITIONS[customer_count][customer_index]
-            view_width, view_height = self.interface.get_content_size()
-            move_y = (CUSTOMER_SCALE * entity.sprite._texture.width / entity.sprite._texture.height) + COUNTER_EDGE_ADJUSTMENT - CUSTOMER_SCALE / 2
+            move_y = CUSTOMER_SCALE * (aspect - 0.5) + COUNTER_EDGE_ADJUSTMENT
             return move_x, move_y
         return None, None
 
