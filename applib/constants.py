@@ -63,6 +63,8 @@ CUSTOMER_POSITIONS = [
     [-0.6, -0.2, 0.2, 0.6],
 ]
 
+CUSTOMER_BOUNCE = 0.04
+
 
 ## Scenery
 

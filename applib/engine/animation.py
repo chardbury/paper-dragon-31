@@ -58,11 +58,11 @@ class AttributeAnimation(Animation):
 
     _easing_names = {'linear', 'symmetric'}
 
-    def __init__(self, thing, name, target, speed, easing='linear'):
+    def __init__(self, thing, name, target, duration, easing='linear'):
         self.thing = thing
         self.name = name
         self.target = target
-        self.speed = speed
+        self.duration = duration
         self.easing = easing
         self.original = None
         self.duration = None
@@ -87,22 +87,48 @@ class AttributeAnimation(Animation):
 
     def start_state(self):
         self.original = getattr(self.thing, self.name)
-        self.duration = abs(self.target - self.original) / self.speed
         self.elapsed = 0.0
 
     def stop_state(self):
-        self.original = None
-        self.duration = None
-        self.elapsed = None
         setattr(self.thing, self.name, self.target)
+        self.original = None
+        self.elapsed = None
 
     def tick(self):
         self.elapsed += TICK_LENGTH
-        new_value = self.interpolate()
-        if (self.original <= self.target <= new_value) or (self.original >= self.target >= new_value):
+        if self.elapsed >= self.duration:
             self.stop()
         else:
-            setattr(self.thing, self.name, new_value)
+            setattr(self.thing, self.name, self.interpolate())
+
+
+class BounceAnimation(Animation):
+    '''Animation class to cause an attribute to oscilate.
+
+    '''
+
+    def __init__(self, thing, name, distance, speed):
+        self.thing = thing
+        self.name = name
+        self.distance = distance
+        self.speed = speed
+        self.original = None
+        self.elapsed = None
+
+    def start_state(self):
+        self.original = getattr(self.thing, self.name)
+        self.elapsed = 0.0
+
+    def stop_state(self):
+        setattr(self.thing, self.name, self.original)
+        self.original = None
+        self.elapsed = None
+
+    def tick(self):
+        self.elapsed += TICK_LENGTH
+        angular_distance = 2 * math.pi * self.speed * self.elapsed
+        linear_distance = self.distance * math.sin(angular_distance)
+        setattr(self.thing, self.name, self.original + linear_distance)
 
 
 class WaitAnimation(Animation):

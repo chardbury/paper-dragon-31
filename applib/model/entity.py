@@ -7,6 +7,8 @@ import re
 import applib
 import pyglet
 
+from applib.engine import sprite
+
 
 def _normalise(string):
     '''Normalise the given string.
@@ -66,7 +68,7 @@ class Entity(object):
         '''
         self.sprite = None
         if self.texture is not None:
-            self.sprite = pyglet.sprite.Sprite(self.texture)
+            self.sprite = sprite.AnimatedSprite(self.texture)
 
     def tick(self):
         pass

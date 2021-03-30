@@ -12,9 +12,11 @@ from applib.constants import COUNTER_EDGE_ADJUSTMENT
 from applib.constants import CURSOR_SCALE
 from applib.constants import CUSTOMER_SCALE
 from applib.constants import CUSTOMER_POSITIONS
+from applib.constants import DEBUG
 from applib.constants import DEVICE_SCALE
 from applib.constants import ITEM_SCALE
 from applib.constants import SCENERY_SCALE
+from applib.engine import animation
 from applib.engine import sound
 
 from pyglet.gl import *
@@ -139,14 +141,19 @@ class LevelScene(object):
                 sprite.y = view_height / 2 + (move_y if isinstance(move_y, int) else move_y * view_height)
 
     def get_position(self, entity):
+        move_x, move_y = None, None
+
+        # Position customers based on how many there are.
         if isinstance(entity, applib.model.level.Customer):
             customer_count = len(self.level.customers)
             customer_index = self.level.customers.index(entity)
             aspect = entity.sprite._texture.width / entity.sprite._texture.height
             move_x = CUSTOMER_POSITIONS[customer_count][customer_index]
             move_y = CUSTOMER_SCALE * (aspect - 0.5) + COUNTER_EDGE_ADJUSTMENT
-            return move_x, move_y
-        return None, None
+            # view_width, view_height = self.interface.get_content_size()
+            # entity.sprite.animate_bounce(0.01 * view_height)
+
+        return move_x, move_y
 
     def on_tick(self):
         self.level.tick()
@@ -159,7 +166,6 @@ class LevelScene(object):
         # Remove sprites for missing entities from the scene.
         found_sprites = set(entity.sprite for entity in self.level.entities)
         self.interface.sprites = [sprite for sprite in self.interface.sprites if sprite in found_sprites]
-
 
     ## Clicking
     ## --------
@@ -181,8 +187,9 @@ class LevelScene(object):
 
         '''
         offset_x, offset_y = self.interface.get_offset()
-        for sprite in self.interface.sprites:
-            sprite.opacity = 255
+        if DEBUG:
+            for sprite in self.interface.sprites:
+                sprite.opacity = 255
         for sprite in reversed(self.interface.sprites):
             texture = sprite._texture
             # 1. Get the position of the target relative to the sprite in the window frame.
@@ -202,7 +209,8 @@ class LevelScene(object):
             if (0 <= texture_x < texture.width) and (0 <= texture_y < texture.height):
                 alpha_index = (texture_y * texture.width + texture_x) * 4 + 3
                 if self._texture_data[texture][alpha_index] > 0:
-                    sprite.opacity = 127
+                    if DEBUG:
+                        sprite.opacity = 127
                     return sprite
     
     def _update_mouse_position(self, mouse_x, mouse_y):
