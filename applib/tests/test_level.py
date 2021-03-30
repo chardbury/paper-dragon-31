@@ -18,7 +18,12 @@ class ExampleLevel(level.Level):
         (device.Bin, 0.0, 0.0),
     ]
 
-    
+    customer_specification = [
+        (5, [item.Doughnut]),
+        (15, [item.Doughnut, item.DoughnutGlazed])
+    ]
+
+    customer_spaces_specification = 2
 
 
 @pytest.fixture
@@ -35,17 +40,12 @@ def test_batter_tray_gives_you_batter(level):
     assert level.held_item.name == 'batter'
     assert device.is_finished
 
-def test_batter_tray_gives_you_batter_and_then_you_can_get_another(level):
+def test_batter_tray_if_holding_something(level):
     device = level.get_device('batter_tray')
-    for _ in range(1000):
-        level.tick()
-    level.interact(device)
-    assert level.held_item.name == 'batter'
+    level.tick()
     level.held_item = item.Doughnut(level)
     level.interact(device)
     assert level.held_item.name == 'doughnut'
-    assert device.is_finished
-
 
 def test_doughnut_fryer_starts_off(level):
     device = level.get_device('doughnut_fryer')
@@ -133,13 +133,6 @@ def test_customer_added(level):
     customer = Customer(level, Order(item.Doughnut(level)))
     assert len(level.customers) == 1
 
-def test_customer_removed(level):
-    from applib.model.level import Customer, Order
-    customer = Customer(level, Order(item.Doughnut(level)))
-    for _ in range (level.customers[0].patience):
-        level.tick()
-    assert len(level.customers) == 0 and level.sad_customer == 1
-
 def test_customer_added_with_one_item_order(level):
     from applib.model.level import Customer, Order
     customer = Customer(level, Order(item.Doughnut(level)))
@@ -204,6 +197,39 @@ def test_bin_destroys_items(level):
     assert test_item.level is None
     assert test_item not in level.entities
 
+def test_customer_arrival_and_leave(level):
+    for _ in range(int(10 // TICK_LENGTH)):
+        level.tick()
+    assert len(level.customers) == 1
+    for _ in range(int(10 // TICK_LENGTH)):
+        level.tick()
+    assert len(level.customers) == 2
+    for _ in range(int(20 // TICK_LENGTH)):
+        level.tick()
+    assert len(level.customers) == 1
+    for _ in range(int(5 // TICK_LENGTH)):
+        level.tick()
+    assert len(level.customers) == 0
+    assert level.sad_customer == 2
+    assert level.score == 80
+
+def test_customer_served(level):
+    for _ in range(int(5 // TICK_LENGTH)):
+        level.tick()
+    assert len(level.customers) == 1
+    level.held_item = item.Doughnut(level)
+    level.interact(level.customers[0])
+    level.tick()
+    assert len(level.customers) == 0
+    for _ in range(int(10 // TICK_LENGTH)):
+        level.tick()
+    assert len(level.customers) == 1
+    for _ in range(int(50 // TICK_LENGTH)):
+        level.tick()
+    assert len(level.customers) == 0
+    assert level.sad_customer == 1
+    assert level.happy_customer == 1
+    assert level.score == 40
 
 def test_plate_destroys_previous_item(level):
     plate = level.get_device('plate')
@@ -221,3 +247,4 @@ def test_plate_destroys_previous_item(level):
     assert doughnut not in level.entities
     assert glaze.level is None
     assert glaze not in level.entities
+

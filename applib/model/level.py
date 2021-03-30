@@ -23,6 +23,7 @@ class Order(object):
 class Customer(entity.Entity):
 
     group = 'customers'
+    start_patience = 30
 
     customer_images = [
         'customers/cop_dog.png',
@@ -47,7 +48,7 @@ class Customer(entity.Entity):
         '''Return the patience in ticks
 
         '''
-        return int(random.randint(10, 30) // TICK_LENGTH)
+        return int(self.start_patience // TICK_LENGTH)
 
     def interact(self, held_item):
         if held_item in self.order.items:
@@ -55,14 +56,27 @@ class Customer(entity.Entity):
             held_item.destroy()
         else:
             return held_item
+    
+    def compute_score(self):
+        percentage_remaining_patience = (self.patience / self.start_patience) * 100
+        if percentage_remaining_patience >= 80:
+            return 0
+        elif percentage_remaining_patience >= 40:
+            return 5
+        elif percentage_remaining_patience >= 20:
+            return 10
+        elif percentage_remaining_patience >= 5:
+            return 20
+        else:
+            return 30
 
     def tick(self):
         if len(self.order.items) == 0:
-            self.level.remove_customer(self, True)
+            self.level.remove_customer(self, True, self.compute_score())
         else:
             self.patience -= 1
             if self.patience <= 0:
-                self.level.remove_customer(self, False)
+                self.level.remove_customer(self, False, 40)
     
 
 
@@ -74,11 +88,22 @@ class Level(pyglet.event.EventDispatcher):
     )
 
     device_specification = ()
+    #format [arrival_time (seconds since start of level), [order]]
+    customer_specification = []
+    customer_spaces_specification = 1
+    scoring = ()
+    
+    #seconds
+    duration = 60
+
+    #: The duration (in ticks) (computed automatically).
+    duration_ticks = None
 
     def __init__(self):
         '''Construct a `Level` object.
 
         '''
+        self.duration_ticks = int(self.duration // TICK_LENGTH)
 
         self.entities = []
 
@@ -86,7 +111,9 @@ class Level(pyglet.event.EventDispatcher):
         self.devices = []
         self.items = []
         self.scenery = []
-
+        self.score = 0
+        self.tick_running = 0
+        self.customer_specification = list(self.customer_specification)
         self.held_item = None
 
         # Create devices.
@@ -150,7 +177,7 @@ class Level(pyglet.event.EventDispatcher):
         elif isinstance(interactable, Customer):
             self.held_item = interactable.interact(self.held_item)
 
-    def remove_customer(self, customer, success):
+    def remove_customer(self, customer, success, score):
         '''Remove a customer from level
 
         '''
@@ -159,17 +186,28 @@ class Level(pyglet.event.EventDispatcher):
             self.happy_customer += 1
         else:
             self.sad_customer += 1
+        self.score += score
 
     
     def tick(self):
         '''Advance the level state by a single tick.
 
         '''
-        if len(self.customers) == 0:
-            customer = Customer(self, Order(item.Doughnut(self)))
-            customer = Customer(self, Order(item.Doughnut(self)))
-            customer = Customer(self, Order(item.Doughnut(self)))
-            customer = Customer(self, Order(item.Doughnut(self)))
+        self.tick_running += 1
+        if (self.tick_running >= self.duration_ticks):
+            # end the level
+            # any reminaing customers in queue or at counter show score max sus 
+            pass
+
+        if len(self.customer_specification) > 0 and len(self.customers) < self.customer_spaces_specification:
+            # we have the space to spawn a customer, if one is waiting
+            # we assume customers are in a queue in the right order!
+            time, order = self.customer_specification[0]
+            if (int(time // TICK_LENGTH) <= self.tick_running):
+                order = Order(*[item_class(self) for item_class in order])
+                new_customer = Customer(self, order)
+                self.customer_specification.pop(0)
+
         for entity in self.entities:
             entity.tick()
 
