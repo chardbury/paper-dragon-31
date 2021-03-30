@@ -30,6 +30,11 @@ class Customer(entity.Entity):
         self.order = order
         self.patience = self.compute_patience()
 
+    def destroy(self):
+        super().destroy()
+        for item in self.order.items:
+            item.destroy()
+
     def compute_patience(self):
         '''Return the patience in ticks
 
@@ -39,6 +44,7 @@ class Customer(entity.Entity):
     def interact(self, held_item):
         if held_item in self.order.items:
             self.order.items.remove(held_item)
+            held_item.destroy()
         else:
             return held_item
 
@@ -60,6 +66,9 @@ class Level(object):
         '''Construct a `Level` object.
 
         '''
+
+        self.entities = []
+
         self.held_item = None
 
         # Create devices.
@@ -73,6 +82,16 @@ class Level(object):
         self.customers = []
         self.happy_customer = 0
         self.sad_customer = 0
+
+    def add_entity(self, entity):
+        self.entities.append(entity)
+        if isinstance(entity, Customer):
+            self.customers.append(entity)
+
+    def remove_entity(self, entity):
+        self.entities.remove(entity)
+        if isinstance(entity, Customer):
+            self.customers.remove(entity)
 
     def get_device(self, name):
         '''Return the first device with the given name.
@@ -101,18 +120,11 @@ class Level(object):
         elif isinstance(interactable, Customer):
             self.held_item = interactable.interact(self.held_item)
 
-
-    def add_customer(self, customer):
-        '''Add a customer to the level
-
-        '''
-        self.customers.append(customer)
-
     def remove_customer(self, customer, success):
         '''Remove a customer from level
 
         '''
-        self.customers.remove(customer)
+        customer.destroy()
         if success == True:
             self.happy_customer += 1
         else:
@@ -123,12 +135,10 @@ class Level(object):
         '''Advance the level state by a single tick.
 
         '''
-        if (len(self.customers) == 0):
-            self.add_customer(Customer(self, Order(item.Doughnut(self))))
-        for device in self.devices:
-            device.tick()
-        for customer in self.customers:
-            customer.tick()
+        if len(self.customers) == 0:
+            customer = Customer(self, Order(item.Doughnut(self)))
+        for entity in self.entities:
+            entity.tick()
 
 
 class TestLevel(Level):
@@ -137,4 +147,6 @@ class TestLevel(Level):
         (device.TestApricot, -0.5, -0.25),
         (device.TestLilac, 0.0, -0.25),
         (device.TestMint, 0.5, -0.25),
+        (device.Bin, -0.25, -0.4),
+        (device.Plate, 0.25, -0.4),
     ]

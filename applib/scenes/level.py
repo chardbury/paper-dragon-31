@@ -75,61 +75,77 @@ class LevelScene(object):
         return applib.model.level.TestLevel()
 
     def load_level_sprites(self):
-        self.level_sprite_map = {}
-        self.create_sprite('scenery/counter.png', 0.5, 0.0, -0.25)
+        self.sprites_by_entity = {}
+        self.entities_by_sprite = {}
+        #self.create_sprite('scenery/counter.png', 0.5, 0.0, -0.25)
+        for entity in self.level.entities:
+            self.update_sprite(entity)
         for device in self.level.devices:
             relative_x, relative_y = self.level.device_locations[device]
-            sprite = self.create_sprite(device, DEVICE_SCALE, relative_x, relative_y)
+            sprite = self.update_sprite(device, relative_x, relative_y)
 
-    def create_sprite(self, target,
-        relative_height=0.1,
-        relative_x=0.0,
-        relative_y=0.0,
-        layer=10,
-        ):
+    _entity_properties = [
+        (applib.model.level.Customer, CUSTOMER_SCALE, -1),
+        (applib.model.device.Device, DEVICE_SCALE, 1),
+        (applib.model.item.Item, ITEM_SCALE, 2),
+    ]
 
-        if isinstance(target, applib.model.entity.Entity):
-            texture = target.texture
-        elif isinstance(target, str):
-            texture = pyglet.resource.texture(target)
-        else:
-            return
+    def update_sprite(self, entity, move_x=None, move_y=None):
+        if entity.sprite is not None:
+            view_width, view_height = self.interface.get_content_size()
+            sprite = entity.sprite
+            texture = sprite._texture
 
-        view_width, view_height = self.interface.get_content_size()
-        texture.anchor_x = texture.width // 2
-        texture.anchor_y = texture.height // 2
-        sprite = pyglet.sprite.Sprite(texture)
-        sprite.scale = (relative_height * view_height) / texture.height
-        sprite.x = relative_x * view_height + view_width / 2
-        sprite.y = relative_y * view_height + view_height / 2
-        sprite.layer = layer
-        self.level_sprite_map[sprite] = target
-        self.interface.sprites.append(sprite)
-        self._texture_data[texture] = texture.get_image_data().get_data()
-        return sprite
+            # Update the sprite indexes.
+            self.sprites_by_entity[entity] = sprite
+            self.entities_by_sprite[sprite] = entity
+
+            # Ensure the sprite is in the interface
+            if sprite not in self.interface.sprites:
+                self.interface.sprites.append(sprite)
+
+                # Cache the texture data for alpha hit testing.
+                texture_data = texture.get_image_data().get_data()
+                self._texture_data[texture] = texture_data
+            
+                # Get the proprties used to configure the sprite.
+                for entity_class, relative_height, sprite_layer in self._entity_properties:
+                    if isinstance(entity, entity_class):
+                        break
+
+                # Configure the sprite and its texture.
+                texture.anchor_x = texture.width // 2
+                texture.anchor_y = texture.height // 2
+                sprite.scale = (relative_height * view_height) / texture.height
+                sprite.layer = sprite_layer
+
+                # Position in the centre by default.
+                move_x = move_x or 0.0
+                move_y = move_y or 0.0
+
+            # Reposition the sprite if requested.
+            if move_x is not None:
+                sprite.x = view_width / 2 + (move_x if isinstance(move_x, int) else move_x * view_height)
+            if move_y is not None:
+                sprite.y = view_height / 2 + (move_y if isinstance(move_y, int) else move_y * view_height)
+
+    def get_position(self, entity):
+        if isinstance(entity, applib.model.level.Customer):
+             customer_positions = [[], [0.0], [-0.3, 0.3], [-0.5, 0.0, 0.5], [-0.6, -0.2, 0.2, 0.6]]
+             return customer_positions[len(self.level.customers)][self.level.customers.index(entity)], 0.0
+        return None, None
 
     def on_tick(self):
         self.level.tick()
 
-        # Check for old sprites to remove.
-        reverse_map = {}
-        for sprite, entity in list(self.level_sprite_map.items()):
-            if isinstance(entity, applib.model.level.Customer):
-                if entity not in self.level.customers:
-                    del self.level_sprite_map[sprite]
-                    self.interface.sprites.remove(sprite)    
-                    continue
-            reverse_map[entity] = sprite
-
-        # Check for new sprites to add.
-        for index, customer in enumerate(self.level.customers):
-            customer_positions = [[], [0.0], [-0.3, 0.3], [-0.5, 0.0, 0.5], [-0.6, -0.2, 0.2, 0.6]]
-            relative_x = customer_positions[len(self.level.customers)][index]
-            if customer not in reverse_map:
-                self.create_sprite(customer, CUSTOMER_SCALE, relative_x, 0.0, 9)
-            else:
-                view_width, view_height = self.interface.get_content_size()
-                reverse_map[customer].x = relative_x * view_height + view_width / 2
+        # Update the sprites for all entities in the level.
+        for entity in self.level.entities:
+            move_x, move_y = self.get_position(entity)
+            self.update_sprite(entity, move_x, move_y)
+        
+        # Remove sprites for missing entities from the scene.
+        found_sprites = set(entity.sprite for entity in self.level.entities)
+        self.interface.sprites = [sprite for sprite in self.interface.sprites if sprite in found_sprites]
 
 
     ## Clicking
@@ -206,7 +222,7 @@ class LevelScene(object):
         if self._clicked_sprite is not None:
             if self._target_sprite is self._clicked_sprite:
                 # Zhu Li, do the thing!
-                target = self.level_sprite_map[self._clicked_sprite]
+                target = self.entities_by_sprite[self._clicked_sprite]
                 self.level.interact(target)
                 sound.pop()
             self._clicked_sprite = None

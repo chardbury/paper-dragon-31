@@ -30,7 +30,7 @@ class Device(entity.Entity):
 
     def __init__(self, level):
         super().__init__(level)
-        self.current_input = None
+        self.current_item = None
         self.ticks_remaining = None
 
     @property
@@ -41,10 +41,7 @@ class Device(entity.Entity):
     def is_finished(self):
         return (self.ticks_remaining is not None) and (self.ticks_remaining <= 0)
 
-    def compute_transition(self, first_item, second_item):
-        # Get the classes for the input item and the current item, dealing with missing items.
-        first_item_class = type(first_item) if isinstance(first_item, item.Item) else first_item
-        second_item_class = type(second_item) if isinstance(second_item, item.Item) else second_item
+    def compute_transition(self, first_item_class, second_item_class):
         # Case 1: We have a recipe for the input item and current item; use it.
         if (first_item_class, second_item_class) in self.recipes:
             new_first_item_class, new_second_item_class = self.recipes[first_item_class, second_item_class]
@@ -58,11 +55,17 @@ class Device(entity.Entity):
         return new_first_item_class, new_second_item_class
 
     def add_item(self, input_item):
+        current_item = self.current_item
+
         # Compute the results of the transition.
-        output_item_class, new_item_class = self.compute_transition(input_item, self.current_input)
+        input_item_class = type(input_item) if isinstance(input_item, item.Item) else input_item
+        current_item_class = type(current_item) if isinstance(current_item, item.Item) else current_item
+        output_item_class, new_item_class = self.compute_transition(input_item_class, current_item_class)
+
         # Determine which sides of the transition have changed.
         changed_input = not isinstance(input_item, output_item_class or type(None))
-        changed_current = not isinstance(self.current_input, new_item_class or type(None))
+        changed_current = not isinstance(current_item, new_item_class or type(None))
+
         # Trigger things when items have changed.
         if changed_current:
             # If we added an item then the device needs to be started.
@@ -71,9 +74,36 @@ class Device(entity.Entity):
             # If we removed the current item then device needs to be stopped.
             else:
                 self.ticks_remaining = None
-        # Set current item and return the output item.
-        self.current_input = new_item_class(self.level) if (new_item_class is not None) else None
-        return output_item_class(self.level) if (output_item_class is not None) else None
+
+        # Work out where the output item came from.
+        if output_item_class is None:
+            output_item = None
+        elif output_item_class is input_item_class:
+            output_item = input_item
+        elif output_item_class is current_item_class:
+            output_item = current_item
+        else:
+            output_item = output_item_class(self.level)
+
+        # Work out where the new item came from.
+        if new_item_class is None:
+            new_item = None
+        elif (new_item_class is input_item_class) and (output_item is not input_item):
+            new_item = input_item
+        elif (output_item_class is current_item_class) and (output_item is not current_item):
+            new_item = current_item
+        else:
+            new_item = new_item_class(self.level)
+
+        # Make sure that unused items are destroyed.
+        if input_item not in (output_item, new_item):
+            input_item.destroy()
+        if current_item not in (output_item, new_item):
+            current_item.destroy()
+
+        # Store the new item and return the output item.
+        self.current_item = new_item
+        return output_item
 
     def interact(self, held_item):
         if not self.is_running or self.is_finished:
@@ -97,6 +127,8 @@ class AutomaticDevice(Device):
         # Bins simply consume the input item.
         if self.product is None:
             self.ticks_remaining = self.duration_ticks
+            if input_item is not None:
+                input_item.destroy()
             return None
         # Non-bins give you their product if you aren't hold anything
         elif input_item is None:
