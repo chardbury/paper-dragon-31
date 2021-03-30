@@ -8,10 +8,13 @@ import applib
 import pyglet
 
 from applib import app
+from applib.constants import COUNTER_EDGE_ADJUSTMENT
 from applib.constants import CURSOR_SCALE
 from applib.constants import CUSTOMER_SCALE
+from applib.constants import CUSTOMER_POSITIONS
 from applib.constants import DEVICE_SCALE
 from applib.constants import ITEM_SCALE
+from applib.constants import SCENERY_SCALE
 from applib.engine import sound
 
 from pyglet.gl import *
@@ -72,7 +75,9 @@ class LevelScene(object):
     ## -----
 
     def create_test_level(self):
-        return applib.model.level.TestLevel()
+        level = applib.model.level.TestLevel()
+        applib.model.scenery.Counter(level)
+        return level
 
     def load_level_sprites(self):
         self.sprites_by_entity = {}
@@ -88,6 +93,7 @@ class LevelScene(object):
         (applib.model.level.Customer, CUSTOMER_SCALE, -1),
         (applib.model.device.Device, DEVICE_SCALE, 1),
         (applib.model.item.Item, ITEM_SCALE, 2),
+        (applib.model.scenery.Scenery, SCENERY_SCALE, 0),
     ]
 
     def update_sprite(self, entity, move_x=None, move_y=None):
@@ -117,11 +123,14 @@ class LevelScene(object):
                 texture.anchor_x = texture.width // 2
                 texture.anchor_y = texture.height // 2
                 sprite.scale = (relative_height * view_height) / texture.height
-                sprite.layer = sprite_layer
+                if sprite_layer is not None:
+                    sprite.layer = sprite_layer
 
                 # Position in the centre by default.
-                move_x = move_x or 0.0
-                move_y = move_y or 0.0
+                if move_x is None:
+                    move_x = 0.0
+                if move_y is None:
+                    move_y = 0.0
 
             # Reposition the sprite if requested.
             if move_x is not None:
@@ -131,8 +140,12 @@ class LevelScene(object):
 
     def get_position(self, entity):
         if isinstance(entity, applib.model.level.Customer):
-             customer_positions = [[], [0.0], [-0.3, 0.3], [-0.5, 0.0, 0.5], [-0.6, -0.2, 0.2, 0.6]]
-             return customer_positions[len(self.level.customers)][self.level.customers.index(entity)], 0.0
+            customer_count = len(self.level.customers)
+            customer_index = self.level.customers.index(entity)
+            move_x = CUSTOMER_POSITIONS[customer_count][customer_index]
+            view_width, view_height = self.interface.get_content_size()
+            move_y = (CUSTOMER_SCALE * entity.sprite._texture.width / entity.sprite._texture.height) + COUNTER_EDGE_ADJUSTMENT - CUSTOMER_SCALE / 2
+            return move_x, move_y
         return None, None
 
     def on_tick(self):
@@ -168,7 +181,8 @@ class LevelScene(object):
 
         '''
         offset_x, offset_y = self.interface.get_offset()
-        for sprite in self.interface.sprites: sprite.color = (255, 255, 255)
+        for sprite in self.interface.sprites:
+            sprite.opacity = 255
         for sprite in reversed(self.interface.sprites):
             texture = sprite._texture
             # 1. Get the position of the target relative to the sprite in the window frame.
@@ -188,7 +202,7 @@ class LevelScene(object):
             if (0 <= texture_x < texture.width) and (0 <= texture_y < texture.height):
                 alpha_index = (texture_y * texture.width + texture_x) * 4 + 3
                 if self._texture_data[texture][alpha_index] > 0:
-                    sprite.color = (0, 0, 0)
+                    sprite.opacity = 127
                     return sprite
     
     def _update_mouse_position(self, mouse_x, mouse_y):

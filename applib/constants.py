@@ -40,12 +40,30 @@ SETTINGS_DEFAULTS = {
 }
 
 
-## GRAPHICS
+## Graphics
 
 CURSOR_SCALE = 0.1
-
-CUSTOMER_SCALE = 0.5
 
 DEVICE_SCALE = 0.2
 
 ITEM_SCALE = 0.1
+
+SCENERY_SCALE = 1.0
+
+
+## Customers
+
+CUSTOMER_SCALE = 0.4
+
+CUSTOMER_POSITIONS = [
+    [],
+    [0.0],
+    [-0.3, 0.3],
+    [-0.5, 0.0, 0.5],
+    [-0.6, -0.2, 0.2, 0.6],
+]
+
+
+## Scenery
+
+COUNTER_EDGE_ADJUSTMENT = -8 / 1152

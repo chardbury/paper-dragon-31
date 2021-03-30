@@ -54,10 +54,16 @@ class Entity(object):
         self.create_sprite()
 
     def destroy(self):
+        '''Remove the entity from its level.
+
+        '''
         self.level.remove_entity(self)
         self.level = None
 
     def create_sprite(self):
+        '''Create the entity sprite.
+
+        '''
         self.sprite = None
         if self.texture is not None:
             self.sprite = pyglet.sprite.Sprite(self.texture)

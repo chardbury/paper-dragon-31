@@ -11,6 +11,7 @@ from applib.constants import TICK_LENGTH
 from applib.model import device
 from applib.model import entity
 from applib.model import item
+from applib.model import scenery
 
 
 class Order(object):
@@ -23,9 +24,16 @@ class Customer(entity.Entity):
 
     group = 'customers'
 
-    name = 'default'
+    customer_images = [
+        'customers/cop_dog.png',
+        'customers/cop_elephant.png',
+        'customers/cop_rabbit.png',
+        'customers/friend_sprinkles.png',
+        # 'customers/edgy_customer.png',
+    ]
 
     def __init__(self, level, order):
+        self.texture = pyglet.resource.texture(random.choice(self.customer_images))
         super().__init__(level)
         self.order = order
         self.patience = self.compute_patience()
@@ -69,17 +77,20 @@ class Level(object):
 
         self.entities = []
 
+        self.customers = []
+        self.devices = []
+        self.items = []
+        self.scenery = []
+
         self.held_item = None
 
         # Create devices.
-        self.devices = []
         self.device_locations = {}
         for device, location_x, location_y in self.device_specification:
             new_device = device(self)
             self.devices.append(new_device)
             self.device_locations[new_device] = (location_x, location_y)
 
-        self.customers = []
         self.happy_customer = 0
         self.sad_customer = 0
 
@@ -87,11 +98,23 @@ class Level(object):
         self.entities.append(entity)
         if isinstance(entity, Customer):
             self.customers.append(entity)
+        if isinstance(entity, device.Device):
+            self.devices.append(entity)
+        if isinstance(entity, item.Item):
+            self.items.append(entity)
+        if isinstance(entity, scenery.Scenery):
+            self.scenery.append(entity)
 
     def remove_entity(self, entity):
         self.entities.remove(entity)
         if isinstance(entity, Customer):
             self.customers.remove(entity)
+        if isinstance(entity, device.Device):
+            self.devices.remove(entity)
+        if isinstance(entity, item.Item):
+            self.items.remove(entity)
+        if isinstance(entity, scenery.Scenery):
+            self.scenery.remove(entity)
 
     def get_device(self, name):
         '''Return the first device with the given name.
@@ -136,6 +159,9 @@ class Level(object):
 
         '''
         if len(self.customers) == 0:
+            customer = Customer(self, Order(item.Doughnut(self)))
+            customer = Customer(self, Order(item.Doughnut(self)))
+            customer = Customer(self, Order(item.Doughnut(self)))
             customer = Customer(self, Order(item.Doughnut(self)))
         for entity in self.entities:
             entity.tick()
