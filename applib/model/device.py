@@ -50,7 +50,7 @@ class Device(entity.Entity):
             new_first_item_class, new_second_item_class = second_item_class, None
         # Case 3: Invalid operation; keep the input item (if any).
         else:
-            new_first_item_class, new_second_item_class = first_item_class, None
+            new_first_item_class, new_second_item_class = first_item_class, second_item_class
         # Return the results of the transition.
         return new_first_item_class, new_second_item_class
 
@@ -143,66 +143,58 @@ class AutomaticDevice(Device):
 
 class Bin(AutomaticDevice):
     
-    name ='bin'
+    name ='station_bin'
 
     product = None
 
 
 class Plate(Device):
 
-    name = 'plate'
+    name = 'station_plate'
 
-    duration = 0
+    duration = 0.0
 
-    # input-item, current-item : held-item, new-current-item
     recipes = {
-        (item.Glaze, item.Doughnut): (None, item.DoughnutGlazed),
-        (item.Sprinkles, item.Doughnut): (None, item.DoughnutSprinkles),
-        (item.Doughnut, None): (None, item.Doughnut),
+        (item.Sprinkles, item.DoughnutGlazed): (None, item.DoughnutSprinkles),
     }
 
+def _populate_plate_recipes():
+    for item_name, item_class in entity.Entity.index['items'].items():
+        Plate.recipes[item_class, None] = (None, item_class)
 
-class TestApricot(AutomaticDevice):
-
-    name = 'apricot'
-
-    product = item.Batter
-
-
-class TestLilac(Device):
-
-    name = 'lilac'
-
-    # input-item, current-item : held-item, new-current-item
-    recipes = {
-        (item.Batter, None): (None, item.Batter),
-        (None, item.Batter): (item.Doughnut, None),
-    }
-
-class TestMint(Device):
-
-    name = 'mint'
-
-    # input-item, current-item : held-item, new-current-item
-    recipes = {
-        (item.Doughnut, None): (None, item.Doughnut),
-        (None, item.Doughnut): (item.DoughnutCooked, None),
-    }
+_populate_plate_recipes()
+del _populate_plate_recipes
 
 
-class BatterTray(AutomaticDevice):
+class Dough(AutomaticDevice):
 
-    name = 'batter_tray'
+    name = 'station_dough'
 
-    product = item.Batter
+    product = item.DoughnutUncooked
 
 
-class DoughnutFryer(Device):
+class Cooking(Device):
 
-    name = 'doughnut_fryer'
+    name = 'station_cooking'
     
-    # input-item, current-item : held-item, new-current-item
     recipes = {
-        (item.Batter, None): (None, item.Batter),
-        (None, item.Batter): (item.Doughnut, None),
+        (item.DoughnutUncooked, None): (None, item.DoughnutUncooked),
+        (None, item.DoughnutUncooked): (item.DoughnutCooked, None),
     }
+
+
+class Icing(Device):
+
+    name = 'station_icing'
+    
+    recipes = {
+        (item.DoughnutCooked, None): (None, item.DoughnutCooked),
+        (None, item.DoughnutCooked): (item.DoughnutGlazed, None),
+    }
+
+
+class Sprinkles(AutomaticDevice):
+
+    name = 'station_sprinkles'
+
+    product = item.Sprinkles

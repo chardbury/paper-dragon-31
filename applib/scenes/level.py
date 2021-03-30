@@ -36,8 +36,8 @@ class ScaledImageMouseCursor(pyglet.window.ImageMouseCursor):
 
         # Compute the coordinates of the cursor box.
         scale = self.height / self.texture.height
-        x1 = x - (self.hot_x + self.texture.anchor_x) * scale
-        y1 = y - (self.hot_y + self.texture.anchor_y) * scale
+        x1 = x - self.hot_x * scale
+        y1 = y - self.hot_y * scale
         x2 = x1 + self.texture.width * scale
         y2 = y1 + self.texture.height * scale
 
@@ -90,7 +90,6 @@ class LevelScene(object):
         self.sprites_by_entity = {}
         self.entities_by_sprite = {}
         self.persisting_sprites = {}
-        #self.create_sprite('scenery/counter.png', 0.5, 0.0, -0.25)
         for entity in self.level.entities:
             self.update_sprite(entity)
         for device in self.level.devices:
@@ -179,7 +178,7 @@ class LevelScene(object):
         customer_count = len(self.level.customers)
         for index, other_customer in enumerate(self.level.customers):
             move_x = CUSTOMER_POSITIONS[customer_count][index]
-            other_customer.sprite.walk_target = move_x * view_height
+            other_customer.sprite._target_offset_x = move_x * view_height
             if other_customer is customer:
                 direction = 1 if (random.random() * view_width < move_x * view_height) else -1
                 customer.sprite.animation_offset_x = direction * view_width / 2
@@ -189,7 +188,7 @@ class LevelScene(object):
 
         # Have the leaving customer walk off.
         direction = 1 if (random.random() * view_width < customer.sprite.x) else -1
-        customer.sprite.walk_target = direction * view_width
+        customer.sprite._target_offset_x = direction * view_width
         self.persisting_sprites[customer.sprite] = (lambda:
             abs(customer.sprite.animation_offset_x) > view_width / 2)
 
@@ -197,7 +196,8 @@ class LevelScene(object):
         customer_count = len(self.level.customers)
         for index, other_customer in enumerate(self.level.customers):
             move_x = CUSTOMER_POSITIONS[customer_count][index]
-            other_customer.sprite.walk_target = move_x * view_height
+            if other_customer is not customer:
+                other_customer.sprite._target_offset_x = move_x * view_height
 
     def on_tick(self):
         self.level.tick()
@@ -333,7 +333,7 @@ class LevelScene(object):
             view_width, view_height = self.interface.get_content_size()
             cursor_height = CURSOR_SCALE * view_height
             cursor_x = cursor_texture.width / 2
-            cursor_y = cursor_texture.width / 2
+            cursor_y = cursor_texture.height / 2
             cursor = ScaledImageMouseCursor(cursor_texture, cursor_height, cursor_x, cursor_y)
             self._cursor_cache[cursor_texture] = cursor
         else:

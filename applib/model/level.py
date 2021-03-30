@@ -157,6 +157,7 @@ class Level(pyglet.event.EventDispatcher):
         for device in self.devices:
             if device.name == name:
                 return device
+        raise ValueError(f'device not found: {name!r}')
 
     def get_devices(self, name):
         '''Return all devices with the given name.
@@ -203,7 +204,7 @@ class Level(pyglet.event.EventDispatcher):
             # we have the space to spawn a customer, if one is waiting
             # we assume customers are in a queue in the right order!
             time, order = self.customer_specification[0]
-            if (int(time // TICK_LENGTH) <= self.tick_running):
+            if (int(time / TICK_LENGTH) <= self.tick_running):
                 order = Order(*[item_class(self) for item_class in order])
                 new_customer = Customer(self, order)
                 self.customer_specification.pop(0)
@@ -215,16 +216,17 @@ class Level(pyglet.event.EventDispatcher):
 class TestLevel(Level):
 
     device_specification = [
-        (device.TestApricot, -0.5, -0.25),
-        (device.TestLilac, 0.0, -0.25),
-        (device.TestMint, 0.5, -0.25),
-        (device.Bin, -0.25, -0.4),
-        (device.Plate, 0.25, -0.4),
+        (device.Dough, -0.5, -0.1),
+        (device.Cooking, 0.0, -0.1),
+        (device.Icing, 0.5, -0.1),
+        (device.Bin, -0.5, -0.3),
+        (device.Plate, 0.0, -0.3),
+        (device.Sprinkles, 0.5, -0.3),
     ]
 
     customer_specification = [
-        (0, [item.Batter]),
-        (1, [item.Doughnut]),
-        (2, [item.DoughnutCooked]),
-        (3, [item.DoughnutGlazed]),
+        (0, [item.DoughnutUncooked]),
+        (5, [item.DoughnutCooked]),
+        (10, [item.DoughnutGlazed]),
+        (15, [item.DoughnutSprinkles]),
     ]
