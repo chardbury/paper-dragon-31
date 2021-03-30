@@ -68,7 +68,7 @@ class Entity(object):
         '''
         self.sprite = None
         if self.texture is not None:
-            self.sprite = sprite.AnimatedSprite(self.texture)
+            self.sprite = sprite.EntitySprite(self.texture)
 
     def tick(self):
         pass

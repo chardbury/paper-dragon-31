@@ -10,7 +10,21 @@ import pyglet
 
 from applib import app
 from applib.engine import animation
+from applib.constants import ANIMATION_ZOOM_RATE
 from applib.constants import TICK_LENGTH
+
+
+class ZoomAnimation(animation.Animation):
+
+    def __init__(self, sprite, zoom_rate):
+        self.sprite = sprite
+        self.zoom_rate = zoom_rate
+
+    def tick(self):
+        current_zoom = self.sprite._animation_zoom
+        target_zoom = self.sprite._target_zoom
+        new_zoom = current_zoom + ANIMATION_ZOOM_RATE * (target_zoom - current_zoom)
+        setattr(self.sprite, 'animation_zoom', new_zoom)
 
 
 class WalkAnimation(animation.Animation):
@@ -24,8 +38,6 @@ class WalkAnimation(animation.Animation):
         self.elapsed_time = None
 
     def start_state(self):
-        if not hasattr(self.sprite, 'walk_target'):
-            self.sprite.walk_target = self.sprite.animation_offset_x
         self.bounce_cycles = None
         self.elapsed_time = 0.0
 
@@ -37,8 +49,8 @@ class WalkAnimation(animation.Animation):
         self.elapsed_time += TICK_LENGTH
 
         # Compute the horizontal offset.
-        current_x = self.sprite.animation_offset_x
-        target_x = self.sprite.walk_target
+        current_x = self.sprite._animation_offset_x
+        target_x = self.sprite._target_offset_x
         if target_x > current_x:
             current_x += self.walk_speed * TICK_LENGTH
             if target_x <= current_x:
@@ -64,10 +76,14 @@ class WalkAnimation(animation.Animation):
                 self.bounce_cycles = None
         setattr(self.sprite, 'animation_offset_y', linear_distance)
 
+        # Compute the zoom level.
 
-class AnimatedSprite(pyglet.sprite.Sprite):
+
+class EntitySprite(pyglet.sprite.Sprite):
 
     # Property: `animation_offset_x`
+
+    _target_offset_x = 0
     
     _animation_offset_x = 0
 
@@ -77,10 +93,13 @@ class AnimatedSprite(pyglet.sprite.Sprite):
 
     @animation_offset_x.setter
     def animation_offset_x(self, value):
-        self._animation_offset_x = value
-        self._update_position()
+        if self._animation_offset_x != value:
+            self._animation_offset_x = value
+            self._update_position()
 
     # Property: `animation_offset_y`
+
+    _target_offset_y = 0
     
     _animation_offset_y = 0
 
@@ -90,25 +109,37 @@ class AnimatedSprite(pyglet.sprite.Sprite):
 
     @animation_offset_y.setter
     def animation_offset_y(self, value):
-        self._animation_offset_y = value
-        self._update_position()
+        if self._animation_offset_y != value:
+            self._animation_offset_y = value
+            self._update_position()
 
-    # # Property: `border_size`
+    # Property: `animation_zoom`
 
-    # _border_sprite = None
-
-    # _border_size = 0.0
+    _target_zoom = 1.0
     
-    # @property
-    # def border_size(self):
-    #     self._border_size
+    _animation_zoom = 1.0
 
-    # @border_size.setter
-    # def border_size(self, value):
-    #     self._border_size = value
-    #     self._update_position()
+    @property
+    def animation_zoom(self):
+        return self._animation_zoom
+
+    @animation_zoom.setter
+    def animation_zoom(self, value):
+        if self._animation_zoom != value:
+            self._animation_zoom = value
+            self._update_position()
 
     # Animation Methods
+
+    zoom_animation = None
+
+    def animate_zoom(self, zoom_rate=ANIMATION_ZOOM_RATE):
+        if self.zoom_animation is None:
+            self.zoom_animation = ZoomAnimation(
+                sprite = self,
+                zoom_rate = zoom_rate,
+            ).start()
+        self.zoom_animation.zoom_rate = zoom_rate
 
     current_animation = None
 
@@ -127,8 +158,8 @@ class AnimatedSprite(pyglet.sprite.Sprite):
 
     def _update_position(self):
         img = self._texture
-        scale_x = self._scale * self._scale_x
-        scale_y = self._scale * self._scale_y
+        scale_x = self._scale * self._scale_x * self._animation_zoom
+        scale_y = self._scale * self._scale_y * self._animation_zoom
         if not self._visible:
             vertices = (0, 0, 0, 0, 0, 0, 0, 0)
         elif self._rotation:
@@ -136,8 +167,8 @@ class AnimatedSprite(pyglet.sprite.Sprite):
             y1 = -img.anchor_y * scale_y
             x2 = x1 + img.width * scale_x
             y2 = y1 + img.height * scale_y
-            x = self._x + self.animation_offset_x
-            y = self._y + self.animation_offset_y
+            x = self._x + self._animation_offset_x
+            y = self._y + self._animation_offset_y
             r = -math.radians(self._rotation)
             cr = math.cos(r)
             sr = math.sin(r)
@@ -151,14 +182,14 @@ class AnimatedSprite(pyglet.sprite.Sprite):
             dy = x1 * sr + y2 * cr + y
             vertices = (ax, ay, bx, by, cx, cy, dx, dy)
         elif scale_x != 1.0 or scale_y != 1.0:
-            x1 = self._x + self.animation_offset_x - img.anchor_x * scale_x
-            y1 = self._y + self.animation_offset_y - img.anchor_y * scale_y
+            x1 = self._x + self._animation_offset_x - img.anchor_x * scale_x
+            y1 = self._y + self._animation_offset_y - img.anchor_y * scale_y
             x2 = x1 + img.width * scale_x
             y2 = y1 + img.height * scale_y
             vertices = (x1, y1, x2, y1, x2, y2, x1, y2)
         else:
-            x1 = self._x + self.animation_offset_x - img.anchor_x
-            y1 = self._y + self.animation_offset_y - img.anchor_y
+            x1 = self._x + self._animation_offset_x - img.anchor_x
+            y1 = self._y + self._animation_offset_y - img.anchor_y
             x2 = x1 + img.width
             y2 = y1 + img.height
             vertices = (x1, y1, x2, y1, x2, y2, x1, y2)
@@ -168,22 +199,3 @@ class AnimatedSprite(pyglet.sprite.Sprite):
                         int(vertices[4]), int(vertices[5]),
                         int(vertices[6]), int(vertices[7]))
         self._vertex_list.vertices[:] = vertices
-        # if self._border_size > 0.0:
-        #     if self._border_sprite is None:
-        #         self._border_sprite = AnimatedSprite(self._texture)
-        #     self._border_sprite._x = self._x
-        #     self._border_sprite._y = self._y
-        #     self._border_sprite._rotation = self._rotation
-        #     self._border_sprite._scale = self._scale
-        #     self._border_sprite._scale_x = self._scale_x + self._border_size / (self._texture.width * self._scale)
-        #     self._border_sprite._scale_y = self._scale_y + self._border_size / (self._texture.height * self._scale)
-        #     self._border_sprite._animation_offset_x = self._animation_offset_x
-        #     self._border_sprite._animation_offset_y = self._animation_offset_y
-        #     self._border_sprite._rgb = (0, 0, 0)
-        #     self._border_sprite._update_position()
-        #     self._border_sprite._update_color()
-
-    def draw(self):
-        # if self._border_size > 0.0:
-        #     self._border_sprite.draw()
-        super().draw()

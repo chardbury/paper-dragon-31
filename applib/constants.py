@@ -51,6 +51,11 @@ ITEM_SCALE = 0.1
 SCENERY_SCALE = 1.0
 
 
+## Animation
+
+ANIMATION_ZOOM_RATE = 0.15
+
+
 ## Customers
 
 CUSTOMER_SCALE = 0.4

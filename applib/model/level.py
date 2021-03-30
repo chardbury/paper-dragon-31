@@ -221,3 +221,10 @@ class TestLevel(Level):
         (device.Bin, -0.25, -0.4),
         (device.Plate, 0.25, -0.4),
     ]
+
+    customer_specification = [
+        (0, [item.Batter]),
+        (1, [item.Doughnut]),
+        (2, [item.DoughnutCooked]),
+        (3, [item.DoughnutGlazed]),
+    ]

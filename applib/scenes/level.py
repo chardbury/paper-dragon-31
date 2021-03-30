@@ -141,6 +141,10 @@ class LevelScene(object):
                 if move_y is not None:
                     sprite.y = view_height / 2 + move_y * view_height
 
+                # Start the necessary animations.
+                if self._is_interactable(entity):
+                    sprite.animate_zoom()
+
     def compute_position(self, entity):
         move_x, move_y = 0.0, 0.0
 
@@ -236,9 +240,9 @@ class LevelScene(object):
         if new_sprite is not None:
             target = self.entities_by_sprite[new_sprite]
             if self._is_interactable(target):
-                new_sprite.opacity = 127
+                new_sprite._target_zoom = 1.1
         if old_sprite is not None:
-            old_sprite.opacity = 255
+            old_sprite._target_zoom = 1.0
 
     def _get_sprite_at(self, target_x, target_y):
         '''Return the sprite at the specified window coordinates.
