@@ -23,6 +23,7 @@ class Sound(object):
     def __call__(self):
         player = random.choice(self.sources).play()
         player.volume = app.settings.volume
+        return player
 
 
 def load_sounds():

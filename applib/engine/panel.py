@@ -205,6 +205,20 @@ class Panel(object):
         )
         glPopAttrib()
 
+    # Events
+
+    def contains(self, x, y):
+        corner_x, corner_y = 0.0, 0.0
+        current_panel = self
+        while current_panel is not None:
+            offset_x, offset_y = current_panel.get_offset()
+            current_panel = current_panel._parent
+            corner_x += offset_x
+            corner_y += offset_y
+        width, height = self.get_content_size()
+        return (0 <= x - corner_x < width) and (0 <= y - corner_y < height)
+
+
     # Rendering
 
     def draw(self, draw_x=0.0, draw_y=0.0):

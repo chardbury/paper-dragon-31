@@ -66,7 +66,7 @@ class Controller(pyglet.event.EventDispatcher):
                 dispatcher = getattr(app, dispatcher_name)
                 for listener_name in reversed(listener_names):
                     listener = getattr(app, listener_name)
-                    dispatcher.push_handlers(listener)
+                    dispatcher.remove_handlers(listener)
 
         # Instantiate or otherwise locate a new scene.
         if isinstance(scene, str):
