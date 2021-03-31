@@ -43,6 +43,7 @@ prepare_resources()
 
 from . import constants
 from . import engine
+from . import main
 from . import model
 from . import scenes
 from . import tools

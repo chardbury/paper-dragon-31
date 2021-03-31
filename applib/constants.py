@@ -36,7 +36,7 @@ MUSIC_FADE_GRACE = 0.5
 SETTINGS_FILE = 'settings.json'
 
 SETTINGS_DEFAULTS = {
-    'fullscreen': False,
+    'fullscreen': not DEBUG,
     'start_scene': 'applib.scenes.level.LevelScene',
     'volume': 0.5,
 }
