@@ -230,7 +230,6 @@ def test_customer_served(level):
     assert len(level.customers) == 0
     assert level.sad_customer == 1
     assert level.happy_customer == 1
-    assert level.score == 40
 
 def test_plate_destroys_previous_item(level):
     plate = level.get_device('station_plate')
@@ -292,7 +291,7 @@ def test_fail_level_from_score(level):
     assert test is True
 
 def test_level_ended_no_customers_leftr(level):
-    for _ in range(int(5 // TICK_LENGTH)):
+    for _ in range(int(30 // TICK_LENGTH)):
         level.tick()
     level.held_item = item.DoughnutCooked(level)
     level.interact(level.customers[0])

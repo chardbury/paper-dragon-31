@@ -8,6 +8,7 @@ import applib
 import pyglet
 
 from applib.constants import TICK_LENGTH
+from applib.constants import MAX_SCORE_FROM_CUSTOMER
 from applib.model import device
 from applib.model import entity
 from applib.model import item
@@ -63,26 +64,39 @@ class Customer(entity.Entity):
         else:
             return held_item
     
-    def compute_score(self):
-        percentage_remaining_patience = (self.patience / self.start_patience) * 100
+    def compute_score_fast(self):
+        percentage_remaining_patience = (self.patience / (self.start_patience // TICK_LENGTH)) * 100
         if percentage_remaining_patience >= 80:
             return 0
         elif percentage_remaining_patience >= 40:
-            return 5
+            return MAX_SCORE_FROM_CUSTOMER * 0.125
         elif percentage_remaining_patience >= 20:
-            return 10
+            return MAX_SCORE_FROM_CUSTOMER * 0.25
         elif percentage_remaining_patience >= 5:
-            return 20
+            return MAX_SCORE_FROM_CUSTOMER * 0.5
         else:
-            return 30
+            return MAX_SCORE_FROM_CUSTOMER * 0.75
+
+    def compute_score_slow(self):
+        percentage_remaining_patience = (self.patience / (self.start_patience // TICK_LENGTH)) * 100
+        if percentage_remaining_patience >= 80:
+            return MAX_SCORE_FROM_CUSTOMER * 0.75
+        elif percentage_remaining_patience >= 40:
+            return MAX_SCORE_FROM_CUSTOMER * 0.5
+        elif percentage_remaining_patience >= 20:
+            return MAX_SCORE_FROM_CUSTOMER * 0.25
+        elif percentage_remaining_patience >= 5:
+            return MAX_SCORE_FROM_CUSTOMER * 0.125
+        else:
+            return 0
 
     def tick(self):
         if len(self.order.items) == 0:
-            self.level.remove_customer(self, True, self.compute_score())
+            self.level.remove_customer(self, True, self.compute_score_slow())
         else:
             self.patience -= 1
             if self.patience <= 0:
-                self.level.remove_customer(self, False, 40)
+                self.level.remove_customer(self, False, MAX_SCORE_FROM_CUSTOMER)
     
 
 
