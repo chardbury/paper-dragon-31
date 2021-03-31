@@ -266,3 +266,15 @@ def test_plates_are_not_weird(level):
     assert isinstance(level.held_item, item.DoughnutUncooked)
     assert isinstance(station_plate.current_item, item.DoughnutUncooked)
     
+
+def test_giving_a_customer_their_order_destroys_order_items(level):
+    from applib.model.level import Customer, Order
+    order_item = item.DoughnutCooked(level)
+    made_item = item.DoughnutCooked(level)
+    customer = Customer(level, Order(order_item))
+    level.held_item = made_item
+    level.interact(customer)
+    assert order_item.level is None
+    assert order_item not in level.entities
+    assert made_item.level is None
+    assert made_item not in level.entities

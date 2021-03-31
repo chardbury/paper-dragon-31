@@ -10,6 +10,7 @@ import pyglet
 from applib import app
 from applib.constants import APPLICATION_NAME
 from applib.constants import APPLICATION_VERSION
+from applib.constants import DEFAULT_SCREEN_SIZE
 from applib.constants import TICK_LENGTH
 from applib.engine import animation
 from applib.engine import music
@@ -39,6 +40,8 @@ class Controller(pyglet.event.EventDispatcher):
         app.window = pyglet.window.Window(
             caption=f'{APPLICATION_NAME} v{APPLICATION_VERSION}',
             fullscreen=app.settings.fullscreen,
+            width=(DEFAULT_SCREEN_SIZE[0] if not app.settings.fullscreen else None),
+            height=(DEFAULT_SCREEN_SIZE[1] if not app.settings.fullscreen else None),
         )
 
         #: The global key state handler.

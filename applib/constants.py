@@ -14,6 +14,8 @@ APPLICATION_NAME = 'Untitled Application'
 
 APPLICATION_VERSION = '0.1'
 
+DEFAULT_SCREEN_SIZE = (800, 450)
+
 
 ## Clock
 

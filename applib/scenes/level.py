@@ -3,6 +3,7 @@
 '''
 
 import math
+import pprint
 import random
 
 import applib
@@ -309,6 +310,13 @@ class LevelScene(object):
                     self.level.interact(target)
                     sound.pop()
             self._clicked_sprite = None
+
+    ## Debugging
+    ## ---------
+
+    def on_key_press(self, symbol, modifiers):
+        if DEBUG and symbol == pyglet.window.key.L:
+            self.level.debug_print()
 
     ## Rendering
     ## ---------

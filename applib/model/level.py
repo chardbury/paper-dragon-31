@@ -19,10 +19,18 @@ class Order(object):
     def __init__(self, *items):
         self.items = list(items)
 
+    def remove(self, match_item):
+        for index, item in enumerate(self.items):
+            if item == match_item:
+                self.items.pop(index).destroy()
+                return True
+        return False
+
 
 class Customer(entity.Entity):
 
     group = 'customers'
+
     start_patience = 30
 
     customer_images = [
@@ -34,7 +42,8 @@ class Customer(entity.Entity):
     ]
 
     def __init__(self, level, order):
-        self.texture = pyglet.resource.texture(random.choice(self.customer_images))
+        self.name = random.choice(self.customer_images)
+        self.texture = pyglet.resource.texture(self.name)
         super().__init__(level)
         self.order = order
         self.patience = self.compute_patience()
@@ -51,8 +60,7 @@ class Customer(entity.Entity):
         return int(self.start_patience // TICK_LENGTH)
 
     def interact(self, held_item):
-        if held_item in self.order.items:
-            self.order.items.remove(held_item)
+        if self.order.remove(held_item):
             held_item.destroy()
         else:
             return held_item
@@ -120,7 +128,6 @@ class Level(pyglet.event.EventDispatcher):
         self.device_locations = {}
         for device, location_x, location_y in self.device_specification:
             new_device = device(self)
-            self.devices.append(new_device)
             self.device_locations[new_device] = (location_x, location_y)
 
         self.happy_customer = 0
@@ -149,6 +156,25 @@ class Level(pyglet.event.EventDispatcher):
             self.items.remove(entity)
         if isinstance(entity, scenery.Scenery):
             self.scenery.remove(entity)
+
+    def debug_print(self):
+        print(f'level:')
+        found_items = []
+        for customer in self.customers:
+            print(f'  customer: {customer.name}')
+            for item in customer.order.items:
+                print(f'    item: {item.name}')
+                found_items.append(item)
+        for device in self.devices:
+            print(f'  device: {device.name}')
+            if device.current_item:
+                print(f'    item: {device.current_item.name}')
+                found_items.append(device.current_item)
+        for item in self.items:
+            if item not in found_items:
+                print(f'  item: {item.name}')
+        for scenery in self.scenery:
+            print(f'  scenery: {scenery.name}')
 
     def get_device(self, name):
         '''Return the first device with the given name.
