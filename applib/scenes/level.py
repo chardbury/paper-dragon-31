@@ -75,10 +75,12 @@ class LevelScene(object):
         # Create the root interface panel.
         self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
-            background = (100, 100, 220, 255),
+            background_color = (100, 100, 220, 255),
         )
 
         self.load_level_sprites()
+
+        self.load_dialogue_overlay()
 
     ## Model
     ## -----
@@ -203,6 +205,11 @@ class LevelScene(object):
                 other_customer.sprite._target_offset_x = move_x * view_height
 
     def on_tick(self):
+
+        if self.dialogue_overlay.visible:
+            # Do dialogue things here.
+            return
+
         view_width, view_height = self.interface.get_content_size()
 
         # Update the level first.
@@ -266,7 +273,121 @@ class LevelScene(object):
                         sprite.visible = False
                     else:
                         self.level.debug_print()
-                
+
+    ## Dialogue
+    ## --------
+
+    def load_dialogue_overlay(self):
+
+        self.dialogue_overlay = self.interface.add(
+            width = 1.0,
+            height = 1.0,
+            align_x = 0.5,
+            align_y = 0.5,
+            background_color = (0, 0, 0, 240),
+            visible = False,
+        )
+
+        self.character_left = self.dialogue_overlay.add(
+            width = 0.25,
+            height = 0.5,
+            align_x = 0.15,
+            align_y = 0.3,
+            anchor_y = 0.0,
+        )
+
+        self.name_left = self.character_left.add(
+            width = 1.0,
+            height = 0.15,
+            align_x = 0.5,
+            align_y = 0.15,
+            text = 'Character Name',
+            text_color = (255, 255, 255, 255),
+            text_bold = True,
+            text_wrap = False,
+            font_size = 0.03,
+            visible = False,
+        )
+
+        self.character_right = self.dialogue_overlay.add(
+            width = 0.25,
+            height = 0.5,
+            align_x = 0.85,
+            align_y = 0.3,
+            anchor_y = 0.0,
+        )
+
+        self.name_right = self.character_right.add(
+            width = 1.0,
+            height = 0.15,
+            align_x = 0.5,
+            align_y = 0.15,
+            text = 'Character Name',
+            text_color = (255, 255, 255, 255),
+            text_bold = True,
+            text_wrap = False,
+            font_size = 0.03,
+            visible = False,
+        )
+
+        self.message_container = self.dialogue_overlay.add(
+            width = 0.9,
+            height = 0.25,
+            padding = 0.02,
+            align_x = 0.5,
+            align_y = 0.3,
+            anchor_y = 1.0,
+            background_color = (200, 50, 50, 255),
+            frame_texture = pyglet.resource.texture('interface/border2.png'),
+        )
+
+        self.message_area = self.message_container.add(
+            align_y = 1.0,
+            align_x = 0.0,
+            text_color = (255, 255, 255, 255),
+            font_size = 0.03,
+        )
+
+        self.message_area.text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec neque ut metus suscipit pretium vel sit amet nulla. Sed rhoncus scelerisque nunc, in lobortis risus tempus in. Nullam vitae nunc ipsum. Quisque sit amet mattis nunc, non dapibus massa. Ut porta ex quis sem tempor aliquam. Fusce semper cursus elit, iaculis rhoncus magna accumsan nec. Maecenas sagittis tempus ligula at congue.'
+
+        self.scene_lines = None
+
+    def start_scene(self, name):
+        self.scene_lines = pyglet.resource.file(f'scenes/{name}.txt', 'r').readlines()
+        self.dialogue_overlay.visible = True
+        self.advance_scene()
+
+    def advance_scene(self):
+        while len(self.scene_lines) > 0:
+            line = self.scene_lines.pop(0).strip()
+            if len(line) == 0:
+                continue
+            command, value = map(str.strip, line.split(':', 1))
+            if command == 'set_left_name':
+                self.name_left.text = value
+            elif command == 'set_left_image':
+                self.character_left.image_texture = pyglet.resource.texture(f'characters/{value}.png')
+            elif command == 'set_right_name':
+                self.name_right.text = value
+            elif command == 'set_right_image':
+                self.character_right.image_texture = pyglet.resource.texture(f'characters/{value}.png')
+            elif command == 'say_left':
+                self.message_area.text = value
+                self.name_left.visible = True
+                self.name_right.visible = False
+                self.character_left.image_color = (255, 255, 255, 255)
+                self.character_right.image_color = (75, 75, 75, 255)
+                break
+            elif command == 'say_right':
+                self.message_area.text = value
+                self.name_right.visible = True
+                self.name_left.visible = False
+                self.character_right.image_color = (255, 255, 255, 255)
+                self.character_left.image_color = (75, 75, 75, 255)
+                break
+        else:
+            self.scene_lines = None
+            self.dialogue_overlay.visible = False
 
     ## Clicking
     ## --------
@@ -333,34 +454,55 @@ class LevelScene(object):
             self._target_sprite = new_target_sprite
 
     def on_mouse_enter(self, x, y):
-        self._update_mouse_position(x, y)
+        if self.dialogue_overlay.visible:
+            pass
+        else:
+            self._update_mouse_position(x, y)
 
     def on_mouse_leave(self, x, y):
-        self._update_mouse_position(x, y)
+        if self.dialogue_overlay.visible:
+            pass
+        else:
+            self._update_mouse_position(x, y)
 
     def on_mouse_motion(self, x, y, dx, dy):
-        self._update_mouse_position(x, y)
+        if self.dialogue_overlay.visible:
+            pass
+        else:
+            self._update_mouse_position(x, y)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
-        self._update_mouse_position(x, y)
+        if self.dialogue_overlay.visible:
+            pass
+        else:
+            self._update_mouse_position(x, y)
 
     def on_mouse_scroll(self, x, y, scroll_x, scroll_y):
-        self._update_mouse_position(x, y)
+        if self.dialogue_overlay.visible:
+            pass
+        else:
+            self._update_mouse_position(x, y)
 
     def on_mouse_press(self, x, y, button, modifiers):
-        self._update_mouse_position(x, y)
-        self._clicked_sprite = self._target_sprite
+        if self.dialogue_overlay.visible:
+            pass
+        else:
+            self._update_mouse_position(x, y)
+            self._clicked_sprite = self._target_sprite
 
     def on_mouse_release(self, x, y, button, modifiers):
-        self._update_mouse_position(x, y)
-        if self._clicked_sprite is not None:
-            if self._target_sprite is self._clicked_sprite:
-                # Zhu Li, do the thing!
-                target = self.entities_by_sprite[self._clicked_sprite]
-                if self._is_interactable(target):
-                    self.level.interact(target)
-                    sound.pop()
-            self._clicked_sprite = None
+        if self.dialogue_overlay.visible:
+            self.advance_scene()
+        else:
+            self._update_mouse_position(x, y)
+            if self._clicked_sprite is not None:
+                if self._target_sprite is self._clicked_sprite:
+                    # Zhu Li, do the thing!
+                    target = self.entities_by_sprite[self._clicked_sprite]
+                    if self._is_interactable(target):
+                        self.level.interact(target)
+                        sound.pop()
+                self._clicked_sprite = None
 
     ## Debugging
     ## ---------
@@ -368,6 +510,8 @@ class LevelScene(object):
     def on_key_press(self, symbol, modifiers):
         if DEBUG and symbol == pyglet.window.key.L:
             self.level.debug_print()
+        if DEBUG and symbol == pyglet.window.key.D:
+            self.start_scene('example')
 
     ## Rendering
     ## ---------
@@ -402,6 +546,8 @@ class LevelScene(object):
         app.window.set_mouse_cursor(cursor)
 
     def on_draw(self):
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         # Clear the buffers.
         app.window.clear()

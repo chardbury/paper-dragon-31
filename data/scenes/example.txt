@@ -1,0 +1,7 @@
+set_left_image : cop_dog
+set_left_name : Officer Dognut
+say_left : Woof Woof!
+set_right_image : cop_elephant
+set_right_name : Commissioner Elephant
+say_right : ...
+say_left : I mean... hello?
