@@ -34,16 +34,14 @@ class Customer(entity.Entity):
     start_patience = 30
 
     customer_images = [
-        'customers/cop_dog.png',
-        'customers/cop_elephant.png',
-        'customers/cop_rabbit.png',
-        'customers/friend_sprinkles.png',
-        # 'customers/edgy_customer.png',
+        'cop_dog',
+        'cop_elephant',
+        'cop_rabbit',
+        'friend_sprinkles',
     ]
 
     def __init__(self, level, order):
         self.name = random.choice(self.customer_images)
-        self.texture = pyglet.resource.texture(self.name)
         super().__init__(level)
         self.order = order
         self.patience = self.compute_patience()

@@ -28,9 +28,6 @@ class Entity(object):
     #: The name of the entity class within its asset group.
     name = None
 
-    #: The texture used to render entities of this class.
-    texture = None
-
     #: The global index of all entity classes.
     index = {}
 
@@ -44,15 +41,13 @@ class Entity(object):
         if cls.name is not None:
             cls.name = _normalise(cls.name)
             cls.index[cls.group][cls.name] = cls
-        if (cls.group is not None) and (cls.name is not None):
-            cls.texture = pyglet.resource.texture(f'{cls.group}/{cls.name}.png')
+
 
     def __init__(self, level):
         '''Create an `Entity` object.
 
         '''
         self.level = level
-        self.create_sprite()
         self.level.add_entity(self)
 
     def destroy(self):
@@ -62,13 +57,23 @@ class Entity(object):
         self.level.remove_entity(self)
         self.level = None
 
-    def create_sprite(self):
-        '''Create the entity sprite.
+    #: The texture used to render entities of this class.
+    _texture = None
 
-        '''
-        self.sprite = None
-        if self.texture is not None:
-            self.sprite = sprite.EntitySprite(self.texture)
+    @property
+    def texture(self):
+        if (self._texture is None) and (self.group is not None) and (self.name is not None):
+            type(self)._texture = pyglet.resource.texture(f'{self.group}/{self.name}.png')
+        return self._texture
+
+    #: The sprite used to render entities of this class (default value).
+    _sprite = None
+
+    @property
+    def sprite(self):
+        if (self._sprite is None) and (self.texture is not None):
+            self._sprite = sprite.EntitySprite(self.texture)
+        return self._sprite
 
     def tick(self):
         pass

@@ -14,6 +14,20 @@ class app(object):
     window = None
 
 
+def set_pyglet_options():
+    '''Set options before we import pyglet submodules.
+
+    '''
+
+    import pyglet
+    pyglet.options.update({
+        'shadow_window': False,
+    })
+
+set_pyglet_options()
+del set_pyglet_options
+
+
 def prepare_resources():
     '''Set the appropriate resource paths.
 
