@@ -363,22 +363,31 @@ class LevelScene(object):
             if len(line) == 0:
                 continue
             command, value = map(str.strip, line.split(':', 1))
+
+            if command == 'set_left_image':
+                if len(value) > 0:
+                    self.character_left.image_texture = pyglet.resource.texture(f'characters/{value}.png')
+                else:
+                    self.character_left.image_texture = None
+            if command == 'set_right_image':
+                if len(value) > 0:
+                    self.character_right.image_texture = pyglet.resource.texture(f'characters/{value}.png')
+                else:
+                    self.character_right.image_texture = None
+
             if command == 'set_left_name':
-                self.name_left.text = value
-            elif command == 'set_left_image':
-                self.character_left.image_texture = pyglet.resource.texture(f'characters/{value}.png')
-            elif command == 'set_right_name':
-                self.name_right.text = value
-            elif command == 'set_right_image':
-                self.character_right.image_texture = pyglet.resource.texture(f'characters/{value}.png')
-            elif command == 'say_left':
+                self.name_left.text = value or None
+            if command == 'set_right_name':
+                self.name_right.text = value or None
+
+            if command == 'say_left':
                 self.message_area.text = value
                 self.name_left.visible = True
                 self.name_right.visible = False
                 self.character_left.image_color = (255, 255, 255, 255)
                 self.character_right.image_color = (75, 75, 75, 255)
                 break
-            elif command == 'say_right':
+            if command == 'say_right':
                 self.message_area.text = value
                 self.name_right.visible = True
                 self.name_left.visible = False
