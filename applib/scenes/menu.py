@@ -2,17 +2,61 @@
 
 '''
 
+import math
 import random
 
 import applib
 import pyglet
 
 from applib import app
+from applib.constants import TICK_LENGTH
 from applib.engine import animation
 from applib.engine import music
 from applib.engine import sound
 
 from pyglet.gl import *
+
+
+class SpiralAnimation(animation.Animation):
+
+    def __init__(self, thing, xname, yname, angle, duration):
+        self.thing = thing
+        self.xname = xname
+        self.yname = yname
+        self.angle = angle
+        self.duration = duration
+        self.elapsed = None
+        self.parameter = None
+        self.tilt = None
+
+    def start_state(self):
+        self.elapsed = 0.0
+        origx = getattr(self.thing, self.xname)
+        origy = getattr(self.thing, self.yname)
+        self.parameter = math.hypot(origx, origy) / self.angle
+        self.tilt = math.atan2(origy, origx) - self.angle
+
+    def stop_state(self):
+        setattr(self.thing, self.xname, 0)
+        setattr(self.thing, self.yname, 0)
+        self.elapsed = None
+        self.parameter = None
+        self.tilt = None
+
+    def tick(self):
+        self.elapsed += TICK_LENGTH
+        lerp = max(0, min(1, self.elapsed / self.duration))
+        lerp = 3 * lerp ** 2 - 2 * lerp ** 3
+        theta = self.angle * (1 - lerp)
+        if theta <= 0.0:
+            self.stop()
+        else:
+            radius = self.parameter * theta
+            sin, cos = math.sin(theta), math.cos(theta)
+            sint, cost = math.sin(self.tilt), math.cos(self.tilt)
+            setattr(self.thing, self.xname, -radius * cos * sint + radius * sin * cost)
+            setattr(self.thing, self.yname, radius * cos * cost + radius * sin * sint)
+
 
 
 class MenuScene(object):
@@ -89,6 +133,9 @@ class MenuScene(object):
             font_size = 0.06,
         )
 
+        self.interface_x = self.interface.get_content_size()[0] * 1.5
+        self.interface_y = -self.interface.get_content_size()[1]
+
     rawr_player = None
 
     def do_rawr(self):
@@ -102,12 +149,19 @@ class MenuScene(object):
         self.logo_animation.stop()
         self.logo_sprite.visible = False
         self.interface.visible = True
+        width, height = self.interface.get_content_size()
+        animations = []
+        animation.QueuedAnimation(
+            SpiralAnimation(self, 'interface_x', 'interface_y', 0.85 * math.pi, 2.0)
+        ).start()
 
     _hover_button = None
 
     _press_button = None
 
     def _update_mouse_position(self, x, y):
+        x -= self.interface_x
+        y -= self.interface_y
         new_hover_button = \
             'play' if self.play_button.contains(x, y) else \
             'quit' if self.quit_button.contains(x, y) else \
@@ -166,7 +220,7 @@ class MenuScene(object):
         glClearColor(1.0, 1.0, 1.0, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
         app.window.clear()
-        self.interface.draw()
+        self.interface.draw(draw_x=self.interface_x, draw_y=self.interface_y)
         self.logo_sprite.draw()
 
         # Render overlay
@@ -176,9 +230,10 @@ class MenuScene(object):
         glTexParameteri(self.overlay.target, GL_TEXTURE_WRAP_S, GL_REPEAT)
         glTexParameteri(self.overlay.target, GL_TEXTURE_WRAP_T, GL_REPEAT)
         x, y = map(int, self.interface.get_offset())
+        tx, ty = x - self.interface_x, y - self.interface_y
         w, h = map(int, self.interface.get_content_size())
         vertex_data = [x, y, x + w, y, x + w, y + h, x, y + h]
-        texture_data = [v / self.overlay.width for v in vertex_data]
+        texture_data = [v / self.overlay.width for v in [tx, ty, tx + w, ty, tx + w, ty + h, tx, ty + h]]
         color_data = [255, 255, 255, 255] * 4
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t2f', texture_data), ('c4B', color_data))
         glPopAttrib()
