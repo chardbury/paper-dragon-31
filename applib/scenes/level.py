@@ -208,7 +208,7 @@ class LevelScene(object):
 
         if self.dialogue_overlay.visible:
             # Do dialogue things here.
-            return
+            return pyglet.event.EVENT_HANDLED
 
         view_width, view_height = self.interface.get_content_size()
 

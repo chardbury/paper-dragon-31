@@ -27,7 +27,7 @@ class Controller(pyglet.event.EventDispatcher):
 
     event_graph = (
         ('window', ('scene', 'keystate')),
-        ('controller', ('scene', 'animation', 'music')),
+        ('controller', ('animation', 'scene', 'music')),
         ('settings', ('scene', 'music')),
     )
 
