@@ -13,12 +13,9 @@ from applib.model import entity
 class Item(entity.Entity):
 
     group = 'items'
-
-    def __eq__(self, other):
-        return type(self) == type(other)
     
-    def __hash__(self):
-        return hash(type(self))
+    def matches(self, other):
+        return type(self) is type(other)
 
 
 def load_items():

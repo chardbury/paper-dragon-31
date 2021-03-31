@@ -16,7 +16,7 @@ class Device(entity.Entity):
     group = 'devices'
 
     #: The duration (in seconds) of one cycle of this device.
-    duration = 10.0
+    duration = 1.0
 
     #: The duration (in ticks) of one cycle of this device (computed automatically).
     duration_ticks = None

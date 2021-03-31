@@ -21,7 +21,7 @@ class Order(object):
 
     def remove(self, match_item):
         for index, item in enumerate(self.items):
-            if item == match_item:
+            if item.matches(match_item):
                 self.items.pop(index).destroy()
                 return True
         return False
@@ -172,7 +172,10 @@ class Level(pyglet.event.EventDispatcher):
                 found_items.append(device.current_item)
         for item in self.items:
             if item not in found_items:
-                print(f'  item: {item.name}')
+                if item is self.held_item:
+                    print(f'  item: {item.name} (held)')
+                else:
+                    print(f'  item: {item.name}')
         for scenery in self.scenery:
             print(f'  scenery: {scenery.name}')
 

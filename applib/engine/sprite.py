@@ -63,7 +63,7 @@ class WalkAnimation(animation.Animation):
 
         # Compute the vertical offset.
         cycles_elapsed = self.bounce_speed * self.elapsed_time
-        angular_distance = 2 * math.pi * cycles_elapsed
+        angular_distance = math.pi * cycles_elapsed
         relative_distance = abs(math.sin(angular_distance))
         linear_distance = self.bounce_distance * relative_distance
         if target_x == current_x:

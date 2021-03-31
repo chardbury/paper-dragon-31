@@ -14,6 +14,7 @@ from applib.constants import COUNTER_EDGE_ADJUSTMENT
 from applib.constants import CURSOR_SCALE
 from applib.constants import CUSTOMER_BOUNCE_DISTANCE
 from applib.constants import CUSTOMER_BOUNCE_SPEED
+from applib.constants import CUSTOMER_ORDER_POSITIONS
 from applib.constants import CUSTOMER_POSITIONS
 from applib.constants import CUSTOMER_SCALE
 from applib.constants import CUSTOMER_WALK_SPEED
@@ -118,6 +119,7 @@ class LevelScene(object):
             # Ensure the sprite is in the interface
             if sprite not in self.interface.sprites:
                 self.interface.sprites.append(sprite)
+                sprite._can_click_through = isinstance(entity, applib.model.item.Item)
 
                 # Cache the texture data for alpha hit testing.
                 texture_data = texture.get_image_data().get_data()
@@ -201,6 +203,9 @@ class LevelScene(object):
                 other_customer.sprite._target_offset_x = move_x * view_height
 
     def on_tick(self):
+        view_width, view_height = self.interface.get_content_size()
+
+        # Update the level first.
         self.level.tick()
 
         # Update the sprites for all entities in the level.
@@ -214,10 +219,54 @@ class LevelScene(object):
         
         # Remove sprites for missing entities from the scene.
         found_sprites = set(entity.sprite for entity in self.level.entities) | set(self.persisting_sprites)
-        for sprite in self.interface.sprites:
+        for sprite in list(self.interface.sprites):
             if sprite not in found_sprites:
                 sprite.stop_animation()
                 self.interface.sprites.remove(sprite)
+                entity = self.entities_by_sprite[sprite]
+                del self.entities_by_sprite[sprite]
+                del self.sprites_by_entity[entity]
+
+        # Update remaining sprites.
+        processed_items = []
+        for sprite, entity in self.entities_by_sprite.items():
+            
+            # Move order sprites to follow their customer.
+            if isinstance(entity, applib.model.level.Customer):
+                order_count = len(entity.order.items)
+                for index, item in enumerate(entity.order.items):
+                    processed_items.append(item)
+                    relative_position_x, relative_position_y = CUSTOMER_ORDER_POSITIONS[order_count][index]
+                    customer_center = sprite.x + sprite.animation_offset_x
+                    position_x = customer_center + relative_position_x * view_height
+                    customer_top = sprite.y + sprite.height / 2
+                    position_y = customer_top + relative_position_y * view_height
+                    item.sprite.layer = sprite.layer + 0.5
+                    item.sprite.update(
+                        x = position_x,
+                        y = position_y,
+                    )
+            
+            # Move current item sprites to their device.
+            if isinstance(entity, applib.model.device.Device):
+                if entity.current_item is not None:
+                    processed_items.append(entity.current_item)
+                    entity.current_item.sprite.layer = sprite.layer + 0.5
+                    entity.current_item.sprite.update(
+                        x = sprite.x,
+                        y = sprite.y,
+                    )
+
+        # Postprocessing for items.
+        for sprite, entity in self.entities_by_sprite.items():
+            if isinstance(entity, applib.model.item.Item):
+                sprite.visible = True
+                if entity not in processed_items:
+                    if entity is self.level.held_item:
+                        sprite.visible = False
+                    else:
+                        self.level.debug_print()
+                
 
     ## Clicking
     ## --------
@@ -251,6 +300,8 @@ class LevelScene(object):
         '''
         offset_x, offset_y = self.interface.get_offset()
         for sprite in reversed(self.interface.sprites):
+            if sprite._can_click_through:
+                continue
             texture = sprite._texture
             # 1. Get the position of the target relative to the sprite in the window frame.
             sprite_x = target_x - (sprite.x + sprite.animation_offset_x + offset_x)
