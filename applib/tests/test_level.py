@@ -24,6 +24,7 @@ class ExampleLevel(level.Level):
     ]
 
     customer_spaces_specification = 2
+    fail_score = 40
 
 
 @pytest.fixture
@@ -278,3 +279,34 @@ def test_giving_a_customer_their_order_destroys_order_items(level):
     assert order_item not in level.entities
     assert made_item.level is None
     assert made_item not in level.entities
+
+def test_fail_level_from_score(level):
+    from applib.model.level import Customer, Order
+    test = level.has_level_ended()
+    assert test is False
+    for _ in range(int(36 // TICK_LENGTH)):
+        level.tick()
+    assert level.fail_score is 40
+    assert level.score is 40
+    test = level.has_level_ended()
+    assert test is True
+
+def test_level_ended_no_customers_leftr(level):
+    for _ in range(int(5 // TICK_LENGTH)):
+        level.tick()
+    level.held_item = item.DoughnutCooked(level)
+    level.interact(level.customers[0])
+    level.tick()
+    for _ in range(int(10 // TICK_LENGTH)):
+        level.tick()
+    level.held_item = item.DoughnutCooked(level)
+    level.interact(level.customers[0])
+    level.tick()
+    level.held_item = item.DoughnutGlazed(level)
+    level.interact(level.customers[0])
+    level.tick()
+    assert level.fail_score is 40
+    assert level.score < 40
+    assert level.tick_running < level.duration_ticks
+    a = level.has_level_ended()
+    assert a is True

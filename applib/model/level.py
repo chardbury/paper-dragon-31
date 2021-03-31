@@ -97,7 +97,7 @@ class Level(pyglet.event.EventDispatcher):
     #format [arrival_time (seconds since start of level), [order]]
     customer_specification = []
     customer_spaces_specification = 1
-    scoring = ()
+    fail_score = 10000
     
     #seconds
     duration = 60
@@ -216,15 +216,41 @@ class Level(pyglet.event.EventDispatcher):
             self.sad_customer += 1
         self.score += score
 
+    def has_level_ended(self):
+        if self.score >= self.fail_score:
+            # we gained to much suspision and have been caught
+            self.end_level(False)
+            return True
+        elif self.tick_running >= self.duration_ticks:
+            # we have run out of time
+            # any reminaing customers in queue or at counter show score max sus (and we should probably fail?)
+            score += (len(self.customers) + len(self.customer_specification)) * MAX_SCORE_FROM_CUSTOMER
+            self.end_level(False)
+            return True
+        elif len(self.customers) + len(self.customer_specification) == 0:
+            # we have severd all the customers and (due to earlier check, not run out of time or scored too much)
+            self.end_level(True)
+            return True
+        else:
+            return False
+
+    def end_level(self, success):
+        if success is True:
+            #end level with success!
+            pass
+        else:
+            #end level with fail
+            pass
+
     
     def tick(self):
         '''Advance the level state by a single tick.
 
         '''
         self.tick_running += 1
-        if (self.tick_running >= self.duration_ticks):
-            # end the level
-            # any reminaing customers in queue or at counter show score max sus 
+
+        # check if level has ended, we won't be continuing if we have
+        if self.has_level_ended():
             pass
 
         if len(self.customer_specification) > 0 and len(self.customers) < self.customer_spaces_specification:
