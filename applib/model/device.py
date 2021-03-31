@@ -15,6 +15,10 @@ class Device(entity.Entity):
 
     group = 'devices'
 
+    # The time after complete where the contents become ruined - default None, does not ruin
+    ruined_time = None
+    ruined_item = None
+
     #: The duration (in seconds) of one cycle of this device.
     duration = 1.0
 
@@ -41,14 +45,21 @@ class Device(entity.Entity):
     def is_finished(self):
         return (self.ticks_remaining is not None) and (self.ticks_remaining <= 0)
 
+    @property
+    def is_ruined(self):
+        return (self.ruined_time is not None) and (self.ticks_remaining is not None) and (self.ticks_remaining <= 0) and (-(self.ruined_time // TICK_LENGTH) > self.ticks_remaining)
+
     def compute_transition(self, first_item_class, second_item_class):
-        # Case 1: We have a recipe for the input item and current item; use it.
-        if (first_item_class, second_item_class) in self.recipes:
+        # Case 1: Device has ruined current content, if we are holding nothing we return this
+        if self.is_ruined and first_item_class is None:
+            new_first_item_class, new_second_item_class = self.ruined_item, None
+        # Case 2: We have a recipe for the input item and current item; use it.
+        elif (first_item_class, second_item_class) in self.recipes:
             new_first_item_class, new_second_item_class = self.recipes[first_item_class, second_item_class]
-        # Case 2: There was no input item; pick up the current item.
+        # Case 3: There was no input item; pick up the current item.
         elif first_item_class is None:
             new_first_item_class, new_second_item_class = second_item_class, None
-        # Case 3: Invalid operation; keep the input item (if any).
+        # Case 4: Invalid operation; keep the input item (if any).
         else:
             new_first_item_class, new_second_item_class = first_item_class, second_item_class
         # Return the results of the transition.
@@ -176,6 +187,9 @@ class Dough(AutomaticDevice):
 class Cooking(Device):
 
     name = 'station_cooking'
+
+    ruined_time = 10
+    ruined_item = item.DoughnutBurned
     
     recipes = {
         (item.DoughnutUncooked, None): (None, item.DoughnutUncooked),

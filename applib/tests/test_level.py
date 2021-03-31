@@ -70,7 +70,7 @@ def test_doughnut_fryer_makes_doughnut_cooked_when_finished(level):
         level.tick()
     level.held_item = item.DoughnutUncooked(level)
     level.interact(device)
-    for _ in range(1000):
+    for _ in range(int(10 // TICK_LENGTH)):
         level.tick()
     level.interact(device)
     assert level.held_item.name == 'doughnut_cooked'
@@ -307,5 +307,15 @@ def test_level_ended_no_customers_leftr(level):
     assert level.fail_score is 40
     assert level.score < 40
     assert level.tick_running < level.duration_ticks
-    a = level.has_level_ended()
-    assert a is True
+    assert level.has_level_ended() is True
+
+def test_ruined_doughnut(level):
+    level.held_item = item.DoughnutUncooked(level)
+    device = level.get_device('station_cooking')
+    level.held_item = item.DoughnutUncooked(level)
+    level.interact(device)
+    for _ in range(1000):
+        level.tick()
+    assert device.is_ruined is True
+    level.interact(device)
+    assert level.held_item.name == 'doughnut_burned'
