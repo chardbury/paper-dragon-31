@@ -347,7 +347,7 @@ class LevelScene(object):
             align_y = 0.3,
             anchor_y = 1.0,
             background_color = (200, 50, 50, 255),
-            frame_texture = pyglet.resource.texture('interface/border2.png'),
+            frame_texture = pyglet.resource.texture('interface/dialogue_border.png'),
         )
 
         self.message_area = self.message_container.add(
@@ -581,31 +581,31 @@ class LevelScene(object):
         layer_key = (lambda sprite: sprite.layer)
         self.interface.sprites.sort(key=layer_key)
 
-        # Draw the speech bubbles.
-
         # Render the interface.
         self.interface.draw()
 
-        # Draw the patience bars.
-        for customer in self.level.customers:
-            if customer.level is not None:
-                sprite = customer.sprite
-                bar_margin = view_height * CUSTOMER_PATIENCE_BAR_MARGIN
-                bar_height = view_height * CUSTOMER_PATIENCE_BAR_HEIGHT
-                bar_x = sprite.x + sprite.animation_offset_x - sprite.width / 2 + bar_margin
-                bar_y = view_height * (0.5 + CUSTOMER_PATIENCE_BAR_VERTICAL_OFFSET) + bar_margin - bar_height / 2
-                bar_width = sprite.width - 2 * bar_margin
-                bar_full_width = bar_width * customer.get_patience_ratio()
-                pyglet.graphics.draw(8, GL_QUADS,
-                    ('v2f', [
-                        bar_x, bar_y,
-                        bar_x + bar_width, bar_y,
-                        bar_x + bar_width, bar_y + bar_height,
-                        bar_x, bar_y + bar_height,
-                        bar_x, bar_y,
-                        bar_x + bar_full_width, bar_y,
-                        bar_x + bar_full_width, bar_y + bar_height,
-                        bar_x, bar_y + bar_height,
-                    ]),
-                    ('c4B', [255, 255, 255, 255] * 4 + [0, 0, 255, 255] * 4)
-                )
+        if not self.dialogue_overlay.visible:
+
+            # Draw the patience bars.
+            for customer in self.level.customers:
+                if customer.level is not None:
+                    sprite = customer.sprite
+                    bar_margin = view_height * CUSTOMER_PATIENCE_BAR_MARGIN
+                    bar_height = view_height * CUSTOMER_PATIENCE_BAR_HEIGHT
+                    bar_x = sprite.x + sprite.animation_offset_x - sprite.width / 2 + bar_margin
+                    bar_y = view_height * (0.5 + CUSTOMER_PATIENCE_BAR_VERTICAL_OFFSET) + bar_margin - bar_height / 2
+                    bar_width = sprite.width - 2 * bar_margin
+                    bar_full_width = bar_width * customer.get_patience_ratio()
+                    pyglet.graphics.draw(8, GL_QUADS,
+                        ('v2f', [
+                            bar_x, bar_y,
+                            bar_x + bar_width, bar_y,
+                            bar_x + bar_width, bar_y + bar_height,
+                            bar_x, bar_y + bar_height,
+                            bar_x, bar_y,
+                            bar_x + bar_full_width, bar_y,
+                            bar_x + bar_full_width, bar_y + bar_height,
+                            bar_x, bar_y + bar_height,
+                        ]),
+                        ('c4B', [255, 255, 255, 255] * 4 + [0, 0, 255, 255] * 4)
+                    )

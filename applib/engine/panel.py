@@ -234,12 +234,13 @@ class Panel(object):
         # Render background
         if self.background_color is not None or self.background_texture is not None:
             color = self.background_color or [255, 255, 255, 255]
+            extra_width = padding + self.frame_width * parent_height / 2
             data = [
                 ('v2f', [
-                    draw_x - padding, draw_y - padding,
-                    draw_x + padding + width, draw_y - padding,
-                    draw_x - padding, draw_y + padding + height,
-                    draw_x + padding + width, draw_y + padding + height,
+                    draw_x - extra_width, draw_y - extra_width,
+                    draw_x + extra_width + width, draw_y - extra_width,
+                    draw_x - extra_width, draw_y + extra_width + height,
+                    draw_x + extra_width + width, draw_y + extra_width + height,
                 ]),
                 ('c4B', list(color) * 4),
             ]
