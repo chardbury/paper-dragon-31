@@ -241,6 +241,12 @@ class Level(pyglet.event.EventDispatcher):
             self.sad_customer += 1
         self.score += score
 
+    def get_score_ratio(self):
+        return self.score / (len(type(self).customer_specification) * MAX_SCORE_FROM_CUSTOMER)
+
+    def get_time_ratio(self):
+        return self.tick_running / self.duration_ticks
+
     def has_level_ended(self):
         if self.score >= self.fail_score:
             # we gained to much suspision and have been caught

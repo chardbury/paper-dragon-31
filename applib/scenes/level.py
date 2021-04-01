@@ -596,7 +596,7 @@ class LevelScene(object):
         view_width, view_height = self.interface.get_content_size()
         offset_x, offset_y = self.interface.get_offset()
         
-        left_bar_progress = 0.5
+        left_bar_progress = max(0.0, min(1.0, self.level.get_score_ratio()))
         left_bar_left = offset_x + PROGRESS_BAR_MARGIN * view_height
         left_bar_right = left_bar_left + PROGRESS_BAR_WIDTH * view_width
         left_bar_top = offset_y + view_height - PROGRESS_BAR_MARGIN * view_height
@@ -610,14 +610,14 @@ class LevelScene(object):
                 left_bar_right, left_bar_top,
                 left_bar_left, left_bar_top,
                 left_bar_left, left_bar_bottom,
-                left_bar_filled_right_slope, left_bar_bottom,
+                left_bar_filled_right, left_bar_bottom,
                 left_bar_filled_right, left_bar_top,
                 left_bar_left, left_bar_top,
             ]),
             ('c4B', [255, 255, 255, 255] * 4 + [0, 0, 255, 255] * 4)
         )
         
-        right_bar_progress = 0.5
+        right_bar_progress = max(0.0, min(1.0, self.level.get_time_ratio()))
         right_bar_right = offset_x + view_width - PROGRESS_BAR_MARGIN * view_height
         right_bar_left = right_bar_right - PROGRESS_BAR_WIDTH * view_width
         right_bar_top = offset_y + view_height - PROGRESS_BAR_MARGIN * view_height
@@ -630,7 +630,7 @@ class LevelScene(object):
                 right_bar_right, right_bar_bottom,
                 right_bar_right, right_bar_top,
                 right_bar_left, right_bar_top,
-                right_bar_filled_left_slope, right_bar_bottom,
+                right_bar_filled_left, right_bar_bottom,
                 right_bar_right, right_bar_bottom,
                 right_bar_right, right_bar_top,
                 right_bar_filled_left, right_bar_top,
