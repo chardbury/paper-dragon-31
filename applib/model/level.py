@@ -123,7 +123,7 @@ class Level(pyglet.event.EventDispatcher):
     #format [arrival_time (seconds since start of level), [order]]
     customer_specification = []
     customer_spaces_specification = 1
-    fail_score = 10000
+    fail_ratio = 1.0
     opening_scene = None
     victory_scene = None
     failure_scene = None
@@ -246,6 +246,10 @@ class Level(pyglet.event.EventDispatcher):
             self.sad_customer += 1
         self.score += score
 
+    @property
+    def fail_score(self):
+        return int(self.fail_ratio * len(type(self).customer_specification) * MAX_SCORE_FROM_CUSTOMER)
+
     def get_score_ratio(self):
         return self.score / self.fail_score
 
@@ -327,6 +331,11 @@ class LevelOne(Level):
     victory_scene = 'victory_1'
     failure_scene = 'failure_1'
 
+    serve_style = 'slow'
+    fail_ratio = 0.5
+
+    background_scenery = scenery.BackgroundVillage
+
     device_specification = [
         (device.Dough, -0.5, -0.1),
         (device.Cooking, 0.0, -0.1),
@@ -343,6 +352,9 @@ class LevelTwo(Level):
     opening_scene = 'opening_2'
     victory_scene = 'victory_2'
     failure_scene = 'failure_2'
+
+    serve_style = 'slow'
+    fail_ratio = 0.5
 
     device_specification = [
         (device.Dough, -0.5, -0.1),
