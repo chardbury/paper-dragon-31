@@ -15,6 +15,9 @@ from applib.constants import CURSOR_SCALE
 from applib.constants import CUSTOMER_BOUNCE_DISTANCE
 from applib.constants import CUSTOMER_BOUNCE_SPEED
 from applib.constants import CUSTOMER_ORDER_POSITIONS
+from applib.constants import CUSTOMER_PATIENCE_BAR_HEIGHT
+from applib.constants import CUSTOMER_PATIENCE_BAR_MARGIN
+from applib.constants import CUSTOMER_PATIENCE_BAR_VERTICAL_OFFSET
 from applib.constants import CUSTOMER_POSITIONS
 from applib.constants import CUSTOMER_SCALE
 from applib.constants import CUSTOMER_WALK_SPEED
@@ -572,3 +575,29 @@ class LevelScene(object):
 
         # Render the interface.
         self.interface.draw()
+
+        view_width, view_height = self.interface.get_content_size()
+
+        # Draw the patience bars.
+        for customer in self.level.customers:
+            if customer.level is not None:
+                sprite = customer.sprite
+                bar_margin = view_height * CUSTOMER_PATIENCE_BAR_MARGIN
+                bar_height = view_height * CUSTOMER_PATIENCE_BAR_HEIGHT
+                bar_x = sprite.x + sprite.animation_offset_x - sprite.width / 2 + bar_margin
+                bar_y = view_height * (0.5 + CUSTOMER_PATIENCE_BAR_VERTICAL_OFFSET) + bar_margin - bar_height / 2
+                bar_width = sprite.width - 2 * bar_margin
+                bar_full_width = bar_width * customer.get_patience_ratio()
+                pyglet.graphics.draw(8, GL_QUADS,
+                    ('v2f', [
+                        bar_x, bar_y,
+                        bar_x + bar_width, bar_y,
+                        bar_x + bar_width, bar_y + bar_height,
+                        bar_x, bar_y + bar_height,
+                        bar_x, bar_y,
+                        bar_x + bar_full_width, bar_y,
+                        bar_x + bar_full_width, bar_y + bar_height,
+                        bar_x, bar_y + bar_height,
+                    ]),
+                    ('c4B', [255, 255, 255, 255] * 4 + [0, 0, 255, 255] * 4)
+                )

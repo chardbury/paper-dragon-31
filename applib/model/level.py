@@ -58,6 +58,9 @@ class Customer(entity.Entity):
         '''
         return int(self.start_patience // TICK_LENGTH)
 
+    def get_patience_ratio(self):
+        return (self.patience / (self.start_patience // TICK_LENGTH))
+
     def interact(self, held_item):
         if self.order.remove(held_item):
             held_item.destroy()
@@ -65,7 +68,7 @@ class Customer(entity.Entity):
             return held_item
     
     def compute_score_fast(self):
-        percentage_remaining_patience = (self.patience / (self.start_patience // TICK_LENGTH)) * 100
+        percentage_remaining_patience = self.get_percent_patience() * 100
         if percentage_remaining_patience >= 80:
             return 0
         elif percentage_remaining_patience >= 40:
@@ -78,7 +81,7 @@ class Customer(entity.Entity):
             return MAX_SCORE_FROM_CUSTOMER * 0.75
 
     def compute_score_slow(self):
-        percentage_remaining_patience = (self.patience / (self.start_patience // TICK_LENGTH)) * 100
+        percentage_remaining_patience = self.get_percent_patience() * 100
         if percentage_remaining_patience >= 80:
             return MAX_SCORE_FROM_CUSTOMER * 0.75
         elif percentage_remaining_patience >= 40:
