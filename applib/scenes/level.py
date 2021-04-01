@@ -25,6 +25,9 @@ from applib.constants import CUSTOMER_WALK_SPEED
 from applib.constants import DEBUG
 from applib.constants import DEVICE_SCALE
 from applib.constants import ITEM_SCALE
+from applib.constants import PROGRESS_BAR_HEIGHT
+from applib.constants import PROGRESS_BAR_MARGIN
+from applib.constants import PROGRESS_BAR_WIDTH
 from applib.constants import SCENERY_SCALE
 from applib.engine import animation
 from applib.engine import sound
@@ -568,7 +571,6 @@ class LevelScene(object):
         app.window.set_mouse_cursor(cursor)
 
     def on_draw(self):
-        view_width, view_height = self.interface.get_content_size()
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -587,6 +589,55 @@ class LevelScene(object):
 
         # Render the interface.
         self.interface.draw()
+
+        self.draw_progress_bars()
+
+    def draw_progress_bars(self):
+        view_width, view_height = self.interface.get_content_size()
+        offset_x, offset_y = self.interface.get_offset()
+        
+        left_bar_progress = 0.5
+        left_bar_left = offset_x + PROGRESS_BAR_MARGIN * view_height
+        left_bar_right = left_bar_left + PROGRESS_BAR_WIDTH * view_width
+        left_bar_top = offset_y + view_height - PROGRESS_BAR_MARGIN * view_height
+        left_bar_bottom = left_bar_top - PROGRESS_BAR_HEIGHT * view_height
+        left_bar_filled_right = left_bar_left + (left_bar_right - left_bar_left) * left_bar_progress
+        left_bar_filled_right_slope = min(left_bar_right, left_bar_filled_right + (left_bar_top - left_bar_bottom))
+        pyglet.graphics.draw(8, GL_QUADS,
+            ('v2f', [
+                left_bar_left, left_bar_bottom,
+                left_bar_right, left_bar_bottom,
+                left_bar_right, left_bar_top,
+                left_bar_left, left_bar_top,
+                left_bar_left, left_bar_bottom,
+                left_bar_filled_right_slope, left_bar_bottom,
+                left_bar_filled_right, left_bar_top,
+                left_bar_left, left_bar_top,
+            ]),
+            ('c4B', [255, 255, 255, 255] * 4 + [0, 0, 255, 255] * 4)
+        )
+        
+        right_bar_progress = 0.5
+        right_bar_right = offset_x + view_width - PROGRESS_BAR_MARGIN * view_height
+        right_bar_left = right_bar_right - PROGRESS_BAR_WIDTH * view_width
+        right_bar_top = offset_y + view_height - PROGRESS_BAR_MARGIN * view_height
+        right_bar_bottom = right_bar_top - PROGRESS_BAR_HEIGHT * view_height
+        right_bar_filled_left = right_bar_right - (right_bar_right - right_bar_left) * right_bar_progress
+        right_bar_filled_left_slope = max(right_bar_left, right_bar_filled_left - (right_bar_top - right_bar_bottom))
+        pyglet.graphics.draw(8, GL_QUADS,
+            ('v2f', [
+                right_bar_left, right_bar_bottom,
+                right_bar_right, right_bar_bottom,
+                right_bar_right, right_bar_top,
+                right_bar_left, right_bar_top,
+                right_bar_filled_left_slope, right_bar_bottom,
+                right_bar_right, right_bar_bottom,
+                right_bar_right, right_bar_top,
+                right_bar_filled_left, right_bar_top,
+            ]),
+            ('c4B', [255, 255, 255, 255] * 4 + [0, 0, 255, 255] * 4)
+        )
+
 
     def draw_customer_overlay(self, sprite):
         customer = self.entities_by_sprite.get(sprite)
