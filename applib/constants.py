@@ -76,11 +76,13 @@ CUSTOMER_BOUNCE_SPEED = 2.0
 
 CUSTOMER_WALK_SPEED = 0.2
 
+CUSTOMER_ORDER_HEIGHT = 0.05
+
 CUSTOMER_ORDER_POSITIONS = [
     [],
-    [(0.0, 0.05)],
-    [(-0.05, 0.05), (0.05, 0.05)],
-    [(-0.1, 0.05), (0.0, 0.05), (0.1, 0.05)],
+    [0.0],
+    [-15.0, 15.0],
+    [-30.0, 0.0, 30.0],
 ]
 
 CUSTOMER_PATIENCE_BAR_VERTICAL_OFFSET = 0.0

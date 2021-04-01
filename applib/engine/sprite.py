@@ -76,10 +76,35 @@ class WalkAnimation(animation.Animation):
                 self.bounce_cycles = None
         setattr(self.sprite, 'animation_offset_y', linear_distance)
 
-        # Compute the zoom level.
-
 
 class EntitySprite(pyglet.sprite.Sprite):
+
+    # Background Sprite
+
+    background_sprite = None
+
+    def set_background_sprite(self, texture=None):
+        if texture is not None:
+            texture.anchor_x = texture.width * self._texture.anchor_x // self._texture.width
+            texture.anchor_y = texture.height * self._texture.anchor_y // self._texture.height
+        if self.background_sprite is None:
+            if texture is not None:
+                self.background_sprite = EntitySprite(texture)
+        elif self.background_sprite._texture != texture:
+            self.background_sprite = EntitySprite(texture)
+        elif texture is None:
+            self.background_sprite = None
+    
+    def update_background_sprite(self):
+        if self.background_sprite is not None:
+            self.background_sprite.update(
+                x = self.x,
+                y = self.y,
+                scale = self.scale,
+                scale_x = self.scale_x,
+                scale_y = self.scale_y,
+                rotation = self.rotation,
+            )
 
     # Property: `animation_offset_x`
 
@@ -199,3 +224,10 @@ class EntitySprite(pyglet.sprite.Sprite):
                         int(vertices[4]), int(vertices[5]),
                         int(vertices[6]), int(vertices[7]))
         self._vertex_list.vertices[:] = vertices
+
+    # Draw Method
+
+    def draw(self):
+        if self.visible and (self.background_sprite is not None):
+            self.background_sprite.draw()
+        super().draw()

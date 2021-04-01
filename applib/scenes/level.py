@@ -15,6 +15,7 @@ from applib.constants import CURSOR_SCALE
 from applib.constants import CUSTOMER_BOUNCE_DISTANCE
 from applib.constants import CUSTOMER_BOUNCE_SPEED
 from applib.constants import CUSTOMER_ORDER_POSITIONS
+from applib.constants import CUSTOMER_ORDER_HEIGHT
 from applib.constants import CUSTOMER_PATIENCE_BAR_HEIGHT
 from applib.constants import CUSTOMER_PATIENCE_BAR_MARGIN
 from applib.constants import CUSTOMER_PATIENCE_BAR_VERTICAL_OFFSET
@@ -246,16 +247,21 @@ class LevelScene(object):
                 order_count = len(entity.order.items)
                 for index, item in enumerate(entity.order.items):
                     processed_items.append(item)
-                    relative_position_x, relative_position_y = CUSTOMER_ORDER_POSITIONS[order_count][index]
+                    order_arc_angle = CUSTOMER_ORDER_POSITIONS[order_count][index]
+                    order_arc_radius = CUSTOMER_ORDER_HEIGHT * view_height + sprite.height / 2
+                    relative_position_x = order_arc_radius * math.sin(math.radians(order_arc_angle))
+                    relative_position_y = order_arc_radius * math.cos(math.radians(order_arc_angle))
                     customer_center = sprite.x + sprite.animation_offset_x
-                    position_x = customer_center + relative_position_x * view_height
-                    customer_top = sprite.y + sprite.height / 2
-                    position_y = customer_top + relative_position_y * view_height
+                    position_x = customer_center + relative_position_x
+                    position_y = sprite.y + relative_position_y
                     item.sprite.layer = sprite.layer + 0.5
                     item.sprite.update(
                         x = position_x,
                         y = position_y,
+                        rotation = order_arc_angle,
                     )
+                    item.sprite.set_background_sprite(pyglet.resource.texture('interface/speech_bubble.png'))
+                    item.sprite.update_background_sprite()
             
             # Move current item sprites to their device.
             if isinstance(entity, applib.model.device.Device):
@@ -274,7 +280,7 @@ class LevelScene(object):
                 if entity not in processed_items:
                     if entity is self.level.held_item:
                         sprite.visible = False
-                    else:
+                    elif DEBUG:
                         self.level.debug_print()
 
     ## Dialogue
@@ -558,6 +564,8 @@ class LevelScene(object):
         app.window.set_mouse_cursor(cursor)
 
     def on_draw(self):
+        view_width, view_height = self.interface.get_content_size()
+
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -573,10 +581,10 @@ class LevelScene(object):
         layer_key = (lambda sprite: sprite.layer)
         self.interface.sprites.sort(key=layer_key)
 
+        # Draw the speech bubbles.
+
         # Render the interface.
         self.interface.draw()
-
-        view_width, view_height = self.interface.get_content_size()
 
         # Draw the patience bars.
         for customer in self.level.customers:

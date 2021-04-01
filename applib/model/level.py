@@ -68,7 +68,7 @@ class Customer(entity.Entity):
             return held_item
     
     def compute_score_fast(self):
-        percentage_remaining_patience = self.get_percent_patience() * 100
+        percentage_remaining_patience = self.get_patience_ratio() * 100
         if percentage_remaining_patience >= 80:
             return 0
         elif percentage_remaining_patience >= 40:
@@ -81,7 +81,7 @@ class Customer(entity.Entity):
             return MAX_SCORE_FROM_CUSTOMER * 0.75
 
     def compute_score_slow(self):
-        percentage_remaining_patience = self.get_percent_patience() * 100
+        percentage_remaining_patience = self.get_patience_ratio() * 100
         if percentage_remaining_patience >= 80:
             return MAX_SCORE_FROM_CUSTOMER * 0.75
         elif percentage_remaining_patience >= 40:
@@ -295,8 +295,8 @@ class TestLevel(Level):
     ]
 
     customer_specification = [
-        (0, [item.DoughnutUncooked]),
-        (5, [item.DoughnutCooked]),
-        (10, [item.DoughnutGlazed]),
-        (15, [item.DoughnutSprinkles]),
+        (0, [item.DoughnutUncooked] * 1),
+        (5, [item.DoughnutCooked] * 2),
+        (10, [item.DoughnutGlazed] * 3),
+        (15, [item.DoughnutSprinkles] * 3),
     ]
