@@ -24,12 +24,19 @@ class ExampleLevel(level.Level):
     ]
 
     customer_spaces_specification = 2
-    fail_score = 40
+
+    fail_ratio = 0.5
 
 
 @pytest.fixture
 def level():
     example_level = ExampleLevel()
+    return example_level
+
+@pytest.fixture
+def slow_level():
+    example_level = ExampleLevel()
+    example_level.serve_style = 'slow'
     return example_level
 
 
@@ -290,24 +297,24 @@ def test_fail_level_from_score(level):
     test = level.has_level_ended()
     assert test is True
 
-def test_level_ended_no_customers_leftr(level):
+def test_slow_level_ended_no_customers_leftr(slow_level):
     for _ in range(int(30 // TICK_LENGTH)):
-        level.tick()
-    level.held_item = item.DoughnutCooked(level)
-    level.interact(level.customers[0])
-    level.tick()
+        slow_level.tick()
+    slow_level.held_item = item.DoughnutCooked(slow_level)
+    slow_level.interact(slow_level.customers[0])
+    slow_level.tick()
     for _ in range(int(10 // TICK_LENGTH)):
-        level.tick()
-    level.held_item = item.DoughnutCooked(level)
-    level.interact(level.customers[0])
-    level.tick()
-    level.held_item = item.DoughnutGlazed(level)
-    level.interact(level.customers[0])
-    level.tick()
-    assert level.fail_score is 40
-    assert level.score < 40
-    assert level.tick_running < level.duration_ticks
-    assert level.has_level_ended() is True
+        slow_level.tick()
+    slow_level.held_item = item.DoughnutCooked(slow_level)
+    slow_level.interact(slow_level.customers[0])
+    slow_level.tick()
+    slow_level.held_item = item.DoughnutGlazed(slow_level)
+    slow_level.interact(slow_level.customers[0])
+    slow_level.tick()
+    assert slow_level.fail_score == 40
+    assert slow_level.score < 40
+    assert slow_level.tick_running < slow_level.duration_ticks
+    assert slow_level.has_level_ended() is True
 
 def test_ruined_doughnut(level):
     level.held_item = item.DoughnutUncooked(level)
