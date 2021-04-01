@@ -606,7 +606,7 @@ class LevelScene(object):
                     bar_x + bar_width, bar_y + bar_height,
                     bar_x, bar_y + bar_height,
                     bar_x, bar_y,
-                    bar_x + bar_full_width, bar_y,
+                    bar_x + min(bar_width, bar_full_width + bar_height), bar_y,
                     bar_x + bar_full_width, bar_y + bar_height,
                     bar_x, bar_y + bar_height,
                 ]),
