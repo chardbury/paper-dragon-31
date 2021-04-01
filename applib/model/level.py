@@ -95,12 +95,17 @@ class Customer(entity.Entity):
 
     def tick(self):
         if len(self.order.items) == 0:
-            self.level.remove_customer(self, True, self.compute_score_slow())
+            if self.level.serve_style == 'slow':
+                score = self.compute_score_slow()
+            elif self.level.serve_style == 'fast':
+                score = self.compute_score_fast()
+            else:
+                raise ValueError
+            self.level.remove_customer(self, True, score)
         else:
             self.patience -= 1
             if self.patience <= 0:
                 self.level.remove_customer(self, False, MAX_SCORE_FROM_CUSTOMER)
-    
 
 
 class Level(pyglet.event.EventDispatcher):
@@ -109,6 +114,8 @@ class Level(pyglet.event.EventDispatcher):
         'on_customer_arrives',
         'on_customer_leaves',
     )
+
+    serve_style = 'slow'
 
     background_scenery = scenery.BackgroundVillage
     device_specification = ()
@@ -242,7 +249,7 @@ class Level(pyglet.event.EventDispatcher):
         elif self.tick_running >= self.duration_ticks:
             # we have run out of time
             # any reminaing customers in queue or at counter show score max sus (and we should probably fail?)
-            score += (len(self.customers) + len(self.customer_specification)) * MAX_SCORE_FROM_CUSTOMER
+            self.score += (len(self.customers) + len(self.customer_specification)) * MAX_SCORE_FROM_CUSTOMER
             self.end_level(False)
             return True
         elif len(self.customers) + len(self.customer_specification) == 0:
