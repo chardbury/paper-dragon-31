@@ -50,6 +50,10 @@ def parse_arguments():
             action='store', dest='start_scene', default=None,
             metavar='SCENE', help='start the application in SCENE')
 
+        debug_group.add_argument('--level',
+            action='store', dest='level', default=0, type=int,
+            metavar='LEVEL', help='start with level number LEVEL')
+
     # Create and store the arguments namespace.
     app.arguments = parser.parse_args()
 

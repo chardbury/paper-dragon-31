@@ -92,6 +92,8 @@ class Controller(pyglet.event.EventDispatcher):
 
         # Switch to the start scene if we are not currently in a scene.
         if app.scene is None:
+            if app.settings.level:
+                app.settings.start_scene = 'applib.scenes.level.LevelScene'
             app.controller.switch_scene(app.settings.start_scene)
 
         # Process enough ticks to catch up to the present.
