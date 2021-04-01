@@ -48,13 +48,15 @@ class Entity(object):
 
         '''
         self.level = level
-        self.level.add_entity(self)
+        if self.level is not None:
+            self.level.add_entity(self)
 
     def destroy(self):
         '''Remove the entity from its level.
 
         '''
-        self.level.remove_entity(self)
+        if self.level is not None:
+            self.level.remove_entity(self)
         self.level = None
 
     #: The texture used to render entities of this class.

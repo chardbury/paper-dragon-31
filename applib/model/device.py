@@ -15,12 +15,16 @@ class Device(entity.Entity):
 
     group = 'devices'
 
-    # The time after complete where the contents become ruined - default None, does not ruin
-    ruined_time = None
+    # The time after complete where the contents become ruined - default 0.0, does not ruin
+    ruined_time = 0.0
+
+    # The time (in ticks) for the contents of the machine to be ruined (computed automatically).
+    ruined_ticks = None
+
     ruined_item = None
 
     #: The duration (in seconds) of one cycle of this device.
-    duration = 1.0
+    duration = 10.0
 
     #: The duration (in ticks) of one cycle of this device (computed automatically).
     duration_ticks = None
@@ -33,6 +37,7 @@ class Device(entity.Entity):
     def __init_subclass__(cls):
         super().__init_subclass__()
         cls.duration_ticks = int(cls.duration // TICK_LENGTH)
+        cls.ruined_ticks = int(cls.ruined_time // TICK_LENGTH)
 
     def __init__(self, level):
         super().__init__(level)
@@ -47,21 +52,14 @@ class Device(entity.Entity):
     def is_finished(self):
         return (self.ticks_remaining is not None) and (self.ticks_remaining <= 0)
 
-    @property
-    def is_ruined(self):
-        return (self.ruined_time is not None) and (self.ticks_remaining is not None) and (self.ticks_remaining <= 0) and (-(self.ruined_time // TICK_LENGTH) > self.ticks_remaining)
-
     def compute_transition(self, first_item_class, second_item_class):
-        # Case 1: Device has ruined current content, if we are holding nothing we return this
-        if self.is_ruined and first_item_class is None:
-            new_first_item_class, new_second_item_class = self.ruined_item, None
-        # Case 2: We have a recipe for the input item and current item; use it.
-        elif (first_item_class, second_item_class) in self.recipes:
+        # Case 1: We have a recipe for the input item and current item; use it.
+        if (first_item_class, second_item_class) in self.recipes:
             new_first_item_class, new_second_item_class = self.recipes[first_item_class, second_item_class]
-        # Case 3: There was no input item; pick up the current item.
+        # Case 2: There was no input item; pick up the current item.
         elif first_item_class is None:
             new_first_item_class, new_second_item_class = second_item_class, None
-        # Case 4: Invalid operation; keep the input item (if any).
+        # Case 3: Invalid operation; keep the input item (if any).
         else:
             new_first_item_class, new_second_item_class = first_item_class, second_item_class
         # Return the results of the transition.
@@ -81,8 +79,11 @@ class Device(entity.Entity):
 
         # Trigger things when items have changed.
         if changed_current:
+            # If we changed over time then the device starts a new cycle.
+            if input_item_class is item.Time:
+                self.ticks_remaining = self.duration_ticks
             # If we added an item then the device needs to be started.
-            if new_item_class is not None:
+            elif new_item_class is not None:
                 self.ticks_remaining = self.duration_ticks
             # If we removed the current item then device needs to be stopped.
             else:
@@ -103,22 +104,25 @@ class Device(entity.Entity):
             new_item = None
         elif (new_item_class is input_item_class) and (output_item is not input_item):
             new_item = input_item
-        elif (output_item_class is current_item_class) and (output_item is not current_item):
+        elif (new_item_class is current_item_class) and (output_item is not current_item):
             new_item = current_item
         else:
             new_item = new_item_class(self.level)
 
         # Make sure that unused items are destroyed.
         if input_item not in (output_item, new_item):
-            input_item.destroy()
+            if isinstance(input_item, item.Item):
+                input_item.destroy()
         if current_item not in (output_item, new_item):
-            current_item.destroy()
+            if isinstance(current_item, item.Item):
+                current_item.destroy()
 
         # Store the new item and return the output item.
         self.current_item = new_item
         return output_item
 
     def interact(self, held_item):
+        return self.add_item(held_item)
         if not self.is_running or self.is_finished:
             return self.add_item(held_item)
         else:
@@ -128,6 +132,13 @@ class Device(entity.Entity):
         super().tick()
         if self.ticks_remaining is not None:
             self.ticks_remaining -= 1
+            if self.ticks_remaining == 0:
+                self.add_item(item.Time)
+        if self.ticks_remaining is not None:
+            if self.ticks_remaining <= -self.ruined_ticks < 0:
+                self.add_item(item.Time)
+                self.ticks_remaining = None
+
 
 
 class AutomaticDevice(Device):
@@ -190,14 +201,15 @@ class Cooking(Device):
 
     name = 'station_cooking'
 
-    ruined_time = 10
-    ruined_item = item.DoughnutBurned
+    ruined_time = 5.0
 
     item_position = (0.0, 0.10)
     
     recipes = {
         (item.DoughnutUncooked, None): (None, item.DoughnutUncooked),
-        (None, item.DoughnutUncooked): (item.DoughnutCooked, None),
+        (item.Time, item.DoughnutUncooked): (None, item.DoughnutCooked),
+        (None, item.DoughnutCooked): (item.DoughnutCooked, None),
+        (item.Time, item.DoughnutCooked): (None, item.DoughnutBurned),
     }
 
 
@@ -209,7 +221,8 @@ class Icing(Device):
     
     recipes = {
         (item.DoughnutCooked, None): (None, item.DoughnutCooked),
-        (None, item.DoughnutCooked): (item.DoughnutGlazed, None),
+        (item.Time, item.DoughnutCooked): (None, item.DoughnutGlazed),
+        (None, item.DoughnutGlazed): (item.DoughnutGlazed, None),
     }
 
 

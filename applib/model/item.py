@@ -18,6 +18,10 @@ class Item(entity.Entity):
         return type(self) is type(other)
 
 
+class Time(Item):
+    pass
+
+
 def load_items():
     indexed_resources = list(pyglet.resource._default_loader._index)
     for resource_name in indexed_resources:
