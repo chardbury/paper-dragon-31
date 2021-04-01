@@ -34,6 +34,7 @@ class Panel(object):
         font_size = 0.1,
         image_texture = None,
         image_color = (255, 255, 255, 255),
+        draw_function = None,
         visible = True,
         ):
 
@@ -51,6 +52,7 @@ class Panel(object):
         self.background_color = background_color
         self.background_texture = background_texture
         self.sprites = list(sprites)
+        self.draw_function = draw_function
         self.visible = visible
 
         # Text
@@ -258,6 +260,8 @@ class Panel(object):
         for content_type, size_method, draw_method in self.content_types:
             if getattr(self, content_type):
                 getattr(self, draw_method)(draw_x, draw_y)
+        if self.draw_function is not None:
+            self.draw_function(draw_x, draw_y)
 
         # Render children
         for child in self._children:

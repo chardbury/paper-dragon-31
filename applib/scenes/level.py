@@ -88,6 +88,10 @@ class LevelScene(object):
             background_color = (100, 100, 220, 255),
         )
 
+        self.overlay = self.interface.add(
+            draw_function = self.draw_overlay,
+        )
+
         self.load_level_sprites()
 
         self.load_dialogue_overlay()
@@ -319,7 +323,7 @@ class LevelScene(object):
             height = 0.15,
             align_x = 0.5,
             align_y = 0.15,
-            text = 'Character Name',
+            text = '',
             text_color = (255, 255, 255, 255),
             text_bold = True,
             text_wrap = False,
@@ -340,7 +344,7 @@ class LevelScene(object):
             height = 0.15,
             align_x = 0.5,
             align_y = 0.15,
-            text = 'Character Name',
+            text = '',
             text_color = (255, 255, 255, 255),
             text_bold = True,
             text_wrap = False,
@@ -598,16 +602,13 @@ class LevelScene(object):
         # Render the interface.
         self.interface.draw()
 
-        self.draw_progress_bars()
-
-    def draw_progress_bars(self):
+    def draw_overlay(self, draw_x, draw_y):
         view_width, view_height = self.interface.get_content_size()
-        offset_x, offset_y = self.interface.get_offset()
         
         left_bar_progress = max(0.0, min(1.0, self.level.get_score_ratio()))
-        left_bar_left = offset_x + PROGRESS_BAR_MARGIN * view_height
+        left_bar_left = draw_x + PROGRESS_BAR_MARGIN * view_height
         left_bar_right = left_bar_left + PROGRESS_BAR_WIDTH * view_width
-        left_bar_top = offset_y + view_height - PROGRESS_BAR_MARGIN * view_height
+        left_bar_top = draw_y + view_height - PROGRESS_BAR_MARGIN * view_height
         left_bar_bottom = left_bar_top - PROGRESS_BAR_HEIGHT * view_height
         left_bar_filled_right = left_bar_left + (left_bar_right - left_bar_left) * left_bar_progress
         left_bar_filled_right_slope = min(left_bar_right, left_bar_filled_right + (left_bar_top - left_bar_bottom))
@@ -626,9 +627,9 @@ class LevelScene(object):
         )
         
         right_bar_progress = max(0.0, min(1.0, self.level.get_time_ratio()))
-        right_bar_right = offset_x + view_width - PROGRESS_BAR_MARGIN * view_height
+        right_bar_right = draw_x + view_width - PROGRESS_BAR_MARGIN * view_height
         right_bar_left = right_bar_right - PROGRESS_BAR_WIDTH * view_width
-        right_bar_top = offset_y + view_height - PROGRESS_BAR_MARGIN * view_height
+        right_bar_top = draw_y + view_height - PROGRESS_BAR_MARGIN * view_height
         right_bar_bottom = right_bar_top - PROGRESS_BAR_HEIGHT * view_height
         right_bar_filled_left = right_bar_right - (right_bar_right - right_bar_left) * right_bar_progress
         right_bar_filled_left_slope = max(right_bar_left, right_bar_filled_left - (right_bar_top - right_bar_bottom))
