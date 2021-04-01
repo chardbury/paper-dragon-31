@@ -76,7 +76,10 @@ class LevelScene(object):
         '''
 
         # Ensure we have an appropriate level.
-        self.level = level or self.create_test_level()
+        level = level or applib.model.level.LevelOne
+        self.level = level()
+        applib.model.scenery.Counter(self.level)
+        
         self.level.push_handlers(self)
 
         # Create the root interface panel.
@@ -88,15 +91,10 @@ class LevelScene(object):
         self.load_level_sprites()
 
         self.load_dialogue_overlay()
+        self.start_scene(self.level.opening_scene)
 
     ## Model
     ## -----
-
-    def create_test_level(self):
-        level = applib.model.level.TestLevel()
-        applib.model.scenery.Counter(level)
-        level.background_scenery(level)
-        return level
 
     def load_level_sprites(self):
         self.sprites_by_entity = {}
@@ -104,8 +102,6 @@ class LevelScene(object):
         self.persisting_sprites = {}
         for entity in self.level.entities:
             self.update_sprite(entity)
-        for device in self.level.devices:
-            sprite = self.update_sprite(device)
 
     _entity_properties = [
         (applib.model.level.Customer, CUSTOMER_SCALE, -1),
@@ -213,6 +209,12 @@ class LevelScene(object):
             move_x = CUSTOMER_POSITIONS[customer_count][index]
             if other_customer is not customer:
                 other_customer.sprite._target_offset_x = move_x * view_height
+
+    def on_level_success(self):
+        self.start_scene(self.level.victory_scene)
+
+    def on_level_fail(self):
+        self.start_scene(self.level.failure_scene)
 
     def on_tick(self):
 
@@ -369,9 +371,10 @@ class LevelScene(object):
         self.scene_lines = None
 
     def start_scene(self, name):
-        self.scene_lines = pyglet.resource.file(f'scenes/{name}.txt', 'r').readlines()
-        self.dialogue_overlay.visible = True
-        self.advance_scene()
+        if name is not None:
+            self.scene_lines = pyglet.resource.file(f'scenes/{name}.txt', 'r').readlines()
+            self.dialogue_overlay.visible = True
+            self.advance_scene()
 
     def advance_scene(self):
         while len(self.scene_lines) > 0:
@@ -410,6 +413,11 @@ class LevelScene(object):
                 self.character_right.image_color = (255, 255, 255, 255)
                 self.character_left.image_color = (75, 75, 75, 255)
                 break
+
+            if command == 'next_level':
+                app.controller.switch_scene(type(self), self.level.next_level)
+            if command == 'repeat_level':
+                app.controller.switch_scene(type(self), type(self.level))
         else:
             self.scene_lines = None
             self.dialogue_overlay.visible = False

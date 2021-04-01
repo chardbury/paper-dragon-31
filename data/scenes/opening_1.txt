@@ -1,0 +1,1 @@
+say_left : opening_1.txt

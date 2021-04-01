@@ -113,17 +113,22 @@ class Level(pyglet.event.EventDispatcher):
     event_types = (
         'on_customer_arrives',
         'on_customer_leaves',
+        'on_level_success',
+        'on_level_fail',
     )
 
     serve_style = 'slow'
-
     background_scenery = scenery.BackgroundVillage
     device_specification = ()
     #format [arrival_time (seconds since start of level), [order]]
     customer_specification = []
     customer_spaces_specification = 1
     fail_score = 10000
-    
+    opening_scene = None
+    victory_scene = None
+    failure_scene = None
+    next_level = None
+
     #seconds
     duration = 60
 
@@ -242,7 +247,7 @@ class Level(pyglet.event.EventDispatcher):
         self.score += score
 
     def get_score_ratio(self):
-        return self.score / (len(type(self).customer_specification) * MAX_SCORE_FROM_CUSTOMER)
+        return self.score / self.fail_score
 
     def get_time_ratio(self):
         return self.tick_running / self.duration_ticks
@@ -268,10 +273,10 @@ class Level(pyglet.event.EventDispatcher):
     def end_level(self, success):
         if success is True:
             #end level with success!
-            pass
+            self.dispatch_event('on_level_success')
         else:
             #end level with fail
-            pass
+            self.dispatch_event('on_level_fail')
 
     
     def tick(self):
@@ -314,3 +319,40 @@ class TestLevel(Level):
         (10, [item.DoughnutGlazed] * 3),
         (15, [item.DoughnutSprinkles] * 3),
     ]
+
+
+class LevelOne(Level):
+
+    opening_scene = 'opening_1'
+    victory_scene = 'victory_1'
+    failure_scene = 'failure_1'
+
+    device_specification = [
+        (device.Dough, -0.5, -0.1),
+        (device.Cooking, 0.0, -0.1),
+        (device.Bin, -0.5, -0.3),
+    ]
+
+    customer_specification = [
+        (2, [item.DoughnutCooked]),
+    ]
+
+
+class LevelTwo(Level):
+
+    opening_scene = 'opening_2'
+    victory_scene = 'victory_2'
+    failure_scene = 'failure_2'
+
+    device_specification = [
+        (device.Dough, -0.5, -0.1),
+        (device.Cooking, 0.0, -0.1),
+        (device.Icing, 0.5, -0.1),
+        (device.Bin, -0.5, -0.3),
+    ]
+
+    customer_specification = [
+        (2, [item.DoughnutGlazed]),
+    ]
+
+LevelOne.next_level = LevelTwo
