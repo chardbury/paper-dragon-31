@@ -117,7 +117,7 @@ class Level(pyglet.event.EventDispatcher):
         'on_level_fail',
     )
 
-    serve_style = 'slow'
+    serve_style = 'fast'
     background_scenery = scenery.BackgroundVillage
     device_specification = ()
     #format [arrival_time (seconds since start of level), [order]]
@@ -331,7 +331,7 @@ class LevelOne(Level):
     victory_scene = 'victory_1'
     failure_scene = 'failure_1'
 
-    serve_style = 'slow'
+    serve_style = 'fast'
     fail_ratio = 0.5
 
     background_scenery = scenery.BackgroundVillage
@@ -353,7 +353,7 @@ class LevelTwo(Level):
     victory_scene = 'victory_2'
     failure_scene = 'failure_2'
 
-    serve_style = 'slow'
+    serve_style = 'fast'
     fail_ratio = 0.5
 
     device_specification = [

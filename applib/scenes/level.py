@@ -278,6 +278,8 @@ class LevelScene(object):
             
             # Move current item sprites to their device.
             if isinstance(entity, applib.model.device.Device):
+                if entity.sprite.x > view_width / 2 and entity.sprite.scale_x > 0:
+                    entity.sprite.scale_x *= -1
                 if entity.current_item is not None:
                     processed_items.append(entity.current_item)
                     entity.current_item.sprite.layer = sprite.layer + 0.5
@@ -672,4 +674,3 @@ class LevelScene(object):
                 ]),
                 ('c4B', [255, 255, 255, 255] * 4 + [0, 0, 255, 255] * 4)
             )
-
