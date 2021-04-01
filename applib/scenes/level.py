@@ -98,6 +98,7 @@ class LevelScene(object):
         self.load_level_sprites()
 
         self.load_dialogue_overlay()
+        self.on_tick()
         self.start_scene(self.level.opening_scene)
 
     ## Model
@@ -284,11 +285,13 @@ class LevelScene(object):
                 if entity.sprite.x > view_width / 2 and entity.sprite.scale_x > 0:
                     entity.sprite.scale_x *= -1
                 if entity.current_item is not None:
+                    flipped = (entity.sprite.x > view_width / 2)
                     processed_items.append(entity.current_item)
+                    item_x, item_y = entity.item_position
                     entity.current_item.sprite.layer = sprite.layer + 0.5
                     entity.current_item.sprite.update(
-                        x = sprite.x,
-                        y = sprite.y,
+                        x = sprite.x + item_x * sprite.width * (-1 if flipped else 1),
+                        y = sprite.y + item_y * sprite.height,
                     )
 
         # Postprocessing for items.

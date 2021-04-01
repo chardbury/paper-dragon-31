@@ -28,6 +28,8 @@ class Device(entity.Entity):
     # input-item, current-item : held-item, new-current-item
     recipes = {}
 
+    item_position = (0.0, 0.0)
+
     def __init_subclass__(cls):
         super().__init_subclass__()
         cls.duration_ticks = int(cls.duration // TICK_LENGTH)
@@ -190,6 +192,8 @@ class Cooking(Device):
 
     ruined_time = 10
     ruined_item = item.DoughnutBurned
+
+    item_position = (0.0, 0.10)
     
     recipes = {
         (item.DoughnutUncooked, None): (None, item.DoughnutUncooked),
@@ -200,6 +204,8 @@ class Cooking(Device):
 class Icing(Device):
 
     name = 'station_icing'
+
+    item_position = (0.15, -0.3)
     
     recipes = {
         (item.DoughnutCooked, None): (None, item.DoughnutCooked),
