@@ -110,6 +110,7 @@ class Level(pyglet.event.EventDispatcher):
         'on_customer_leaves',
     )
 
+    background_scenery = scenery.BackgroundVillage
     device_specification = ()
     #format [arrival_time (seconds since start of level), [order]]
     customer_specification = []

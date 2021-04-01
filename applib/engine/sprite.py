@@ -106,6 +106,14 @@ class EntitySprite(pyglet.sprite.Sprite):
                 rotation = self.rotation,
             )
 
+    # Overlay
+
+    overlay_function = None
+
+    def draw_overlay(self):
+        if self.overlay_function is not None:
+            self.overlay_function(self)
+
     # Property: `animation_offset_x`
 
     _target_offset_x = 0
@@ -231,3 +239,4 @@ class EntitySprite(pyglet.sprite.Sprite):
         if self.visible and (self.background_sprite is not None):
             self.background_sprite.draw()
         super().draw()
+        self.draw_overlay()

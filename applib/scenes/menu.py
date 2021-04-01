@@ -93,7 +93,7 @@ class MenuScene(object):
             height = 0.84,
             align_y = 0.58,
             anchor_y = 0.5,
-            image_texture = pyglet.resource.texture('scenery/background_village.jpg')
+            image_texture = pyglet.resource.texture('interface/title.png')
         )
 
         self.play_button = self.interface.add(
