@@ -92,6 +92,7 @@ class LevelScene(object):
     def create_test_level(self):
         level = applib.model.level.TestLevel()
         applib.model.scenery.Counter(level)
+        applib.model.scenery.BackgroundVillage(level)
         return level
 
     def load_level_sprites(self):
@@ -107,7 +108,7 @@ class LevelScene(object):
         (applib.model.level.Customer, CUSTOMER_SCALE, -1),
         (applib.model.device.Device, DEVICE_SCALE, 1),
         (applib.model.item.Item, ITEM_SCALE, 2),
-        (applib.model.scenery.Scenery, SCENERY_SCALE, 0),
+        (applib.model.scenery.Scenery, SCENERY_SCALE, None),
     ]
 
     def update_sprite(self, entity):
@@ -142,6 +143,8 @@ class LevelScene(object):
                 sprite.scale = (relative_height * view_height) / texture.height
                 if sprite_layer is not None:
                     sprite.layer = sprite_layer
+                elif hasattr(entity, 'get_layer'):
+                    sprite.layer = entity.get_layer()
 
                 # Position the sprite.
                 if move_x is not None:
