@@ -373,20 +373,21 @@ class LevelScene(object):
         )
 
         self.message_container = self.dialogue_overlay.add(
-            width = 0.9,
-            height = 0.25,
+            width = 0.8,
+            height = 0.2,
             padding = 0.02,
             align_x = 0.5,
             align_y = 0.3,
             anchor_y = 1.0,
-            background_color = (200, 50, 50, 255),
-            frame_texture = pyglet.resource.texture('interface/dialogue_border.png'),
+            background_color = (200, 200, 200, 255),
+            frame_texture = pyglet.resource.texture('interface/border.png'),
+            frame_width = 0.15,
         )
 
         self.message_area = self.message_container.add(
             align_y = 1.0,
             align_x = 0.0,
-            text_color = (255, 255, 255, 255),
+            text_color = (0, 0, 0, 255),
             font_size = 0.03,
         )
 
@@ -757,7 +758,7 @@ class LevelScene(object):
                 ]),
                 ('c4B', [255, 255, 255, 255] * 4 + color * 4)
             )
-            texture = pyglet.resource.texture('interface/dialogue_border.png')
+            texture = pyglet.resource.texture('interface/border.png')
             self.draw_frame(texture, bar_x, bar_y, bar_width, bar_height, bar_height / 2)
 
     def draw_frame(self, texture, left, bottom, width, height, size):
