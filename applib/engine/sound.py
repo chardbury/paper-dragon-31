@@ -13,8 +13,17 @@ from applib import app
 
 class Sound(object):
 
+    sounds = []
+
     def __init__(self):
+        self.sounds.append(self)
         self.sources = []
+
+    @classmethod
+    def _preload(cls, delta):
+        for sound in cls.sounds:
+            for source in sound.sources:
+                source.play().volume = 0.0
 
     def add(self, source_name):
         source = pyglet.resource.media(f'sounds/{source_name}.mp3', streaming=False)
@@ -36,3 +45,5 @@ def load_sounds():
 
 load_sounds()
 del load_sounds
+
+pyglet.clock.schedule_once(Sound._preload, 0.0)
