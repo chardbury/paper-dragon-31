@@ -1,0 +1,7 @@
+set_image_left : cop_dog
+set_name_left : Sgt. Dognut
+set_image_right : cop_rabbit
+set_name_left : Constable Iced Bun
+say_left : Comissioner Peanut would really like these.
+say_left : It's a pity she's at the police picnic at Vermillion Orchard.
+next_level :

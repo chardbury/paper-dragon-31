@@ -1,0 +1,6 @@
+set_image_left : cook_flynn
+set_name_left : Flynn
+set_image_right : scrumper_patches
+set_name_right : Patches
+say_left : That was close. We need a way to keep them at the stall longer.
+say_right : I know! Plates! If we give them plates they'll have to stick around to eat them.

@@ -1,0 +1,13 @@
+set_left_image : cop_elephant
+set_left_name : Constable Peanut
+say_left : I've caught you, you naughty scrumpers
+say_left : The punishment for disrupting our picnic is...
+say_left : LITTER PICKING.
+set_image_right : scrumper_patches
+set_name_right : Patches
+say_right : Oh dear.
+say left: And I'm telling your parents.
+set_image_right : cook_flynn
+set_name_right : Flynn
+say_right : Oh no!
+repeat_level :
