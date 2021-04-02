@@ -679,7 +679,7 @@ class LevelScene(object):
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t3f', bg_texture.tex_coords), ('c4B', [255] * 16))
         glPopAttrib()
 
-        progress = 1.0#max(0.0, min(1.0, self.level.get_score_ratio()))
+        progress = max(0.0, min(1.0, self.level.get_score_ratio()))
         left_offset = 0.15
         bottom_offset = 0.25
         right_offset = 0.12
