@@ -255,15 +255,13 @@ class LevelScene(object):
             move_x = CUSTOMER_POSITIONS[customer_count][index]
             other_customer.sprite._target_offset_x = move_x * view_height
             if other_customer is customer:
-                direction = 1 if (random.random() * view_width < move_x * view_height) else -1
-                customer.sprite.animation_offset_x = direction * view_width / 2
+                customer.sprite.animation_offset_x = view_width / 2
 
     def on_customer_leaves(self, customer):
         view_width, view_height = self.interface.get_content_size()
 
         # Have the leaving customer walk off.
-        direction = 1 if (random.random() * view_width < customer.sprite.x) else -1
-        customer.sprite._target_offset_x = direction * view_width
+        customer.sprite._target_offset_x = -view_width
         self.persisting_sprites[customer.sprite] = (lambda:
             abs(customer.sprite.animation_offset_x) > view_width / 2)
 
@@ -272,7 +270,7 @@ class LevelScene(object):
         for index, other_customer in enumerate(self.level.customers):
             move_x = CUSTOMER_POSITIONS[customer_count][index]
             if other_customer is not customer:
-                other_customer.sprite._target_offset_x = move_x * view_height
+                other_customer.sprite._target_offset_x = -move_x * view_height
 
     def on_level_success(self):
         self.start_scene(self.level.victory_scene, 1.0)
