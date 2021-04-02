@@ -44,7 +44,7 @@ class Customer(entity.Entity):
 
     def __init__(self, level, order, customer_type=None):
         if customer_type is None:
-            self.name = random.choice(list(self.customer_images))
+            self.name = random.choice(list(self.customer_patience))
         else:
             self.name = customer_type
         super().__init__(level)
@@ -360,8 +360,8 @@ class TestLevel(Level):
     ]
 
     customer_specification = [
-        (0, 'cop_dog', [item.DoughnutUncooked] * 1),
-        (5, 'cop_elephant', [item.DoughnutCooked] * 2),
+        (0, 'cop_rabbit', [item.DoughnutUncooked] * 1),
+        (5, 'friend_patches', [item.DoughnutCooked] * 2),
         (10, 'cop_rabbit', [item.DoughnutIcedBlue] * 3),
         (15, 'friend_patches', [item.DoughnutFinalBluePurple] * 3),
     ]

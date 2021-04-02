@@ -40,4 +40,6 @@ The following assets are licensed or attributed thusly:
 - Sound, "Bird Whistling by InspectorJ", https://freesound.org/people/InspectorJ/sounds/339326/, CC BY 3.0
 - Sound, "Gas Fire by Fogma", https://freesound.org/people/fogma/sounds/32647/, CC BY 3.0
 - Sound, "Deep Frying by Benboncan", https://freesound.org/people/Benboncan/sounds/80082/, CC BY 3.0
+- Sound, "Success Jingle by Kastenfrosch", https://freesound.org/people/Kastenfrosch/sounds/521949/, CC0 1.0
+- Sound, "Sad Trombone by kirbydx", https://freesound.org/people/kirbydx/sounds/175409/, CC0 1.0
 - Font, "Lato". https://fonts.google.com/specimen/Lato, OFL

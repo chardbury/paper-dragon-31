@@ -133,12 +133,14 @@ class LevelScene(object):
         self.fade_animation = animation.QueuedAnimation(
             animation.AttributeAnimation(self, 'scene_fade', 0.0, 1.0),
         ).start()
+        self.dialogue_animation = None
 
         self.load_level_sprites()
 
         self.load_dialogue_overlay()
         self.on_tick()
         self.start_scene(self.level.opening_scene)
+        self.paw_animations = {}
 
     ## Model
     ## -----
@@ -273,10 +275,12 @@ class LevelScene(object):
                 other_customer.sprite._target_offset_x = move_x * view_height
 
     def on_level_success(self):
-        self.start_scene(self.level.victory_scene)
+        self.start_scene(self.level.victory_scene, 1.0)
+        sound.success()
 
     def on_level_fail(self):
-        self.start_scene(self.level.failure_scene)
+        self.start_scene(self.level.failure_scene, 1.0)
+        sound.sad_trombone()
 
     fade_animation = None
 
@@ -286,12 +290,7 @@ class LevelScene(object):
 
         if self.dialogue_overlay.visible:
             # Do dialogue things here.
-            if self.fade_animation in app.animation:
-                self.fade_animation.tick()
-            for anim in app.animation:
-                if (getattr(anim, 'thing', None) == self) and (getattr(anim, 'name', None) == 'scene_fade'):
-                    anim.tick()
-            return pyglet.event.EVENT_HANDLED
+            return
 
         view_width, view_height = self.interface.get_content_size()
 
@@ -313,9 +312,10 @@ class LevelScene(object):
             if sprite not in found_sprites:
                 sprite.stop_animation()
                 self.interface.sprites.remove(sprite)
-                entity = self.entities_by_sprite[sprite]
-                del self.entities_by_sprite[sprite]
-                del self.sprites_by_entity[entity]
+                if sprite in self.entities_by_sprite:
+                    entity = self.entities_by_sprite[sprite]
+                    del self.entities_by_sprite[sprite]
+                    del self.sprites_by_entity[entity]
 
         # Update remaining sprites.
         processed_items = []
@@ -344,6 +344,47 @@ class LevelScene(object):
                     bubble = pyglet.resource.texture('interface/bubble.png')
                     item.sprite.set_background_sprite(bubble)
                     item.sprite.update_background_sprite()
+
+                # Paw animation
+                paw_name = f'customers/{entity.name}_paw.png'
+                if paw_name in pyglet.resource._default_loader._index:
+                    if not sprite.foreground_sprite:
+                        texture = pyglet.resource.texture(paw_name)
+                        sprite.set_foreground_sprite(texture)
+                        fg = sprite.foreground_sprite
+                        fg.visible = False
+                        fg.layer = sprite.layer
+                        self.persisting_sprites[fg] = lambda: False
+                        self.interface.sprites.append(fg)
+                    sprite.update_foreground_sprite()
+                    fg = sprite.foreground_sprite
+
+                    customer_is_moving = (sprite.animation_offset_x != 0.0)
+                    paws_on_counter = (fg.animation_offset_y == 0.0 and fg.layer == 0.1)
+                    paws_are_animating = (entity in self.paw_animations) and (self.paw_animations[entity] in app.animation)
+
+                    if not paws_are_animating:
+                        if customer_is_moving and paws_on_counter:
+                            # Animate off counter
+                            fg.visible = True
+                            fg.animation_offset_y = 0.0
+                            fg.layer = 0.1
+                            self.paw_animations[entity] = animation.QueuedAnimation(
+                                animation.AttributeAnimation(fg, 'animation_offset_y', 0.03 * fg.height, 0.4, 'symmetric'),
+                                animation.WaitAnimation(0.0, lambda fg=fg, sp=sprite: setattr(fg, 'layer', sp.layer+0.1)),
+                                animation.AttributeAnimation(fg, 'animation_offset_y', -0.1 * fg.height, 0.8, 'symmetric'),
+                            ).start()
+                        elif not customer_is_moving and not paws_on_counter:
+                            # Animate on counter
+                            fg.visible = True
+                            fg.animation_offset_y = -0.1 * fg.height
+                            fg.layer = sprite.layer + 0.1
+                            self.paw_animations[entity] = animation.QueuedAnimation(
+                                animation.AttributeAnimation(fg, 'animation_offset_y', 0.03 * fg.height, 0.8, 'symmetric'),
+                                animation.WaitAnimation(0.0, lambda fg=fg: setattr(fg, 'layer', 0.1)),
+                                animation.AttributeAnimation(fg, 'animation_offset_y', 0.0, 0.4, 'symmetric'),
+                            ).start()
+                        
             
             # Move current item sprites to their device.
             if isinstance(entity, applib.model.device.Device):
@@ -420,7 +461,7 @@ class LevelScene(object):
             width = 0.25,
             height = 0.5,
             align_x = 0.15,
-            align_y = 0.35,
+            align_y = 0.38,
             anchor_y = 0.0,
         )
 
@@ -428,8 +469,8 @@ class LevelScene(object):
             padding = -0.05,
             width = 1.0,
             height = 0.15,
-            align_x = 0.5,
-            align_y = 0.15,
+            align_x = 0.0,
+            align_y = 0.14,
             text = '',
             text_color = (0, 0, 0, 255),
             text_bold = True,
@@ -445,15 +486,16 @@ class LevelScene(object):
             width = 0.25,
             height = 0.5,
             align_x = 0.85,
-            align_y = 0.35,
+            align_y = 0.38,
             anchor_y = 0.0,
         )
 
         self.name_right = self.character_right.add(
+            padding = -0.05,
             width = 1.0,
             height = 0.15,
-            align_x = 0.5,
-            align_y = 0.15,
+            align_x = 1.0,
+            align_y = 0.14,
             text = '',
             text_color = (0, 0, 0, 255),
             text_bold = True,
@@ -488,11 +530,26 @@ class LevelScene(object):
 
         self.scene_lines = None
 
-    def start_scene(self, name):
+    def start_scene(self, name, slowly=None):
         if name is not None:
+            self.name_left.text_update(None)
+            self.name_right.text_update(None)
+            self.name_left.visible = False
+            self.name_right.visible = False
+            self.character_left.image_texture = None
+            self.character_right.image_texture = None
+            self.message_container.visible = False
+            self.message_area.text_update(None)
             self.scene_lines = pyglet.resource.file(f'scenes/{name}.txt', 'r').readlines()
             self.dialogue_overlay.visible = True
-            self.advance_scene()
+            if slowly is not None:
+                self.dialogue_overlay.background_opacity = 0.0
+                self.dialogue_animation = animation.QueuedAnimation(
+                    animation.AttributeAnimation(self.dialogue_overlay, 'background_opacity', 0.8, slowly, 'symmetric'),
+                    animation.WaitAnimation(0.3, self.advance_scene),
+                ).start()
+            else:
+                self.advance_scene()
 
     def advance_scene(self):
         while len(self.scene_lines) > 0:
@@ -515,9 +572,10 @@ class LevelScene(object):
             if command == 'set_left_name':
                 self.name_left.text_update(value or None)
             if command == 'set_right_name':
-                self.name_left.text_update(value or None)
+                self.name_right.text_update(value or None)
 
             if command == 'say_left':
+                self.message_container.visible = True
                 self.message_area.text_update(value)
                 self.name_left.visible = bool(self.name_left.text)
                 self.name_right.visible = False
@@ -525,6 +583,7 @@ class LevelScene(object):
                 self.character_right.image_color = (75, 75, 75, 255)
                 break
             if command == 'say_right':
+                self.message_container.visible = True
                 self.message_area.text_update(value)
                 self.name_right.visible = bool(self.name_right.text)
                 self.name_left.visible = False
@@ -545,6 +604,14 @@ class LevelScene(object):
                     animation.WaitAnimation(0.5, app.controller.switch_scene, type(self), type(self.level)),
                 ).start()
                 break
+
+            if command == 'win_game':
+                self.fade_animation = animation.QueuedAnimation(
+                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+                    animation.WaitAnimation(0.5, app.controller.switch_scene, applib.scenes.victory.VictoryScene),
+                ).start()
+                break
+
         else:
             self.scene_lines = None
             self.dialogue_overlay.visible = False
@@ -581,7 +648,7 @@ class LevelScene(object):
         '''
         offset_x, offset_y = self.interface.get_offset()
         for sprite in reversed(self.interface.sprites):
-            if sprite._can_click_through:
+            if getattr(sprite, '_can_click_through', True):
                 continue
             texture = sprite._texture
             # 1. Get the position of the target relative to the sprite in the window frame.
