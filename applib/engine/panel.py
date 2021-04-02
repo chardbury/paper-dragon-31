@@ -239,7 +239,54 @@ class Panel(object):
         draw_y += offset_y
 
         # Render background
-        if self.background_color is not None or self.background_texture is not None:
+        if self.background_texture is not None:
+            tex_coords = self.background_texture.tex_coords
+            frame_width = self.frame_width * parent_height
+            vertex_data = [
+                # Bottom-left corner
+                draw_x - padding - frame_width, draw_y - padding - frame_width,
+                draw_x - padding, draw_y - padding - frame_width,
+                draw_x - padding - frame_width, draw_y - padding,
+                draw_x - padding, draw_y - padding,
+                # Bottom-right corner
+                draw_x + padding + width, draw_y - padding - frame_width,
+                draw_x + padding + width + frame_width, draw_y - padding - frame_width,
+                draw_x + padding + width, draw_y - padding,
+                draw_x + padding + width + frame_width, draw_y - padding,
+                # Top-left corner
+                draw_x - padding - frame_width, draw_y + padding + height,
+                draw_x - padding, draw_y + padding + height,
+                draw_x - padding - frame_width, draw_y + padding + height + frame_width,
+                draw_x - padding, draw_y + padding + height + frame_width,
+                # Top-right corner
+                draw_x + padding + width, draw_y + padding + height,
+                draw_x + padding + width + frame_width, draw_y + padding + height,
+                draw_x + padding + width, draw_y + padding + height + frame_width,
+                draw_x + padding + width + frame_width, draw_y + padding + height + frame_width,
+            ]
+            tx1, ty1 = tex_coords[0:2]
+            tx2, ty2 = tex_coords[6:8]
+            txm = (tx1 + tx2) / 2
+            tym = (ty1 + ty2) / 2
+            texture_data = [
+                # Bottom-left corner
+                tx1, ty1, txm, ty1, tx1, tym, txm, tym,
+                # Bottom-right corner
+                txm, ty1, tx2, ty1, txm, tym, tx2, tym,
+                # Top-left corner
+                tx1, tym, txm, tym, tx1, ty2, txm, ty2,
+                # Top-right corner
+                txm, tym, tx2, tym, txm, ty2, tx2, ty2,
+            ]
+            glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+            glEnable(self.background_texture.target)
+            glBindTexture(self.background_texture.target, self.background_texture.id)
+            color = self.background_color or (255, 255, 255, 255)
+            pyglet.graphics.draw_indexed(16, GL_TRIANGLE_STRIP,
+                [0, 1, 2, 3, 8, 9, 10, 9, 11, 9, 14, 12, 15, 12, 13, 12, 7, 6, 5, 6, 4, 6, 1, 3, 3, 6, 9, 12],
+                ('v2f', vertex_data), ('t2f', texture_data), ('c4B', color * 16))
+            glPopAttrib()
+        elif self.background_color is not None:
             color = self.background_color or [255, 255, 255, 255]
             extra_width = padding + self.frame_width * parent_height / 2
             data = [

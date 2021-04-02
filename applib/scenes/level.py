@@ -333,7 +333,7 @@ class LevelScene(object):
             height = 1.0,
             align_x = 0.5,
             align_y = 0.5,
-            background_color = (0, 0, 0, 240),
+            background_color = (240, 240, 240, 255),
             visible = False,
         )
 
@@ -341,28 +341,32 @@ class LevelScene(object):
             width = 0.25,
             height = 0.5,
             align_x = 0.15,
-            align_y = 0.3,
+            align_y = 0.35,
             anchor_y = 0.0,
         )
 
         self.name_left = self.character_left.add(
+            padding = -0.05,
             width = 1.0,
             height = 0.15,
             align_x = 0.5,
             align_y = 0.15,
             text = '',
-            text_color = (255, 255, 255, 255),
+            text_color = (0, 0, 0, 255),
             text_bold = True,
             text_wrap = False,
             font_size = 0.03,
             visible = False,
+            background_color = (230, 230, 230, 255),
+            frame_texture = pyglet.resource.texture('interface/border_plain.png'),
+            frame_width = 0.15,
         )
 
         self.character_right = self.dialogue_overlay.add(
             width = 0.25,
             height = 0.5,
             align_x = 0.85,
-            align_y = 0.3,
+            align_y = 0.35,
             anchor_y = 0.0,
         )
 
@@ -372,11 +376,14 @@ class LevelScene(object):
             align_x = 0.5,
             align_y = 0.15,
             text = '',
-            text_color = (255, 255, 255, 255),
+            text_color = (0, 0, 0, 255),
             text_bold = True,
             text_wrap = False,
             font_size = 0.03,
             visible = False,
+            background_color = (230, 230, 230, 255),
+            frame_texture = pyglet.resource.texture('interface/border_plain.png'),
+            frame_width = 0.15,
         )
 
         self.message_container = self.dialogue_overlay.add(
@@ -386,7 +393,7 @@ class LevelScene(object):
             align_x = 0.5,
             align_y = 0.3,
             anchor_y = 1.0,
-            background_color = (200, 200, 200, 255),
+            background_color = (230, 230, 230, 255),
             frame_texture = pyglet.resource.texture('interface/border.png'),
             frame_width = 0.15,
         )
@@ -647,6 +654,23 @@ class LevelScene(object):
 
         # Render the interface.
         self.interface.draw()
+
+        # Render overlay
+        overlay_texture = pyglet.resource.texture('overlays/burlap_256.png')
+        glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+        glEnable(overlay_texture.target)
+        glBindTexture(overlay_texture.target, overlay_texture.id)
+        glTexParameteri(overlay_texture.target, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        glTexParameteri(overlay_texture.target, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        x, y = map(int, self.interface.get_offset())
+        w, h = map(int, self.interface.get_content_size())
+        x, y = 0, 0
+        w, h = app.window.get_size()
+        vertex_data = [x, y, x + w, y, x + w, y + h, x, y + h]
+        texture_data = [v / overlay_texture.width for v in [x, y, x + w, y, x + w, y + h, x, y + h]]
+        color_data = [255, 255, 255, 255] * 4
+        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t2f', texture_data), ('c4B', color_data))
+        glPopAttrib()
 
         # Render fade
         if self.scene_fade > 0.0:
