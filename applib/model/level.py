@@ -451,7 +451,7 @@ class LevelFour(Level):
     background_scenery = scenery.BackgroundHill
     customer_spaces_specification = 3
 
-    duration = 35
+    duration = 60
 
     opening_scene = 'level_4_opening'
     victory_scene = 'level_4_victory'
@@ -475,10 +475,9 @@ class LevelFour(Level):
     customer_specification = [
         (1, 'cop_elephant', [item.DoughnutFinalBluePurple]),
         (7, 'cop_rabbit', [item.DoughnutCooked, item.DoughnutIcedBlue]),
-        (12, 'cop_dog', [item.DoughnutFinalPinkYellow, item.DoughnutFinalPinkPurple]),
-        (13, 'cop_rabbit', [item.DoughnutCooked, item.DoughnutIcedPink]),
-        (17, 'cop_elephant', [item.DoughnutIcedBlue, item.DoughnutIcedPink, item.DoughnutCooked]),
-        (25, 'friend_patches', [item.DoughnutBurned]),
+        (17, 'cop_dog', [item.DoughnutIcedPink]),
+        (18, 'cop_rabbit', [item.DoughnutCooked]),
+        (25, 'cop_elephant', [item.DoughnutFinalPinkYellow, item.DoughnutFinalPinkPurple, item.DoughnutCooked]),
     ]
 
 LevelOne.next_level = LevelTwo

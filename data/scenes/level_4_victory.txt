@@ -5,4 +5,4 @@ set_name_right : Patches
 say_left : Patches, we need to stop.
 say_right : Why? are the cops too suspicous?
 say_left : No, but we've run out of room for apples in the Doughnut wagon
-next_level :
+win_game :
