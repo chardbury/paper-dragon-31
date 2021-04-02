@@ -36,10 +36,10 @@ class Customer(entity.Entity):
     group = 'customers'
 
     customer_patience = {
-        'cop_dog': 10,
+        'cop_dog': 15,
         'cop_elephant': 50,
         'cop_rabbit': 30,
-        'friend_patches': 30,
+        'friend_patches': 5,
     }
 
     def __init__(self, level, order, customer_type=None):
@@ -371,6 +371,8 @@ class TestLevel(Level):
 
 class LevelOne(Level):
 
+    background_scenery = scenery.BackgroundVillage
+
     opening_scene = 'level_1_opening'
     victory_scene = 'level_1_victory'
     failure_scene = 'level_1_failure'
@@ -378,20 +380,21 @@ class LevelOne(Level):
     serve_style = 'fast'
     fail_ratio = 0.5 
 
-    background_scenery = scenery.BackgroundVillage
-
     device_specification = [
-        (device.Dough, -0.5, -0.1),
-        (device.Cooking, 0.0, -0.1),
-        (device.Bin, -0.5, -0.3),
+        (device.Dough, -0.5, -0.2),
+        (device.Cooking, 0.25, -0.15),
+        (device.Bin, 0.75, -0.4),
     ]
 
     customer_specification = [
-        (2, [item.DoughnutCooked, item.DoughnutCooked, item.DoughnutCooked]),
+        (2, 'cop_rabbit' ,[item.DoughnutCooked] * 3),
     ]
 
 
 class LevelTwo(Level):
+
+    background_scenery = scenery.BackgroundVillage
+    customer_spaces_specification = 2
 
     opening_scene = 'level_2_opening'
     victory_scene = 'level_2_victory'
@@ -401,54 +404,81 @@ class LevelTwo(Level):
     fail_ratio = 0.5
 
     device_specification = [
-        (device.Dough, -0.5, -0.1),
-        (device.Cooking, 0.0, -0.1),
-        (device.IcingBlue, 0.5, -0.1),
-        (device.Bin, -0.5, -0.3),
+        (device.Dough, -0.5, -0.2),
+        (device.Cooking, 0.25, -0.15),
+        (device.IcingBlue, 0.5, -0.05),
+        (device.Bin, 0.75, -0.4),
     ]
 
     customer_specification = [
-        (2, [item.DoughnutIcedBlue]),
+        (2, 'cop_dog', [item.DoughnutIcedBlue]),
+        (10, 'friend_patches', [item.DoughnutUncooked]),
+        (15, 'cop_rabbit', [item.DoughnutCooked]),
+        (17, 'cop_dog', [item.DoughnutIcedBlue] * 2),
     ]
 
 class LevelThree(Level):
+
+    background_scenery = scenery.BackgroundVillage
+    customer_spaces_specification = 2
 
     opening_scene = 'level_3_opening'
     victory_scene = 'level_3_victory'
     failure_scene = 'level_3_failure'
 
     serve_style = 'fast'
-    fail_ratio = 0.5
+    fail_ratio = 0.75
 
     device_specification = [
-        (device.Dough, -0.5, -0.1),
-        (device.Cooking, 0.0, -0.1),
-        (device.IcingBlue, 0.5, -0.1),
-        (device.Bin, -0.5, -0.3),
+        (device.Dough, -0.5, -0.2),
+        (device.Cooking, 0.25, -0.15),
+        (device.IcingBlue, 0.5, -0.05),
+        (device.IcingPink, 0.6, -0.15),
+        (device.Plating, 0.0, -0.1),
+        (device.Plate, 0.0, -0.29),
+        (device.Bin, 0.75, -0.4),
     ]
 
     customer_specification = [
-        (2, [item.DoughnutIcedBlue]),
+        (2, 'cop_dog', [item.DoughnutIcedPink]),
+        (8, 'cop_rabbit', [item.DoughnutIcedPink, item.DoughnutCooked]),
+        (12, 'cop_dog', [item.DoughnutIcedBlue]),
+        (20, 'cop_rabbit', [item.DoughnutIcedBlue, item.DoughnutIcedPink]),
     ]
 
 class LevelFour(Level):
+
+    background_scenery = scenery.BackgroundHill
+    customer_spaces_specification = 3
+
+    duration = 35
 
     opening_scene = 'level_4_opening'
     victory_scene = 'level_4_victory'
     failure_scene = 'level_4_failure'
 
     serve_style = 'fast'
-    fail_ratio = 0.5
+    fail_ratio = 0.9
 
     device_specification = [
-        (device.Dough, -0.5, -0.1),
-        (device.Cooking, 0.0, -0.1),
-        (device.IcingBlue, 0.5, -0.1),
-        (device.Bin, -0.5, -0.3),
+        (device.Dough, -0.5, -0.2),
+        (device.Cooking, 0.25, -0.15),
+        (device.IcingBlue, 0.5, -0.05),
+        (device.IcingPink, 0.6, -0.15),
+        (device.Plating, 0.0, -0.1),
+        (device.Plate, 0.0, -0.29),
+        (device.Bin, 0.75, -0.4),
+        (device.SprinklesPurple, -0.25, -0.1),
+        (device.SprinklesYellow, -0.2, -0.25),
     ]
 
     customer_specification = [
-        (2, [item.DoughnutIcedBlue]),
+        (1, 'cop_elephant', [item.DoughnutFinalBluePurple]),
+        (7, 'cop_rabbit', [item.DoughnutCooked, item.DoughnutIcedBlue]),
+        (12, 'cop_dog', [item.DoughnutFinalPinkYellow, item.DoughnutFinalPinkPurple]),
+        (13, 'cop_rabbit', [item.DoughnutCooked, item.DoughnutIcedPink]),
+        (17, 'cop_elephant', [item.DoughnutIcedBlue, item.DoughnutIcedPink, item.DoughnutCooked]),
+        (25, 'friend_patches', [item.DoughnutBurned]),
     ]
 
 LevelOne.next_level = LevelTwo

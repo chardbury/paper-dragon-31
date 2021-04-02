@@ -239,6 +239,8 @@ class Cooking(Device):
 
     name = 'station_cooking'
 
+    duration = 5.0
+
     ruined_time = 5.0
 
     item_position = (0.0, 0.10)
@@ -264,6 +266,8 @@ class IcingBlue(Device):
 
     name = 'station_icing_blue'
 
+    duration = 3.0
+
     item_position = (0.15, -0.3)
     
     recipes = {
@@ -276,6 +280,8 @@ class IcingBlue(Device):
 class IcingPink(Device):
 
     name = 'station_icing_pink'
+
+    duration = 2.0
 
     item_position = (0.15, -0.3)
     
