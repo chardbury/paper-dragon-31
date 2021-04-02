@@ -36,34 +36,64 @@ from applib.engine import sound
 from pyglet.gl import *
 
 
-class ScaledImageMouseCursor(pyglet.window.ImageMouseCursor):
+class HeldItemMouseCursor(pyglet.window.ImageMouseCursor):
 
-    def __init__(self, image, height, hot_x=0.0, hot_y=0.0):
+    def __init__(self, scene, height, image, hot_x=0.0, hot_y=0.0):
         super().__init__(image, hot_x, hot_y)
+        self.scene = scene
         self.height = height
     
     def draw(self, x, y):
+        held = self.scene.level.held_item
+        if held is None:
+            texture = self.texture
+            return
+        else:
+            texture = held.sprite._texture
 
         # Compute the coordinates of the cursor box.
-        scale = self.height / self.texture.height
+        scale = self.height / texture.height
         x1 = x - self.hot_x * scale
         y1 = y - self.hot_y * scale
-        x2 = x1 + self.texture.width * scale
-        y2 = y1 + self.texture.height * scale
+        x2 = x1 + texture.width * scale
+        y2 = y1 + texture.height * scale
 
         # Render the texture in the cursor box.
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glEnable(self.texture.target)
-        glBindTexture(self.texture.target, self.texture.id)
+        glEnable(texture.target)
+        glBindTexture(texture.target, texture.id)
         pyglet.graphics.draw_indexed(4, GL_TRIANGLES,
             [0, 1, 2, 0, 2, 3],
             ('v2f', [x1, y1, x2, y1, x2, y2, x1, y2]),
-            ('t3f', self.texture.tex_coords),
+            ('t3f', texture.tex_coords),
             ('c4B', [255] * 16),
         )
         glPopAttrib()
+
+        if held.holds:
+            subtexture = held.holds.sprite._texture
+            off_x, off_y = held.holds_position
+            off_x *= held.sprite.width
+            off_y *= held.sprite.height
+            scale = self.height / subtexture.height
+            x1 = x - self.hot_x * scale + off_x
+            y1 = y - self.hot_y * scale + off_y
+            x2 = x1 + subtexture.width * scale
+            y2 = y1 + subtexture.height * scale
+            glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            glEnable(subtexture.target)
+            glBindTexture(subtexture.target, subtexture.id)
+            pyglet.graphics.draw_indexed(4, GL_TRIANGLES,
+                [0, 1, 2, 0, 2, 3],
+                ('v2f', [x1, y1, x2, y1, x2, y2, x1, y2]),
+                ('t3f', subtexture.tex_coords),
+                ('c4B', [255] * 16),
+            )
+            glPopAttrib()
 
 
 class LevelScene(object):
@@ -650,34 +680,20 @@ class LevelScene(object):
     ## Rendering
     ## ---------
 
-    _cursor_cache = {}
+    _held_item_cursor = None
 
-    def set_cursor(self, image):
-        '''Use the texture from the given object as the mouse cursor.
-
-        '''
-        # Acquire the texture from the input object.
-        if isinstance(image, pyglet.sprite.Sprite):
-            image = image._texture
-        if isinstance(image, pyglet.image.AbstractImage):
-            cursor_texture = image.get_texture()
+    def set_cursor(self):
+        if self.level.held_item:
+            if self._held_item_cursor is None:
+                cursor_texture = self.level.held_item.sprite._texture
+                view_width, view_height = self.interface.get_content_size()
+                cursor_height = CURSOR_SCALE * view_height
+                cursor_x = cursor_texture.width / 2
+                cursor_y = cursor_texture.height / 2
+                self._held_item_cursor = HeldItemMouseCursor(self, cursor_height, cursor_texture, cursor_x, cursor_y)
+            app.window.set_mouse_cursor(self._held_item_cursor)
         else:
             app.window.set_mouse_cursor(None)
-            return
-
-        # Create and cache the cursor object.
-        if cursor_texture not in self._cursor_cache:
-            view_width, view_height = self.interface.get_content_size()
-            cursor_height = CURSOR_SCALE * view_height
-            cursor_x = cursor_texture.width / 2
-            cursor_y = cursor_texture.height / 2
-            cursor = ScaledImageMouseCursor(cursor_texture, cursor_height, cursor_x, cursor_y)
-            self._cursor_cache[cursor_texture] = cursor
-        else:
-            cursor = self._cursor_cache[cursor_texture]
-
-        # Set the cursor on the window.
-        app.window.set_mouse_cursor(cursor)
 
     def on_draw(self):
 
@@ -692,10 +708,7 @@ class LevelScene(object):
         glEnable(GL_SCISSOR_TEST)
         glScissor(x, y, w, h)
 
-        if self.level.held_item:
-            self.set_cursor(self.level.held_item.sprite)
-        else:
-            app.window.set_mouse_cursor(None)
+        self.set_cursor()
 
         # Order the sprites for rendering.
         layer_key = (lambda sprite: sprite.layer)
