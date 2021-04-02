@@ -1,8 +1,13 @@
+from setuptools import find_packages
 from setuptools import setup
+
+from applib.constants import APPLICATION_VERSION
 
 
 setup(
-    name = 'applib',
+    name = 'copcake-caper',
+    version = APPLICATION_VERSION,
+    packages = find_packages(),
     install_requires = [
         'pyglet',
     ],
