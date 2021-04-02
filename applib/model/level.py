@@ -38,7 +38,7 @@ class Customer(entity.Entity):
         'cop_dog',
         'cop_elephant',
         'cop_rabbit',
-        'friend_sprinkles',
+        'friend_patches',
     ]
 
     def __init__(self, level, order):

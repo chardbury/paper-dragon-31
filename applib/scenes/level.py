@@ -826,7 +826,7 @@ class LevelScene(object):
                     bar_x + bar_full_width, bar_y + bar_height,
                     bar_x, bar_y + bar_height,
                 ]),
-                ('c4B', [255, 255, 255, 255] * 4 + color * 4)
+                ('c4B', [255] * 4 * 4 + color * 4)
             )
             self.draw_frame(fg_texture, bar_x, bar_y, bar_width, bar_height, bar_height / 2)
 
@@ -855,6 +855,7 @@ class LevelScene(object):
             15, 13, 14, 13, 11, 8,
             10, 8, 9, 8, 6, 7,
             5, 7, 4, 7, 1, 2,
+            #2, 7, 13, 8,
         )
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
         glEnable(texture.target)
