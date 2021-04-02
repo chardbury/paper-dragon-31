@@ -1,4 +1,1 @@
-set_left_image: camden
-set_left_name: Camden
-set_right_image: cuttysark
-say_left: Wait! How'd I get here?
+say_left: opening_1.txt

@@ -333,7 +333,7 @@ class LevelScene(object):
             height = 1.0,
             align_x = 0.5,
             align_y = 0.5,
-            background_color = (240, 240, 240, 255),
+            background_color = (255, 255, 255, 200),
             visible = False,
         )
 
@@ -440,14 +440,14 @@ class LevelScene(object):
 
             if command == 'say_left':
                 self.message_area.text_update(value)
-                self.name_left.visible = True
+                self.name_left.visible = bool(self.name_left.text)
                 self.name_right.visible = False
                 self.character_left.image_color = (255, 255, 255, 255)
                 self.character_right.image_color = (75, 75, 75, 255)
                 break
             if command == 'say_right':
                 self.message_area.text_update(value)
-                self.name_right.visible = True
+                self.name_right.visible = bool(self.name_right.text)
                 self.name_left.visible = False
                 self.character_right.image_color = (255, 255, 255, 255)
                 self.character_left.image_color = (75, 75, 75, 255)
@@ -655,22 +655,22 @@ class LevelScene(object):
         # Render the interface.
         self.interface.draw()
 
-        # Render overlay
-        overlay_texture = pyglet.resource.texture('overlays/burlap_256.png')
-        glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
-        glEnable(overlay_texture.target)
-        glBindTexture(overlay_texture.target, overlay_texture.id)
-        glTexParameteri(overlay_texture.target, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        glTexParameteri(overlay_texture.target, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        x, y = map(int, self.interface.get_offset())
-        w, h = map(int, self.interface.get_content_size())
-        x, y = 0, 0
-        w, h = app.window.get_size()
-        vertex_data = [x, y, x + w, y, x + w, y + h, x, y + h]
-        texture_data = [v / overlay_texture.width for v in [x, y, x + w, y, x + w, y + h, x, y + h]]
-        color_data = [255, 255, 255, 255] * 4
-        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t2f', texture_data), ('c4B', color_data))
-        glPopAttrib()
+        # # Render texture overlay
+        # overlay_texture = pyglet.resource.texture('overlays/burlap_256.png')
+        # glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+        # glEnable(overlay_texture.target)
+        # glBindTexture(overlay_texture.target, overlay_texture.id)
+        # glTexParameteri(overlay_texture.target, GL_TEXTURE_WRAP_S, GL_REPEAT)
+        # glTexParameteri(overlay_texture.target, GL_TEXTURE_WRAP_T, GL_REPEAT)
+        # x, y = map(int, self.interface.get_offset())
+        # w, h = map(int, self.interface.get_content_size())
+        # x, y = 0, 0
+        # w, h = app.window.get_size()
+        # vertex_data = [x, y, x + w, y, x + w, y + h, x, y + h]
+        # texture_data = [v / overlay_texture.width for v in [x, y, x + w, y, x + w, y + h, x, y + h]]
+        # color_data = [255, 255, 255, 255] * 4
+        # pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t2f', texture_data), ('c4B', color_data))
+        # glPopAttrib()
 
         # Render fade
         if self.scene_fade > 0.0:
