@@ -13,6 +13,8 @@ from applib.model import entity
 class Item(entity.Entity):
 
     group = 'items'
+
+    holds = None
     
     def matches(self, other):
         return type(self) is type(other)

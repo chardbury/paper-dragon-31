@@ -627,6 +627,8 @@ class LevelScene(object):
             self.level.dispatch_event('on_level_fail')
         if DEBUG and symbol == pyglet.window.key.W:
             self.level.dispatch_event('on_level_success')
+        if DEBUG and symbol == pyglet.window.key.T:
+            app.controller.switch_scene(LevelScene, applib.model.level.TestLevel)
 
     ## Rendering
     ## ---------

@@ -68,7 +68,14 @@ class Device(entity.Entity):
         return new_first_item_class, new_second_item_class
 
     def add_item(self, input_item):
-        current_item = self.current_item
+        
+        # Apply the input to the contents of a plate.
+        if (input_item is not None) and isinstance(self.current_item, item.Plate) and (self.current_item.holds is not None):
+            current_item = self.current_item.holds
+            modifying_holds = True
+        else:
+            current_item = self.current_item
+            modifying_holds = False
 
         # Compute the results of the transition.
         input_item_class = type(input_item) if isinstance(input_item, item.Item) else input_item
@@ -90,6 +97,11 @@ class Device(entity.Entity):
             # If we removed the current item then device needs to be stopped.
             else:
                 self.ticks_remaining = None
+
+        # Check for special plate behaviour.
+        if current_item_class is new_item_class is item.Plate:
+            if (current_item.holds is None) and (output_item_class is None):
+                current_item.holds = input_item
 
         # Work out where the output item came from.
         if output_item_class is None:
@@ -120,7 +132,10 @@ class Device(entity.Entity):
                 current_item.destroy()
 
         # Store the new item and return the output item.
-        self.current_item = new_item
+        if modifying_holds:
+            self.current_item.holds = new_item
+        else:
+            self.current_item = new_item
         return output_item
 
     def interact(self, held_item):
@@ -188,7 +203,15 @@ class Plating(Device):
     duration = 0.0
 
     recipes = {
+        (item.Plate, None): (None, item.Plate),
+        (item.DoughnutUncooked, item.Plate): (None, item.Plate),
+        (item.DoughnutCooked, item.Plate): (None, item.Plate),
+        (item.DoughnutIcedBlue, item.Plate): (None, item.Plate),
+        (item.DoughnutIcedPink, item.Plate): (None, item.Plate),
         (item.LadlePurple, item.DoughnutIcedBlue): (None, item.DoughnutFinalBluePurple),
+        (item.LadlePurple, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkPurple),
+        (item.LadleYellow, item.DoughnutIcedBlue): (None, item.DoughnutFinalBlueYellow),
+        (item.LadleYellow, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkYellow),
     }
 
 def _populate_plating_recipes():

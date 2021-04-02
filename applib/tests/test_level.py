@@ -169,16 +169,23 @@ def test_customer_serve_wrong_item(level):
 
 def test_plate_recipes(level):
     device = level.get_device('station_plating')
+    level.held_item = item.Plate(level)
+    level.interact(device)
+    assert level.held_item is None
+    assert isinstance(device.current_item, item.Plate)
     level.held_item = item.DoughnutIcedBlue(level)
     level.interact(device)
     assert level.held_item is None
-    assert isinstance(device.current_item, item.DoughnutIcedBlue)
+    assert isinstance(device.current_item, item.Plate)
+    assert isinstance(device.current_item.holds, item.DoughnutIcedBlue)
     level.held_item = item.LadlePurple(level)
     level.interact(device)
     assert level.held_item is None
-    assert isinstance(device.current_item, item.DoughnutFinalBluePurple)
+    assert isinstance(device.current_item, item.Plate)
+    assert isinstance(device.current_item.holds, item.DoughnutFinalBluePurple)
     level.interact(device)
-    assert isinstance(level.held_item, item.DoughnutFinalBluePurple)
+    assert isinstance(level.held_item, item.Plate)
+    assert isinstance(level.held_item.holds, item.DoughnutFinalBluePurple)
     assert device.current_item is None
 
 def test_bin(level):
