@@ -44,7 +44,7 @@ class Customer(entity.Entity):
 
     def __init__(self, level, order, customer_type=None):
         if customer_type is None:
-            self.name = random.choice(list(self.customer_images))
+            self.name = random.choice(list(self.customer_patience))
         else:
             self.name = customer_type
         super().__init__(level)

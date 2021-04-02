@@ -19,8 +19,8 @@ class ExampleLevel(level.Level):
     ]
 
     customer_specification = [
-        (5, [item.DoughnutCooked]),
-        (15, [item.DoughnutCooked, item.DoughnutIcedBlue])
+        (5, 'friend_patches', [item.DoughnutCooked]),
+        (15, 'friend_patches', [item.DoughnutCooked, item.DoughnutIcedBlue])
     ]
 
     customer_spaces_specification = 2
@@ -318,8 +318,8 @@ def test_fail_level_from_score(level):
     assert test is False
     for _ in range(int(36 // TICK_LENGTH)):
         level.tick()
-    assert level.fail_score is 40
-    assert level.score is 40
+    assert level.fail_score == 40
+    assert level.score == 40
     test = level.has_level_ended()
     assert test is True
 
