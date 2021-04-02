@@ -66,6 +66,32 @@ class Customer(entity.Entity):
             held_item.destroy()
         else:
             return held_item
+
+    def get_score_bracket(self):
+        percentage_remaining_patience = self.get_patience_ratio() * 100
+        if self.level.serve_style == 'slow':
+            if percentage_remaining_patience >= 80:
+                score = 0
+            elif percentage_remaining_patience >= 40:
+                score = 1
+            elif percentage_remaining_patience >= 20:
+                score = 2
+            elif percentage_remaining_patience >= 5:
+                score = 3
+            else:
+                score = 4
+        elif self.level.serve_style == 'fast':
+            if percentage_remaining_patience >= 80:
+                score = 4
+            elif percentage_remaining_patience >= 40:
+                score = 3
+            elif percentage_remaining_patience >= 20:
+                score = 2
+            elif percentage_remaining_patience >= 5:
+                score = 1
+            else:
+                score = 0
+        return score
     
     def compute_score_fast(self):
         percentage_remaining_patience = self.get_patience_ratio() * 100
