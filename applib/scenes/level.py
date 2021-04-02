@@ -420,7 +420,7 @@ class LevelScene(object):
             width = 0.25,
             height = 0.5,
             align_x = 0.15,
-            align_y = 0.35,
+            align_y = 0.38,
             anchor_y = 0.0,
         )
 
@@ -429,7 +429,7 @@ class LevelScene(object):
             width = 1.0,
             height = 0.15,
             align_x = 0.5,
-            align_y = 0.15,
+            align_y = 0.14,
             text = '',
             text_color = (0, 0, 0, 255),
             text_bold = True,
@@ -445,7 +445,7 @@ class LevelScene(object):
             width = 0.25,
             height = 0.5,
             align_x = 0.85,
-            align_y = 0.35,
+            align_y = 0.38,
             anchor_y = 0.0,
         )
 
@@ -453,7 +453,7 @@ class LevelScene(object):
             width = 1.0,
             height = 0.15,
             align_x = 0.5,
-            align_y = 0.15,
+            align_y = 0.14,
             text = '',
             text_color = (0, 0, 0, 255),
             text_bold = True,
