@@ -369,7 +369,7 @@ class LevelOne(Level):
     ]
 
     customer_specification = [
-        (2, [item.DoughnutCooked]),
+        (2, [item.DoughnutCooked, item.DoughnutCooked, item.DoughnutCooked]),
     ]
 
 

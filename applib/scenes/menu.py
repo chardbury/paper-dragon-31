@@ -214,11 +214,11 @@ class MenuScene(object):
     poem_animation = None
     def do_show_poem(self):
         self.fade_poem = 0.0
-        self.fade_width = 0.2
+        self.fade_width = 0.3
         self.poem_animation = animation.QueuedAnimation(
                 SpiralAnimation(self, 'interface_x', 'interface_y', self.interface.get_content_size()[0], 0.5 * self.interface.get_content_size()[1], 0.25 * math.pi, 1.0),
                 animation.WaitAnimation(1.0),
-                animation.AttributeAnimation(self, 'fade_poem', 1.0, 15.0),
+                animation.AttributeAnimation(self, 'fade_poem', 1.0, 10.0),
                 animation.WaitAnimation(3.0, self.do_start),
         ).start()
 

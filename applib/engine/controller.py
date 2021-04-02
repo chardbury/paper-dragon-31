@@ -42,7 +42,9 @@ class Controller(pyglet.event.EventDispatcher):
             fullscreen=app.settings.fullscreen,
             width=(DEFAULT_SCREEN_SIZE[0] if not app.settings.fullscreen else None),
             height=(DEFAULT_SCREEN_SIZE[1] if not app.settings.fullscreen else None),
+            visible=False,
         )
+
 
         #: The global key state handler.
         app.keystate = pyglet.window.key.KeyStateHandler()
@@ -101,6 +103,9 @@ class Controller(pyglet.event.EventDispatcher):
         while self.next_tick <= 0.0:
             self.next_tick += TICK_LENGTH
             self.dispatch_event('on_tick')
+
+        if not app.window.visible:
+            app.window.set_visible(True)
 
 
 def prepare_controller():

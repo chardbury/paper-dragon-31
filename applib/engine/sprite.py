@@ -85,8 +85,8 @@ class EntitySprite(pyglet.sprite.Sprite):
 
     def set_background_sprite(self, texture=None):
         if texture is not None:
-            texture.anchor_x = texture.width * self._texture.anchor_x // self._texture.width
-            texture.anchor_y = texture.height * self._texture.anchor_y // self._texture.height
+            texture.anchor_x = texture.width // 2
+            texture.anchor_y = texture.height // 2
         if self.background_sprite is None:
             if texture is not None:
                 self.background_sprite = EntitySprite(texture)
@@ -95,14 +95,16 @@ class EntitySprite(pyglet.sprite.Sprite):
         elif texture is None:
             self.background_sprite = None
     
-    def update_background_sprite(self):
+    def update_background_sprite(self, factor=2.5):
         if self.background_sprite is not None:
+            scale_rel_x = self._texture.width / self.background_sprite._texture.width
+            scale_rel_y = self._texture.height / self.background_sprite._texture.height
             self.background_sprite.update(
                 x = self.x,
                 y = self.y,
-                scale = self.scale,
-                scale_x = self.scale_x,
-                scale_y = self.scale_y,
+                scale = self.scale * factor,
+                scale_x = self.scale_x * scale_rel_x,
+                scale_y = self.scale_y * scale_rel_y,
                 rotation = self.rotation,
             )
 

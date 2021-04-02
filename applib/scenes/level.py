@@ -154,7 +154,8 @@ class LevelScene(object):
                 # Configure the sprite and its texture.
                 texture.anchor_x = texture.width // 2
                 texture.anchor_y = texture.height // 2
-                sprite.scale = (relative_height * view_height) / texture.height
+                sprite.scale_x = (relative_height * view_height) / texture.height
+                sprite.scale_y = (relative_height * view_height) / texture.height
                 if sprite_layer is not None:
                     sprite.layer = sprite_layer
                 elif hasattr(entity, 'get_layer'):
@@ -284,9 +285,11 @@ class LevelScene(object):
                     item.sprite.update(
                         x = position_x,
                         y = position_y,
+                        scale = 0.7,
                         rotation = order_arc_angle,
                     )
-                    item.sprite.set_background_sprite(pyglet.resource.texture('interface/speech_bubble.png'))
+                    bubble = pyglet.resource.texture('interface/bubble.png')
+                    item.sprite.set_background_sprite(bubble)
                     item.sprite.update_background_sprite()
             
             # Move current item sprites to their device.
@@ -642,27 +645,48 @@ class LevelScene(object):
 
     def draw_overlay(self, draw_x, draw_y):
         view_width, view_height = self.interface.get_content_size()
-        
-        left_bar_progress = max(0.0, min(1.0, self.level.get_score_ratio()))
-        left_bar_left = draw_x + PROGRESS_BAR_MARGIN * view_height
-        left_bar_right = left_bar_left + PROGRESS_BAR_WIDTH * view_width
-        left_bar_top = draw_y + view_height - PROGRESS_BAR_MARGIN * view_height
-        left_bar_bottom = left_bar_top - PROGRESS_BAR_HEIGHT * view_height
-        left_bar_filled_right = left_bar_left + (left_bar_right - left_bar_left) * left_bar_progress
-        left_bar_filled_right_slope = min(left_bar_right, left_bar_filled_right + (left_bar_top - left_bar_bottom))
-        pyglet.graphics.draw(8, GL_QUADS,
-            ('v2f', [
-                left_bar_left, left_bar_bottom,
-                left_bar_right, left_bar_bottom,
-                left_bar_right, left_bar_top,
-                left_bar_left, left_bar_top,
-                left_bar_left, left_bar_bottom,
-                left_bar_filled_right, left_bar_bottom,
-                left_bar_filled_right, left_bar_top,
-                left_bar_left, left_bar_top,
-            ]),
-            ('c4B', [255, 255, 255, 255] * 4 + [0, 0, 255, 255] * 4)
+
+        def make_rect(x, y, w, h):
+            return [x, y, x + w, y, x + w, y + h, x, y + h]
+
+        # Suspicion on left!
+
+        bg_texture = pyglet.resource.texture('interface/sus_bg.png')
+        fg_texture = pyglet.resource.texture('interface/sus_fg.png')
+        width = PROGRESS_BAR_WIDTH * view_width
+        height = width * bg_texture.height / bg_texture.width
+        left = draw_x
+        bottom = draw_y + view_height - height
+        vertex_data = make_rect(left, bottom, width, height)
+
+        glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+        glEnable(bg_texture.target)
+        glBindTexture(bg_texture.target, bg_texture.id)
+        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t3f', bg_texture.tex_coords), ('c4B', [255] * 16))
+        glPopAttrib()
+
+        progress = max(0.0, min(1.0, self.level.get_score_ratio()))
+        left_offset = 0.15
+        bottom_offset = 0.25
+        right_offset = 0.1
+        top_offset = 0.25
+        top_right_slope_threshold = 0.22
+        vertex_data_filled = make_rect(
+            left + left_offset * height,
+            bottom + bottom_offset * height,
+            max(0, width * progress - (left_offset + right_offset) * height),
+            height - (bottom_offset + top_offset) * height,
         )
+        vertex_data_filled[4] = min(vertex_data_filled[4], left + width - top_right_slope_threshold * width)
+        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', [0, 0, 255, 255] * 4))
+
+        glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+        glEnable(fg_texture.target)
+        glBindTexture(fg_texture.target, fg_texture.id)
+        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t3f', fg_texture.tex_coords), ('c4B', [255] * 16))
+        glPopAttrib()
+
+        # Heist on right!
         
         right_bar_progress = max(0.0, min(1.0, self.level.get_time_ratio()))
         right_bar_right = draw_x + view_width - PROGRESS_BAR_MARGIN * view_height
@@ -711,3 +735,38 @@ class LevelScene(object):
                 ]),
                 ('c4B', [255, 255, 255, 255] * 4 + color * 4)
             )
+            texture = pyglet.resource.texture('interface/dialogue_border.png')
+            self.draw_frame(texture, bar_x, bar_y, bar_width, bar_height, bar_height / 2)
+
+    def draw_frame(self, texture, left, bottom, width, height, size):
+        def make_rect(x, y, w, h):
+            return (x, y, x + w, y, x + w, y + h, x, y + h)
+        vertex_data = (
+            make_rect(left - size/2, bottom - size/2, size, size) +
+            make_rect(left + width - size/2, bottom - size/2, size, size) +
+            make_rect(left + width - size / 2, bottom + height - size / 2, size, size) +
+            make_rect(left - size / 2, bottom + height - size / 2, size, size)
+        )
+        tx1, ty1 = texture.tex_coords[0:2]
+        tx2, ty2 = texture.tex_coords[6:8]
+        txm = (tx1 + tx2) / 2
+        tym = (ty1 + ty2) / 2
+        texture_data = (
+            tx1, ty1, txm, ty1, txm, tym, tx1, tym,
+            txm, ty1, tx2, ty1, tx2, tym, txm, tym,
+            txm, tym, tx2, tym, tx2, ty2, txm, ty2,
+            tx1, tym, txm, tym, txm, ty2, tx1, ty2,
+        )
+        color_data = (255, 255, 255, 255) * 16
+        indices = (
+            0, 1, 3, 2, 12, 13,
+            15, 13, 14, 13, 11, 8,
+            10, 8, 9, 8, 6, 7,
+            5, 7, 4, 7, 1, 2,
+        )
+        glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+        glEnable(texture.target)
+        glBindTexture(texture.target, texture.id)
+        pyglet.graphics.draw_indexed(16, GL_TRIANGLE_STRIP, indices,
+            ('v2f', vertex_data), ('t2f', texture_data), ('c4B', color_data))
+        glPopAttrib()
