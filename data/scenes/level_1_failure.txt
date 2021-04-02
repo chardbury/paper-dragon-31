@@ -2,7 +2,7 @@ set_left_image : cop_rabbit
 set_left_name : Constable Iced Bun
 set_right_image : cook_flynn
 set_right_name : Flynn
-say_left : You aren't selling doughnuts. 
+say_left : You aren't selling anything, this is a distraction. 
 say_left : Where's your friend Patches. Is she scrumping again?
 say_right : Please don't tell our parents.
 repeat_level :

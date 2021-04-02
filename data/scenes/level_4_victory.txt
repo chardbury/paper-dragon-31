@@ -1,8 +1,8 @@
-set_image_left : cook_flynn
-set_name_left : Flynn
-set_image_right : scrumper_patches
-set_name_right : Patches
+set_left_image : cook_flynn
+set_left_name_left : Flynn
+set_right_image : scrumper_patches
+set_right_name : Patches
 say_left : Patches, we need to stop.
 say_right : Why? are the cops too suspicous?
-say_left : No, but we've run out of room for apples in the Doughnut wagon
+say_left : No, but we've run out of room for apples in the wagon
 win_game :
