@@ -168,10 +168,17 @@ class MenuScene(object):
             font_size = 0.03,
         )
 
+        self.scene_fade = 1.0
+        animation.QueuedAnimation(
+            animation.AttributeAnimation(self, 'scene_fade', 0.0, 1.0),
+        ).start()
+
     fade_poem = None
     fade_width = None
 
     def on_tick(self):
+        if self.scene_fade > 0.0:
+            return
         if self.fade_poem is not None:
             self.poem_text.get_content_size()
             lines = self.poem_text._text_layout.lines
@@ -204,18 +211,23 @@ class MenuScene(object):
             self.rawr_player.pause()
         self.rawr_player = sound.rawr()
 
+    poem_animation = None
     def do_show_poem(self):
         self.fade_poem = 0.0
         self.fade_width = 0.2
-        SpiralAnimation(self, 'interface_x', 'interface_y', self.interface.get_content_size()[0], 0.5 * self.interface.get_content_size()[1], 0.25 * math.pi, 1.0).start()
-        animation.QueuedAnimation(
-            animation.WaitAnimation(1.0),
-            animation.AttributeAnimation(self, 'fade_poem', 1.0, 15.0),
-            animation.WaitAnimation(3.0, self.do_start),
+        self.poem_animation = animation.QueuedAnimation(
+                SpiralAnimation(self, 'interface_x', 'interface_y', self.interface.get_content_size()[0], 0.5 * self.interface.get_content_size()[1], 0.25 * math.pi, 1.0),
+                animation.WaitAnimation(1.0),
+                animation.AttributeAnimation(self, 'fade_poem', 1.0, 15.0),
+                animation.WaitAnimation(3.0, self.do_start),
         ).start()
 
     def do_start(self):
-        app.controller.switch_scene(applib.scenes.level.LevelScene)
+        self.scene_fade = 0.0
+        animation.QueuedAnimation(
+            animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+            animation.WaitAnimation(0.2, app.controller.switch_scene, applib.scenes.level.LevelScene),
+        ).start()
 
     def end_logo(self):
         if self.rawr_player:
@@ -228,6 +240,10 @@ class MenuScene(object):
         animation.QueuedAnimation(
             SpiralAnimation(self, 'interface_x', 'interface_y', 0.0, 0.0, 0.85 * math.pi, 2.0),
         ).start()
+
+    def end_poem(self):
+        if self.poem_animation:
+            self.poem_animation.stop()
 
     _hover_button = None
 
@@ -276,9 +292,12 @@ class MenuScene(object):
     def on_mouse_release(self, x, y, button, modifiers):
         if self.interface.visible:
             self._update_mouse_position(x, y)
-            if (self._press_button is not None) and (self._hover_button == self._press_button):
-                getattr(self, f'do_button_{self._press_button}')()
-            self._press_button = None
+            if self.fade_poem is not None:
+                self.end_poem()
+            else:
+                if (self._press_button is not None) and (self._hover_button == self._press_button):
+                    getattr(self, f'do_button_{self._press_button}')()
+                self._press_button = None
         else:
             self.end_logo()
 
@@ -311,3 +330,10 @@ class MenuScene(object):
         color_data = [255, 255, 255, 255] * 4
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t2f', texture_data), ('c4B', color_data))
         glPopAttrib()
+
+        # Render fade
+        if self.scene_fade is not None:
+            w, h = app.window.get_size()
+            alpha = max(0, min(255, int(256*self.scene_fade)))
+            color = [0, 0, 0, alpha]
+            pyglet.graphics.draw(4, GL_QUADS, ('v2f', [0,0,w,0,w,h,0,h]), ('c4B', color*4))

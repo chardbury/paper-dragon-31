@@ -138,6 +138,10 @@ class Panel(object):
 
     _text_layout = None
 
+    def text_update(self, text):
+        self.text = text
+        self._text_layout = None
+
     def get_text_size(self):
         if self._text_layout is None:
             default_width, default_height = self.get_default_size()

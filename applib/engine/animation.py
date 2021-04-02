@@ -159,11 +159,13 @@ class WaitAnimation(Animation):
         self.callback = callback
         self.args = args
         self.kwargs = kwargs
+        self.remaining = None
 
     def start_state(self):
         self.remaining = self.duration
 
     def stop_state(self):
+        self.remaining = None
         if self.callback is not None:
             self.callback(*self.args, **self.kwargs)
 
@@ -191,6 +193,7 @@ class QueuedAnimation(Animation):
         if self.current is not None:
             self.current.stop()
         for animation in self.remaining:
+            animation.start()
             animation.stop()
         self.remaining = None
         self.current = None

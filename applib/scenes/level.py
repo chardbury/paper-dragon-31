@@ -96,6 +96,11 @@ class LevelScene(object):
             draw_function = self.draw_overlay,
         )
 
+        self.scene_fade = 1.0
+        animation.QueuedAnimation(
+            animation.AttributeAnimation(self, 'scene_fade', 0.0, 1.0),
+        ).start()
+
         self.load_level_sprites()
 
         self.load_dialogue_overlay()
@@ -226,6 +231,8 @@ class LevelScene(object):
         self.start_scene(self.level.failure_scene)
 
     def on_tick(self):
+        if self.scene_fade > 0.0:
+            return
 
         if self.dialogue_overlay.visible:
             # Do dialogue things here.
@@ -408,19 +415,19 @@ class LevelScene(object):
                     self.character_right.image_texture = None
 
             if command == 'set_left_name':
-                self.name_left.text = value or None
+                self.name_left.text_update(value or None)
             if command == 'set_right_name':
-                self.name_right.text = value or None
+                self.name_left.text_update(value or None)
 
             if command == 'say_left':
-                self.message_area.text = value
+                self.message_area.text_update(value)
                 self.name_left.visible = True
                 self.name_right.visible = False
                 self.character_left.image_color = (255, 255, 255, 255)
                 self.character_right.image_color = (75, 75, 75, 255)
                 break
             if command == 'say_right':
-                self.message_area.text = value
+                self.message_area.text_update(value)
                 self.name_right.visible = True
                 self.name_left.visible = False
                 self.character_right.image_color = (255, 255, 255, 255)
@@ -428,9 +435,16 @@ class LevelScene(object):
                 break
 
             if command == 'next_level':
-                app.controller.switch_scene(type(self), self.level.next_level)
+                animation.QueuedAnimation(
+                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+                    animation.WaitAnimation(0.1, app.controller.switch_scene, type(self), self.level.next_level)
+                ).start()
+
             if command == 'repeat_level':
-                app.controller.switch_scene(type(self), type(self.level))
+                animation.QueuedAnimation(
+                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+                    animation.WaitAnimation(0.1, app.controller.switch_scene, type(self), type(self.level)),
+                ).start()
         else:
             self.scene_lines = None
             self.dialogue_overlay.visible = False
@@ -610,6 +624,13 @@ class LevelScene(object):
 
         # Render the interface.
         self.interface.draw()
+
+        # Render fade
+        if self.scene_fade > 0.0:
+            w, h = app.window.get_size()
+            alpha = max(0, min(255, int(256*self.scene_fade)))
+            color = [0, 0, 0, alpha]
+            pyglet.graphics.draw(4, GL_QUADS, ('v2f', [0,0,w,0,w,h,0,h]), ('c4B', color*4))
 
     def draw_overlay(self, draw_x, draw_y):
         view_width, view_height = self.interface.get_content_size()
