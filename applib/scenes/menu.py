@@ -16,13 +16,32 @@ from applib.engine import sound
 
 from pyglet.gl import *
 
+POEM_TEXT = '''
+Craig and Tom are the bane of the wood
+They get up to all the mischief they could
+They scrump from Sam's orchard and litter the cores
+They filch from poor Mrs Nutkin's stores
+
+But now the fuzz has had enough;
+Craig and Tom are finding it rough
+to get away with all their hi-jinks.
+"We need a decoy, Craig", Tom thinks.
+
+Craig says, "Hey! I've just the plan!"
+So Craig and Tom set up a stand
+In front of the place they're doing a job
+So rather than chase them, The Blue fill their gobs!
+'''
+
 
 class SpiralAnimation(animation.Animation):
 
-    def __init__(self, thing, xname, yname, angle, duration):
+    def __init__(self, thing, xname, yname, xtarget, ytarget, angle, duration):
         self.thing = thing
         self.xname = xname
         self.yname = yname
+        self.xtarget = xtarget
+        self.ytarget = ytarget
         self.angle = angle
         self.duration = duration
         self.elapsed = None
@@ -31,14 +50,14 @@ class SpiralAnimation(animation.Animation):
 
     def start_state(self):
         self.elapsed = 0.0
-        origx = getattr(self.thing, self.xname)
-        origy = getattr(self.thing, self.yname)
+        origx = getattr(self.thing, self.xname) - self.xtarget
+        origy = getattr(self.thing, self.yname) - self.ytarget
         self.parameter = math.hypot(origx, origy) / self.angle
         self.tilt = math.atan2(origy, origx) - self.angle
 
     def stop_state(self):
-        setattr(self.thing, self.xname, 0)
-        setattr(self.thing, self.yname, 0)
+        setattr(self.thing, self.xname, self.xtarget)
+        setattr(self.thing, self.yname, self.ytarget)
         self.elapsed = None
         self.parameter = None
         self.tilt = None
@@ -54,8 +73,8 @@ class SpiralAnimation(animation.Animation):
             radius = self.parameter * theta
             sin, cos = math.sin(theta), math.cos(theta)
             sint, cost = math.sin(self.tilt), math.cos(self.tilt)
-            setattr(self.thing, self.xname, -radius * cos * sint + radius * sin * cost)
-            setattr(self.thing, self.yname, radius * cos * cost + radius * sin * sint)
+            setattr(self.thing, self.xname, self.xtarget + -radius * cos * sint + radius * sin * cost)
+            setattr(self.thing, self.yname, self.ytarget + radius * cos * cost + radius * sin * sint)
 
 
 
@@ -136,12 +155,67 @@ class MenuScene(object):
         self.interface_x = self.interface.get_content_size()[0] * 1.5
         self.interface_y = -self.interface.get_content_size()[1]
 
+        self.poem = self.interface.add(
+            align_x = -1.0,
+            align_y = -0.5,
+            anchor_x = 0.0,
+            anchor_y = 0.0,
+        )
+
+        self.poem_text = self.poem.add(
+            text = POEM_TEXT,
+            text_color = (0, 0, 0, 0),
+            font_size = 0.03,
+        )
+
+    fade_poem = None
+    fade_width = None
+
+    def on_tick(self):
+        if self.fade_poem is not None:
+            self.poem_text.get_content_size()
+            lines = self.poem_text._text_layout.lines
+            yvals = []
+            trips = []
+            for line in lines:
+                for vlist in line.vertex_lists:
+                    verts = vlist.vertices
+                    for i in range(0, len(verts)//2):
+                        yv = verts[2*i+1]
+                        yvals.append(yv)
+                        trips.append((vlist, i, yv))
+            maxy = max(yvals)
+            miny = min(yvals)
+            fade_width = self.fade_width * (maxy - miny)
+            fade_max = miny + (1.0 - self.fade_poem) * (maxy - miny + fade_width)
+            fade_min = fade_max - fade_width
+            for vlist, i, yval in trips:
+                col = 0
+                if yval > fade_max:
+                    col = 255
+                elif yval > fade_min:
+                    col = min(255, int(256 * (yval - fade_min) / fade_width))
+                vlist.colors[4*i+3] = col
+            
     rawr_player = None
 
     def do_rawr(self):
         if self.rawr_player:
             self.rawr_player.pause()
         self.rawr_player = sound.rawr()
+
+    def do_show_poem(self):
+        self.fade_poem = 0.0
+        self.fade_width = 0.2
+        SpiralAnimation(self, 'interface_x', 'interface_y', self.interface.get_content_size()[0], 0.5 * self.interface.get_content_size()[1], 0.25 * math.pi, 1.0).start()
+        animation.QueuedAnimation(
+            animation.WaitAnimation(1.0),
+            animation.AttributeAnimation(self, 'fade_poem', 1.0, 15.0),
+            animation.WaitAnimation(3.0, self.do_start),
+        ).start()
+
+    def do_start(self):
+        app.controller.switch_scene(applib.scenes.level.LevelScene)
 
     def end_logo(self):
         if self.rawr_player:
@@ -152,7 +226,7 @@ class MenuScene(object):
         width, height = self.interface.get_content_size()
         animations = []
         animation.QueuedAnimation(
-            SpiralAnimation(self, 'interface_x', 'interface_y', 0.85 * math.pi, 2.0)
+            SpiralAnimation(self, 'interface_x', 'interface_y', 0.0, 0.0, 0.85 * math.pi, 2.0),
         ).start()
 
     _hover_button = None
@@ -209,7 +283,7 @@ class MenuScene(object):
             self.end_logo()
 
     def do_button_play(self):
-        app.controller.switch_scene(applib.scenes.level.LevelScene)
+        self.do_show_poem()
 
     def do_button_quit(self):
         pyglet.app.exit()

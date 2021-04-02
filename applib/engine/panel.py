@@ -139,32 +139,33 @@ class Panel(object):
     _text_layout = None
 
     def get_text_size(self):
-        default_width, default_height = self.get_default_size()
-        root_width, root_height = self.get_root_size()
+        if self._text_layout is None:
+            default_width, default_height = self.get_default_size()
+            root_width, root_height = self.get_root_size()
 
-        self._text_document = pyglet.text.document.UnformattedDocument()
-        self._text_layout = pyglet.text.layout.IncrementalTextLayout(self._text_document, 0, 0)
+            self._text_document = pyglet.text.document.UnformattedDocument()
+            self._text_layout = pyglet.text.layout.IncrementalTextLayout(self._text_document, 0, 0)
 
-        self._text_layout.begin_update()
-        self._text_layout.content_width = 0 # Do not remove this line... seriously!
-        self._text_document.set_style(0, 0, {
-            'font_name': self.font_name,
-            'font_size': int(self.font_size * root_height),
-            'color': self.text_color,
-            'align': 'left',
-            'bold': self.text_bold,
-        })
-        self._text_document.text = self.text
-        self._text_layout.x = self._text_layout.y = 0
-        self._text_layout.width = default_width
-        self._text_layout.height = default_height
-        self._text_layout.content_valign = 'bottom'
-        self._text_layout.multiline = True
-        self._text_layout.wrap_lines = self.text_wrap
-        self._text_layout.end_update()
+            self._text_layout.begin_update()
+            self._text_layout.content_width = 0 # Do not remove this line... seriously!
+            self._text_document.set_style(0, 0, {
+                'font_name': self.font_name,
+                'font_size': int(self.font_size * root_height),
+                'color': self.text_color,
+                'align': 'left',
+                'bold': self.text_bold,
+            })
+            self._text_document.text = self.text
+            self._text_layout.x = self._text_layout.y = 0
+            self._text_layout.width = default_width
+            self._text_layout.height = default_height
+            self._text_layout.content_valign = 'bottom'
+            self._text_layout.multiline = True
+            self._text_layout.wrap_lines = self.text_wrap
+            self._text_layout.end_update()
 
-        self._text_layout.width = self._text_layout.content_width + 1
-        self._text_layout.height = self._text_layout.content_height + 1
+            self._text_layout.width = self._text_layout.content_width + 1
+            self._text_layout.height = self._text_layout.content_height + 1
 
         return (self._text_layout.content_width,
                 self._text_layout.content_height)
