@@ -1,2 +1,0 @@
-say_left : failure_1.txt
-repeat_level :

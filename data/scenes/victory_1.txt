@@ -1,2 +1,0 @@
-say_left : victory_1.txt
-next_level :
