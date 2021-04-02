@@ -361,10 +361,12 @@ class TestLevel(Level):
 
     customer_specification = [
         (0, 'cop_rabbit', [item.DoughnutUncooked] * 1),
-        (5, 'friend_patches', [item.DoughnutCooked] * 2),
-        (10, 'cop_rabbit', [item.DoughnutIcedBlue] * 3),
-        (15, 'friend_patches', [item.DoughnutFinalBluePurple] * 3),
+        (5, 'friend_patches', [item.DoughnutUncooked] * 2),
+        (10, 'cop_rabbit', [item.DoughnutUncooked] * 3),
+        (15, 'friend_patches', [item.DoughnutUncooked] * 3),
     ]
+
+    customer_spaces_specification = 4
 
     background_scenery = scenery.BackgroundHill
 
