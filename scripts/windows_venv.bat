@@ -2,7 +2,7 @@
 
 cd %~p0..
 
-if not exist venv (%LOCALAPPDATA%\Programs\Python\Python39\python -m venv venv)
+if not exist venv ("%LOCALAPPDATA%\Programs\Python\Python39\python" -m venv venv)
 
 venv\Scripts\python -m pip install -U pip wheel
 
