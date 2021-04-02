@@ -211,6 +211,9 @@ class LevelScene(object):
                 if move_y is not None:
                     sprite.y = view_height / 2 + move_y * view_height
 
+                if sprite.x > view_width / 2 and sprite.scale_x > 0:
+                    sprite.scale_x *= -1
+
                 # Start the necessary animations.
                 if self._is_interactable(entity):
                     sprite.animate_zoom()
