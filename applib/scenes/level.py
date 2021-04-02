@@ -261,6 +261,7 @@ class LevelScene(object):
         view_width, view_height = self.interface.get_content_size()
 
         # Have the leaving customer walk off.
+        customer.sprite.layer = -1.5
         customer.sprite._target_offset_x = -view_width
         self.persisting_sprites[customer.sprite] = (lambda:
             abs(customer.sprite.animation_offset_x) > view_width / 2)
@@ -270,7 +271,8 @@ class LevelScene(object):
         for index, other_customer in enumerate(self.level.customers):
             move_x = CUSTOMER_POSITIONS[customer_count][index]
             if other_customer is not customer:
-                other_customer.sprite._target_offset_x = -move_x * view_height
+                other_customer.sprite.layer = -1
+                other_customer.sprite._target_offset_x = move_x * view_height
 
     def on_level_success(self):
         self.start_scene(self.level.victory_scene, 1.0)
@@ -357,7 +359,7 @@ class LevelScene(object):
                     sprite.update_foreground_sprite()
                     fg = sprite.foreground_sprite
 
-                    customer_is_moving = (sprite.animation_offset_x != 0.0)
+                    customer_is_moving = (sprite._animation_offset_x != sprite._target_offset_x)
                     paws_on_counter = (fg.animation_offset_y == 0.0 and fg.layer == 0.1)
                     paws_are_animating = (entity in self.paw_animations) and (self.paw_animations[entity] in app.animation)
 
