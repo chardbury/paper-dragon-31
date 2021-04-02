@@ -1,0 +1,14 @@
+set_left_image : cop_dog
+set_left_name : Sgt. Dognut
+set_right_image : cop_rabbit
+set_right_name : Constable Iced Bun
+say_left : Are the racoons up to mischief? What do you have there?
+say_right : These are very good doughnuts.
+say_left : If they are selling doughnuts then they can't be scrumping.
+set_left_image : cook_flynn
+set_left_name : Flynn
+set_right_image : cop_dog
+set_right_name : Sgt. Dognut
+say_right : Do you have doughnuts with icing?
+set_left_image : doughnut_flynn
+say_left : Why yes

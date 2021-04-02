@@ -357,12 +357,12 @@ class TestLevel(Level):
 
 class LevelOne(Level):
 
-    opening_scene = 'opening_1'
-    victory_scene = 'victory_1'
-    failure_scene = 'failure_1'
+    opening_scene = 'level_1_opening'
+    victory_scene = 'level_1_victory'
+    failure_scene = 'level_1_failure'
 
     serve_style = 'fast'
-    fail_ratio = 0.5
+    fail_ratio = 0.5 
 
     background_scenery = scenery.BackgroundVillage
 
@@ -379,9 +379,49 @@ class LevelOne(Level):
 
 class LevelTwo(Level):
 
-    opening_scene = 'opening_2'
-    victory_scene = 'victory_2'
-    failure_scene = 'failure_2'
+    opening_scene = 'level_2_opening'
+    victory_scene = 'level_2_victory'
+    failure_scene = 'level_2_failure'
+
+    serve_style = 'fast'
+    fail_ratio = 0.5
+
+    device_specification = [
+        (device.Dough, -0.5, -0.1),
+        (device.Cooking, 0.0, -0.1),
+        (device.IcingBlue, 0.5, -0.1),
+        (device.Bin, -0.5, -0.3),
+    ]
+
+    customer_specification = [
+        (2, [item.DoughnutIcedBlue]),
+    ]
+
+class LevelThree(Level):
+
+    opening_scene = 'level_3_opening'
+    victory_scene = 'level_3_victory'
+    failure_scene = 'level_3_failure'
+
+    serve_style = 'fast'
+    fail_ratio = 0.5
+
+    device_specification = [
+        (device.Dough, -0.5, -0.1),
+        (device.Cooking, 0.0, -0.1),
+        (device.IcingBlue, 0.5, -0.1),
+        (device.Bin, -0.5, -0.3),
+    ]
+
+    customer_specification = [
+        (2, [item.DoughnutIcedBlue]),
+    ]
+
+class LevelFour(Level):
+
+    opening_scene = 'level_4_opening'
+    victory_scene = 'level_4_victory'
+    failure_scene = 'level_4_failure'
 
     serve_style = 'fast'
     fail_ratio = 0.5
@@ -398,3 +438,5 @@ class LevelTwo(Level):
     ]
 
 LevelOne.next_level = LevelTwo
+LevelTwo.next_level = LevelThree
+LevelThree.next_level = LevelFour

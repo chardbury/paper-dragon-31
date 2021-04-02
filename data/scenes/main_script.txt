@@ -1,0 +1,87 @@
+This is not code. This is just one file to put the whole thing in the same place.
+
+
+
+
+Constable Iced Bun: Hello Flynn. What are you up to today?
+Flynn: No need for suspicion. I am just selling doughnuts.
+Constable Iced Bun: I'll take three.
+
+<Level 1>
+
+<failure>
+Constable Iced Bun: You aren't selling doughnuts. 
+Constable Iced Bun: Where's your friend Patches. Is she scrumping again?
+Flynn: Please don't tell our parents
+<endfailure>
+
+<success>
+Patches : I did it! I got an apple!
+Patches : Mmm, Golden Delicious.
+Flynn : Wait, what about me? Where's my apple?
+Patches : Oh, sorry. Make a distraction again.
+<endsuccess>
+
+---
+
+Sgt. Dognut : Are the racoons up to mischief? What do you have there?
+Constable Iced Bun : These are very good doughnuts.
+Sgt. Dognut : If they are selling doughnuts then they can't be scrumping.
+<scene change>
+Sgt. Dognut : Do you have doughnuts with icing?
+Flynn (showing doughnut) : Why yes
+
+<level 2>
+
+<failure>
+Sgt. Dognut: Cook the doughnut, put icing on it, hand it to me.
+Sgt. Dognut: It isn't difficult. Are you distracted?
+Sgt. Dognut: Where's Patches? Is she stealing Granny Smith's apples again?
+Flynn: No...
+<endfailure>
+
+<success>
+Flynn : What were you doing, you were supposed to be scrumping me an apple?
+Patches : I wanted to see what the doughnuts tasted like.
+Patches : Here, a nice crunchy Braeburn.
+<endsuccess>
+---
+
+Flynn : That was close. We need a way to keep them at the stall longer.
+Patches : I know! Plates! If we give them plates they'll have to stick around to eat them.
+
+<Level 3>
+
+<failure>
+Constable Iced Bun: I see you climbing over the garden fence!
+Sgt Dognut: Stop right there!
+Flynn & Patches : Run for it!
+<endfailure>
+
+<success>
+Sgt. Dognut : Comissioner Peanut would really like these.
+Sgt. Dognut : It's a pity she's at the police picnic at Vermillion Orchard.
+<endsuccess>
+
+----
+
+Flynn : The cops here are all full. The doughnut distraction won't work anymore.
+Patches : Let's go to the Vermillion Orchard. There are loads of apples there.
+
+<level 4>
+
+<Failure>
+Constable Peanut: I've caught you, you naughty scrumpers
+Constable Peanut: The punishment for disrupting our picnic is...
+Constable Peanut: LITTER PICKING.
+Patches & Flynn: Oh no.
+Constable Peanut: And I'm telling your parents.
+Patches & Flynn: Oh no!
+<endfailure>
+
+<success>
+Flynn : Patches, we need to stop.
+Patches : Why? are the cops too suspicous?
+Flynn : No, but we've run out of room for apples in the Doughnut wagon
+<endsuccess>
+
