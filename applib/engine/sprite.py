@@ -108,6 +108,34 @@ class EntitySprite(pyglet.sprite.Sprite):
                 rotation = self.rotation,
             )
 
+    foreground_sprite = None
+
+    def set_foreground_sprite(self, texture=None):
+        if texture is not None:
+            texture.anchor_x = texture.width // 2
+            texture.anchor_y = texture.height // 2
+        if self.foreground_sprite is None:
+            if texture is not None:
+                self.foreground_sprite = EntitySprite(texture)
+        elif self.foreground_sprite._texture != texture:
+            self.foreground_sprite = EntitySprite(texture)
+        elif texture is None:
+            self.foreground_sprite = None
+    
+    def update_foreground_sprite(self, factor=1.0):
+        if self.foreground_sprite is not None:
+            scale_rel_x = self._texture.width / self.foreground_sprite._texture.width
+            scale_rel_y = self._texture.height / self.foreground_sprite._texture.height
+            self.foreground_sprite.animation_offset_x = self.animation_offset_x
+            self.foreground_sprite.update(
+                x = self.x,
+                y = self.y,
+                scale = self.scale * factor,
+                scale_x = self.scale_x * scale_rel_x,
+                scale_y = self.scale_y * scale_rel_y,
+                rotation = self.rotation,
+            )
+
     # Overlay
 
     overlay_function = None
@@ -241,4 +269,6 @@ class EntitySprite(pyglet.sprite.Sprite):
         if self.visible and (self.background_sprite is not None):
             self.background_sprite.draw()
         super().draw()
+        # if self.visible and (self.foreground_sprite is not None):
+        #     self.foreground_sprite.draw()
         self.draw_overlay()

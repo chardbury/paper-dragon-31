@@ -139,6 +139,7 @@ class LevelScene(object):
         self.load_dialogue_overlay()
         self.on_tick()
         self.start_scene(self.level.opening_scene)
+        self.paw_animations = {}
 
     ## Model
     ## -----
@@ -313,9 +314,10 @@ class LevelScene(object):
             if sprite not in found_sprites:
                 sprite.stop_animation()
                 self.interface.sprites.remove(sprite)
-                entity = self.entities_by_sprite[sprite]
-                del self.entities_by_sprite[sprite]
-                del self.sprites_by_entity[entity]
+                if sprite in self.entities_by_sprite:
+                    entity = self.entities_by_sprite[sprite]
+                    del self.entities_by_sprite[sprite]
+                    del self.sprites_by_entity[entity]
 
         # Update remaining sprites.
         processed_items = []
@@ -344,6 +346,47 @@ class LevelScene(object):
                     bubble = pyglet.resource.texture('interface/bubble.png')
                     item.sprite.set_background_sprite(bubble)
                     item.sprite.update_background_sprite()
+
+                # Paw animation
+                paw_name = f'customers/{entity.name}_paw.png'
+                if paw_name in pyglet.resource._default_loader._index:
+                    if not sprite.foreground_sprite:
+                        texture = pyglet.resource.texture(paw_name)
+                        sprite.set_foreground_sprite(texture)
+                        fg = sprite.foreground_sprite
+                        fg.visible = False
+                        fg.layer = sprite.layer
+                        self.persisting_sprites[fg] = lambda: False
+                        self.interface.sprites.append(fg)
+                    sprite.update_foreground_sprite()
+                    fg = sprite.foreground_sprite
+
+                    customer_is_moving = (sprite.animation_offset_x != 0.0)
+                    paws_on_counter = (fg.animation_offset_y == 0.0 and fg.layer == 0.1)
+                    paws_are_animating = (entity in self.paw_animations) and (self.paw_animations[entity] in app.animation)
+
+                    if not paws_are_animating:
+                        if customer_is_moving and paws_on_counter:
+                            # Animate off counter
+                            fg.visible = True
+                            fg.animation_offset_y = 0.0
+                            fg.layer = 0.1
+                            self.paw_animations[entity] = animation.QueuedAnimation(
+                                animation.AttributeAnimation(fg, 'animation_offset_y', 0.03 * fg.height, 0.4, 'symmetric'),
+                                animation.WaitAnimation(0.0, lambda fg=fg, sp=sprite: setattr(fg, 'layer', sp.layer+0.1)),
+                                animation.AttributeAnimation(fg, 'animation_offset_y', -0.1 * fg.height, 0.8, 'symmetric'),
+                            ).start()
+                        elif not customer_is_moving and not paws_on_counter:
+                            # Animate on counter
+                            fg.visible = True
+                            fg.animation_offset_y = -0.1 * fg.height
+                            fg.layer = sprite.layer + 0.1
+                            self.paw_animations[entity] = animation.QueuedAnimation(
+                                animation.AttributeAnimation(fg, 'animation_offset_y', 0.03 * fg.height, 0.8, 'symmetric'),
+                                animation.WaitAnimation(0.0, lambda fg=fg: setattr(fg, 'layer', 0.1)),
+                                animation.AttributeAnimation(fg, 'animation_offset_y', 0.0, 0.4, 'symmetric'),
+                            ).start()
+                        
             
             # Move current item sprites to their device.
             if isinstance(entity, applib.model.device.Device):
@@ -581,7 +624,7 @@ class LevelScene(object):
         '''
         offset_x, offset_y = self.interface.get_offset()
         for sprite in reversed(self.interface.sprites):
-            if sprite._can_click_through:
+            if getattr(sprite, '_can_click_through', True):
                 continue
             texture = sprite._texture
             # 1. Get the position of the target relative to the sprite in the window frame.
