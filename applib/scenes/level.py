@@ -83,6 +83,7 @@ class LevelScene(object):
             level = level.next_level
         self.level = level()
         applib.model.scenery.Counter(self.level)
+        self.level.background_scenery(self.level)
         
         self.level.push_handlers(self)
 
@@ -612,6 +613,11 @@ class LevelScene(object):
 
         # Clear the buffers.
         app.window.clear()
+        
+        x, y = map(int, self.interface.get_offset())
+        w, h = map(int, self.interface.get_content_size())
+        glEnable(GL_SCISSOR_TEST)
+        glScissor(x, y, w, h)
 
         if self.level.held_item:
             self.set_cursor(self.level.held_item.sprite)
@@ -631,6 +637,8 @@ class LevelScene(object):
             alpha = max(0, min(255, int(256*self.scene_fade)))
             color = [0, 0, 0, alpha]
             pyglet.graphics.draw(4, GL_QUADS, ('v2f', [0,0,w,0,w,h,0,h]), ('c4B', color*4))
+
+        glDisable(GL_SCISSOR_TEST)
 
     def draw_overlay(self, draw_x, draw_y):
         view_width, view_height = self.interface.get_content_size()

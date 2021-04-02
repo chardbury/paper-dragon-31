@@ -310,9 +310,17 @@ class MenuScene(object):
     def on_draw(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glClearColor(1.0, 1.0, 1.0, 1.0)
+        glClearColor(0.0, 0.0, 0.0, 0.0)
         glClear(GL_COLOR_BUFFER_BIT)
-        app.window.clear()
+        
+        x, y = map(int, self.interface.get_offset())
+        w, h = map(int, self.interface.get_content_size())
+        glEnable(GL_SCISSOR_TEST)
+        glScissor(x, y, w, h)
+
+        color = [255, 255, 255, 255]
+        pyglet.graphics.draw(4, GL_QUADS, ('v2f', [x, y, x+w, y, x+w, y+h, x, y+h]), ('c4B', color * 4))
+
         self.interface.draw(draw_x=self.interface_x, draw_y=self.interface_y)
         self.logo_sprite.draw()
 
@@ -325,6 +333,8 @@ class MenuScene(object):
         x, y = map(int, self.interface.get_offset())
         tx, ty = x - self.interface_x, y - self.interface_y
         w, h = map(int, self.interface.get_content_size())
+        x, y = 0, 0
+        w, h = app.window.get_size()
         vertex_data = [x, y, x + w, y, x + w, y + h, x, y + h]
         texture_data = [v / self.overlay.width for v in [tx, ty, tx + w, ty, tx + w, ty + h, tx, ty + h]]
         color_data = [255, 255, 255, 255] * 4
@@ -337,3 +347,5 @@ class MenuScene(object):
             alpha = max(0, min(255, int(256*self.scene_fade)))
             color = [0, 0, 0, alpha]
             pyglet.graphics.draw(4, GL_QUADS, ('v2f', [0,0,w,0,w,h,0,h]), ('c4B', color*4))
+
+        glDisable(GL_SCISSOR_TEST)
