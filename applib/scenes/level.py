@@ -98,7 +98,7 @@ class LevelScene(object):
         )
 
         self.scene_fade = 1.0
-        animation.QueuedAnimation(
+        self.fade_animation = animation.QueuedAnimation(
             animation.AttributeAnimation(self, 'scene_fade', 0.0, 1.0),
         ).start()
 
@@ -232,12 +232,19 @@ class LevelScene(object):
     def on_level_fail(self):
         self.start_scene(self.level.failure_scene)
 
+    fade_animation = None
+
     def on_tick(self):
         if self.scene_fade > 0.0:
             return
 
         if self.dialogue_overlay.visible:
             # Do dialogue things here.
+            if self.fade_animation in app.animation:
+                self.fade_animation.tick()
+            for anim in app.animation:
+                if (getattr(anim, 'thing', None) == self) and (getattr(anim, 'name', None) == 'scene_fade'):
+                    anim.tick()
             return pyglet.event.EVENT_HANDLED
 
         view_width, view_height = self.interface.get_content_size()
@@ -440,16 +447,18 @@ class LevelScene(object):
                 break
 
             if command == 'next_level':
-                animation.QueuedAnimation(
+                self.fade_animation = animation.QueuedAnimation(
                     animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
-                    animation.WaitAnimation(0.1, app.controller.switch_scene, type(self), self.level.next_level)
+                    animation.WaitAnimation(0.5, app.controller.switch_scene, type(self), self.level.next_level)
                 ).start()
+                break
 
             if command == 'repeat_level':
-                animation.QueuedAnimation(
+                self.fade_animation = animation.QueuedAnimation(
                     animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
-                    animation.WaitAnimation(0.1, app.controller.switch_scene, type(self), type(self.level)),
+                    animation.WaitAnimation(0.5, app.controller.switch_scene, type(self), type(self.level)),
                 ).start()
+                break
         else:
             self.scene_lines = None
             self.dialogue_overlay.visible = False
@@ -577,6 +586,10 @@ class LevelScene(object):
             self.level.debug_print()
         if DEBUG and symbol == pyglet.window.key.D:
             self.start_scene('example')
+        if DEBUG and symbol == pyglet.window.key.F:
+            self.level.dispatch_event('on_level_fail')
+        if DEBUG and symbol == pyglet.window.key.W:
+            self.level.dispatch_event('on_level_success')
 
     ## Rendering
     ## ---------
@@ -745,6 +758,9 @@ class LevelScene(object):
             bar_width = sprite.width - 2 * bar_margin
             bar_full_width = bar_width * customer.get_patience_ratio()
             color = CUSTOMER_PATIENCE_COLOURS[customer.get_score_bracket()]
+            bg_texture = pyglet.resource.texture('interface/white_fade_bg.png')
+            fg_texture = pyglet.resource.texture('interface/white_fade_bg.png')
+            self.draw_frame(bg_texture, bar_x, bar_y, bar_width, bar_height, bar_height / 2)
             pyglet.graphics.draw(8, GL_QUADS,
                 ('v2f', [
                     bar_x, bar_y,
@@ -758,8 +774,7 @@ class LevelScene(object):
                 ]),
                 ('c4B', [255, 255, 255, 255] * 4 + color * 4)
             )
-            texture = pyglet.resource.texture('interface/border.png')
-            self.draw_frame(texture, bar_x, bar_y, bar_width, bar_height, bar_height / 2)
+            self.draw_frame(fg_texture, bar_x, bar_y, bar_width, bar_height, bar_height / 2)
 
     def draw_frame(self, texture, left, bottom, width, height, size):
         def make_rect(x, y, w, h):
