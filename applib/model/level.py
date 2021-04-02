@@ -25,7 +25,7 @@ class Order(object):
             if item.matches(match_item):
                 self.items.pop(index).destroy()
                 return True
-            if match_item.holds and item.matches(match_item.holds):
+            if match_item and match_item.holds and item.matches(match_item.holds):
                 self.items.pop(index).destroy()
                 return True
         return False
@@ -35,20 +35,27 @@ class Customer(entity.Entity):
 
     group = 'customers'
 
-    start_patience = 30
+    customer_patience = {
+        'cop_dog': 10,
+        'cop_elephant': 50,
+        'cop_rabbit': 30,
+        'friend_patches': 30,
+    }
 
-    customer_images = [
-        'cop_dog',
-        'cop_elephant',
-        'cop_rabbit',
-        'friend_patches',
-    ]
-
-    def __init__(self, level, order):
-        self.name = random.choice(self.customer_images)
+    def __init__(self, level, order, customer_type=None):
+        if customer_type is None:
+            self.name = random.choice(list(self.customer_images))
+        else:
+            self.name = customer_type
         super().__init__(level)
         self.order = order
         self.patience = self.compute_patience()
+
+    @property
+    def texture(self):
+        if (self._texture is None) and (self.group is not None) and (self.name is not None):
+            self._texture = pyglet.resource.texture(f'{self.group}/{self.name}.png')
+        return self._texture
 
     def destroy(self):
         super().destroy()
@@ -59,6 +66,7 @@ class Customer(entity.Entity):
         '''Return the patience in ticks
 
         '''
+        self.start_patience = self.customer_patience[self.name]
         return int(self.start_patience // TICK_LENGTH)
 
     def get_patience_ratio(self):
@@ -325,10 +333,14 @@ class Level(pyglet.event.EventDispatcher):
         if len(self.customer_specification) > 0 and len(self.customers) < self.customer_spaces_specification:
             # we have the space to spawn a customer, if one is waiting
             # we assume customers are in a queue in the right order!
-            time, order = self.customer_specification[0]
+            if len(self.customer_specification[0]) == 2:
+                time, order = self.customer_specification[0]
+                customer_type = None
+            else:
+                time, customer_type, order = self.customer_specification[0]
             if (int(time / TICK_LENGTH) <= self.tick_running):
                 order = Order(*[item_class(self) for item_class in order])
-                new_customer = Customer(self, order)
+                new_customer = Customer(self, order, customer_type)
                 self.customer_specification.pop(0)
 
         for entity in self.entities:
@@ -348,11 +360,13 @@ class TestLevel(Level):
     ]
 
     customer_specification = [
-        (0, [item.DoughnutUncooked] * 1),
-        (5, [item.DoughnutCooked] * 2),
-        (10, [item.DoughnutIcedBlue] * 3),
-        (15, [item.DoughnutFinalBluePurple] * 3),
+        (0, 'cop_dog', [item.DoughnutUncooked] * 1),
+        (5, 'cop_elephant', [item.DoughnutCooked] * 2),
+        (10, 'cop_rabbit', [item.DoughnutIcedBlue] * 3),
+        (15, 'friend_patches', [item.DoughnutFinalBluePurple] * 3),
     ]
+
+    background_scenery = scenery.BackgroundHill
 
 
 class LevelOne(Level):
