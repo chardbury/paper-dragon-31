@@ -1,0 +1,6 @@
+set_left_image : scrumper_patches
+set_left_name : Patches
+say_left : Lets practice a bit.
+say_left : While the cake is frying,
+say_left : Pick up a plate from the stack and put it on the plating board.
+say_left : Put the cake on the plate before you hand it to me.

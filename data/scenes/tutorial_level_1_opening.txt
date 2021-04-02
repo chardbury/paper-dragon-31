@@ -1,0 +1,8 @@
+set_left_image : scrumper_patches
+set_left_name : Patches
+say_left : Lets practice a bit.
+say_left : Pick up some dough from the left.
+say_left : Put it into the fryer.
+say_left : Wait until it turns golden-brown.
+say_left : Give it to me.
+say_left : If you leave it too long it'll burn and you'll have to throw it in the bin.

@@ -1,0 +1,6 @@
+set_left_image : scrumper_patches
+set_left_name : Patches
+say_left : Lets practice a bit.
+say_left : Once you have iced the cake and put it on a plate,
+say_left : You can take a scoop of sprinkles and tip them onto the cake
+say_left : Did you know we have two colours of sprinkles?
