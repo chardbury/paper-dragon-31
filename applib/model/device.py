@@ -124,10 +124,16 @@ class Device(entity.Entity):
             new_item = new_item_class(self.level)
 
         # Make sure that unused items are destroyed.
-        if input_item not in (output_item, new_item):
+        remaining_items = []
+        for root_item in (output_item, new_item):
+            if isinstance(root_item, item.Item):
+                remaining_items.append(root_item)
+                if isinstance(root_item.holds, item.Item):
+                    remaining_items.append(root_item.holds)
+        if input_item not in remaining_items:
             if isinstance(input_item, item.Item):
                 input_item.destroy()
-        if current_item not in (output_item, new_item):
+        if current_item not in remaining_items:
             if isinstance(current_item, item.Item):
                 current_item.destroy()
 

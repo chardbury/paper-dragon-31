@@ -173,19 +173,26 @@ def test_plate_recipes(level):
     level.interact(device)
     assert level.held_item is None
     assert isinstance(device.current_item, item.Plate)
+    assert device.current_item.level is level
     level.held_item = item.DoughnutIcedBlue(level)
     level.interact(device)
     assert level.held_item is None
     assert isinstance(device.current_item, item.Plate)
     assert isinstance(device.current_item.holds, item.DoughnutIcedBlue)
+    assert device.current_item.level is level
+    assert device.current_item.holds.level is level
     level.held_item = item.LadlePurple(level)
     level.interact(device)
     assert level.held_item is None
     assert isinstance(device.current_item, item.Plate)
     assert isinstance(device.current_item.holds, item.DoughnutFinalBluePurple)
+    assert device.current_item.level is level
+    assert device.current_item.holds.level is level
     level.interact(device)
     assert isinstance(level.held_item, item.Plate)
     assert isinstance(level.held_item.holds, item.DoughnutFinalBluePurple)
+    assert level.held_item.level is level
+    assert level.held_item.holds.level is level
     assert device.current_item is None
 
 def test_bin(level):

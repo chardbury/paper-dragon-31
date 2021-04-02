@@ -77,10 +77,13 @@ class LevelScene(object):
         '''
 
         # Ensure we have an appropriate level.
-        level = level or applib.model.level.LevelOne
         advance_levels = app.settings.level - 1
-        for _ in range(advance_levels):
-            level = level.next_level
+        if advance_levels < 0:
+            level = applib.model.level.TestLevel
+        else:
+            level = level or applib.model.level.LevelOne
+            for _ in range(advance_levels):
+                level = level.next_level
         self.level = level()
         applib.model.scenery.Counter(self.level)
         self.level.background_scenery(self.level)
@@ -299,7 +302,7 @@ class LevelScene(object):
                     customer_center = sprite.x + sprite.animation_offset_x
                     position_x = customer_center + relative_position_x
                     position_y = sprite.y + relative_position_y
-                    item.sprite.layer = sprite.layer + 0.5
+                    item.sprite.layer = sprite.layer + 0.2
                     item.sprite.update(
                         x = position_x,
                         y = position_y,
@@ -336,7 +339,7 @@ class LevelScene(object):
                     processed_items.append(entity.current_item)
                     flipped = (entity.sprite.x > view_width / 2)
                     item_x, item_y = entity.item_position
-                    entity.current_item.sprite.layer = sprite.layer + 0.5
+                    entity.current_item.sprite.layer = sprite.layer + 0.2
                     entity.current_item.sprite.visible = not has_alt_sprite
                     entity.current_item.sprite.update(
                         x = sprite.x + item_x * sprite.width * (-1 if flipped else 1),
@@ -344,6 +347,20 @@ class LevelScene(object):
                     )
 
         # Postprocessing for items.
+        for sprite, entity in self.entities_by_sprite.items():
+            if isinstance(entity, applib.model.item.Item):
+                if entity.holds is not None:
+                    processed_items.append(entity.holds)
+                    hold_sprite = entity.holds.sprite
+                    item_x, item_y = entity.holds_position
+                    entity.holds.sprite.layer = sprite.layer + 0.2
+                    entity.holds.sprite.visible = (entity is not self.level.held_item)
+                    entity.holds.sprite.update(
+                        x = sprite.x + item_x * sprite.width,
+                        y = sprite.y + item_y * sprite.height,
+                    )
+
+        # Postpostprocessing for items.
         for sprite, entity in self.entities_by_sprite.items():
             if isinstance(entity, applib.model.item.Item):
                 if entity not in processed_items:
