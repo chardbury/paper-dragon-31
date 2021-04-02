@@ -41,7 +41,7 @@ class Plate(Item):
 def load_items():
     indexed_resources = list(pyglet.resource._default_loader._index)
     for resource_name in indexed_resources:
-        if match := re.match(rf'{Item.group}/([a-z_]+)\.png', resource_name):
+        if match := re.match(rf'{Item.group}/([A-Za-z_]+)\.png', resource_name):
             asset_name = match.group(1)
             if asset_name not in entity.Entity.index[Item.group]:
                 class_name = ''.join(part.title() for part in re.split(r'_+', asset_name))
