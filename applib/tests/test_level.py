@@ -246,6 +246,17 @@ def test_customer_served(level):
     assert level.sad_customer == 1
     assert level.happy_customer == 1
 
+def test_customer_accepts_plated_food(level):
+    for _ in range(int(5 // TICK_LENGTH)):
+        level.tick()
+    assert len(level.customers) == 1
+    level.held_item = item.Plate(level)
+    level.held_item.holds = item.DoughnutCooked(level)
+    level.interact(level.customers[0])
+    level.tick()
+    assert len(level.customers) == 0
+
+
 def test_plate_destroys_previous_item(level):
     plate = level.get_device('station_plating')
     doughnut = item.DoughnutIcedBlue(level)

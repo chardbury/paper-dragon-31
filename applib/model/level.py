@@ -25,6 +25,9 @@ class Order(object):
             if item.matches(match_item):
                 self.items.pop(index).destroy()
                 return True
+            if match_item.holds and item.matches(match_item.holds):
+                self.items.pop(index).destroy()
+                return True
         return False
 
 
@@ -338,7 +341,8 @@ class TestLevel(Level):
         (device.Dough, -0.5, -0.1),
         (device.Cooking, 0.0, -0.1),
         (device.IcingBlue, 0.5, -0.1),
-        (device.Bin, -0.5, -0.3),
+        (device.Bin, -0.8, -0.4),
+        (device.Plating, -0.5, -0.3),
         (device.Plate, 0.0, -0.3),
         (device.SprinklesPurple, 0.5, -0.3),
     ]
