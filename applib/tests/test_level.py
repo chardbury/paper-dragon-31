@@ -14,13 +14,13 @@ class ExampleLevel(level.Level):
     device_specification = [
         (device.Dough, 0.0, 0.0),
         (device.Cooking, 0.0, 0.0),
-        (device.Plate, 0.0, 0.0),
+        (device.Plating, 0.0, 0.0),
         (device.Bin, 0.0, 0.0),
     ]
 
     customer_specification = [
         (5, [item.DoughnutCooked]),
-        (15, [item.DoughnutCooked, item.DoughnutGlazed])
+        (15, [item.DoughnutCooked, item.DoughnutIcedBlue])
     ]
 
     customer_spaces_specification = 2
@@ -168,17 +168,17 @@ def test_customer_serve_wrong_item(level):
     assert level.happy_customer == 0 and level.sad_customer == 0
 
 def test_plate_recipes(level):
-    device = level.get_device('station_plate')
-    level.held_item = item.DoughnutGlazed(level)
+    device = level.get_device('station_plating')
+    level.held_item = item.DoughnutIcedBlue(level)
     level.interact(device)
     assert level.held_item is None
-    assert isinstance(device.current_item, item.DoughnutGlazed)
-    level.held_item = item.Sprinkles(level)
+    assert isinstance(device.current_item, item.DoughnutIcedBlue)
+    level.held_item = item.LadlePurple(level)
     level.interact(device)
     assert level.held_item is None
-    assert isinstance(device.current_item, item.DoughnutSprinkles)
+    assert isinstance(device.current_item, item.DoughnutFinalBluePurple)
     level.interact(device)
-    assert isinstance(level.held_item, item.DoughnutSprinkles)
+    assert isinstance(level.held_item, item.DoughnutFinalBluePurple)
     assert device.current_item is None
 
 def test_bin(level):
@@ -240,25 +240,25 @@ def test_customer_served(level):
     assert level.happy_customer == 1
 
 def test_plate_destroys_previous_item(level):
-    plate = level.get_device('station_plate')
-    doughnut = item.DoughnutGlazed(level)
-    sprinkles = item.Sprinkles(level)
+    plate = level.get_device('station_plating')
+    doughnut = item.DoughnutIcedBlue(level)
+    LadlePurple = item.LadlePurple(level)
     assert doughnut.level is level
     assert doughnut in level.entities
-    assert sprinkles.level is level
-    assert sprinkles in level.entities
+    assert LadlePurple.level is level
+    assert LadlePurple in level.entities
     level.held_item = doughnut
     level.interact(plate)
-    level.held_item = sprinkles
+    level.held_item = LadlePurple
     level.interact(plate)
     assert doughnut.level is None
     assert doughnut not in level.entities
-    assert sprinkles.level is None
-    assert sprinkles not in level.entities
+    assert LadlePurple.level is None
+    assert LadlePurple not in level.entities
 
 def test_plates_are_not_weird(level):
     station_dough = level.get_device('station_dough')
-    station_plate = level.get_device('station_plate')
+    station_plate = level.get_device('station_plating')
     assert level.held_item is None
     assert station_plate.current_item is None
     level.interact(station_dough)
@@ -309,7 +309,7 @@ def test_slow_level_ended_no_customers_leftr(slow_level):
     slow_level.held_item = item.DoughnutCooked(slow_level)
     slow_level.interact(slow_level.customers[0])
     slow_level.tick()
-    slow_level.held_item = item.DoughnutGlazed(slow_level)
+    slow_level.held_item = item.DoughnutIcedBlue(slow_level)
     slow_level.interact(slow_level.customers[0])
     slow_level.tick()
     assert slow_level.fail_score == 40

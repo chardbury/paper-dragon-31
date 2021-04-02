@@ -337,17 +337,17 @@ class TestLevel(Level):
     device_specification = [
         (device.Dough, -0.5, -0.1),
         (device.Cooking, 0.0, -0.1),
-        (device.Icing, 0.5, -0.1),
+        (device.IcingBlue, 0.5, -0.1),
         (device.Bin, -0.5, -0.3),
         (device.Plate, 0.0, -0.3),
-        (device.Sprinkles, 0.5, -0.3),
+        (device.SprinklesPurple, 0.5, -0.3),
     ]
 
     customer_specification = [
         (0, [item.DoughnutUncooked] * 1),
         (5, [item.DoughnutCooked] * 2),
-        (10, [item.DoughnutGlazed] * 3),
-        (15, [item.DoughnutSprinkles] * 3),
+        (10, [item.DoughnutIcedBlue] * 3),
+        (15, [item.DoughnutFinalBluePurple] * 3),
     ]
 
 
@@ -385,12 +385,12 @@ class LevelTwo(Level):
     device_specification = [
         (device.Dough, -0.5, -0.1),
         (device.Cooking, 0.0, -0.1),
-        (device.Icing, 0.5, -0.1),
+        (device.IcingBlue, 0.5, -0.1),
         (device.Bin, -0.5, -0.3),
     ]
 
     customer_specification = [
-        (2, [item.DoughnutGlazed]),
+        (2, [item.DoughnutIcedBlue]),
     ]
 
 LevelOne.next_level = LevelTwo

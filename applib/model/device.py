@@ -169,27 +169,34 @@ class AutomaticDevice(Device):
 
 class Bin(AutomaticDevice):
     
-    name ='station_bin'
+    name = 'station_bin'
 
     product = None
 
 
-class Plate(Device):
+class Plate(AutomaticDevice):
 
     name = 'station_plate'
+
+    product = item.Plate
+
+
+class Plating(Device):
+
+    name = 'station_plating'
 
     duration = 0.0
 
     recipes = {
-        (item.Sprinkles, item.DoughnutGlazed): (None, item.DoughnutSprinkles),
+        (item.LadlePurple, item.DoughnutIcedBlue): (None, item.DoughnutFinalBluePurple),
     }
 
-def _populate_plate_recipes():
+def _populate_plating_recipes():
     for item_name, item_class in entity.Entity.index['items'].items():
-        Plate.recipes[item_class, None] = (None, item_class)
+        Plating.recipes[item_class, None] = (None, item_class)
 
-_populate_plate_recipes()
-del _populate_plate_recipes
+_populate_plating_recipes()
+del _populate_plating_recipes
 
 
 class Dough(AutomaticDevice):
@@ -224,21 +231,41 @@ class Cooking(Device):
     }
 
 
-class Icing(Device):
+class IcingBlue(Device):
 
-    name = 'station_icing'
+    name = 'station_icing_blue'
 
     item_position = (0.15, -0.3)
     
     recipes = {
         (item.DoughnutCooked, None): (None, item.DoughnutCooked),
-        (item.Time, item.DoughnutCooked): (None, item.DoughnutGlazed),
-        (None, item.DoughnutGlazed): (item.DoughnutGlazed, None),
+        (item.Time, item.DoughnutCooked): (None, item.DoughnutIcedBlue),
+        (None, item.DoughnutIcedBlue): (item.DoughnutIcedBlue, None),
     }
 
 
-class Sprinkles(AutomaticDevice):
+class IcingPink(Device):
 
-    name = 'station_sprinkles'
+    name = 'station_icing_pink'
 
-    product = item.Sprinkles
+    item_position = (0.15, -0.3)
+    
+    recipes = {
+        (item.DoughnutCooked, None): (None, item.DoughnutCooked),
+        (item.Time, item.DoughnutCooked): (None, item.DoughnutIcedPink),
+        (None, item.DoughnutIcedPink): (item.DoughnutIcedPink, None),
+    }
+
+
+class SprinklesPurple(AutomaticDevice):
+
+    name = 'station_sprinkles_purple'
+
+    product = item.LadlePurple
+
+
+class SprinklesYellow(AutomaticDevice):
+
+    name = 'station_sprinkles_yellow'
+
+    product = item.LadleYellow
