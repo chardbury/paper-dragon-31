@@ -515,7 +515,7 @@ class LevelScene(object):
             if command == 'set_left_name':
                 self.name_left.text_update(value or None)
             if command == 'set_right_name':
-                self.name_left.text_update(value or None)
+                self.name_right.text_update(value or None)
 
             if command == 'say_left':
                 self.message_area.text_update(value)
