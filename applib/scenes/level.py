@@ -604,6 +604,14 @@ class LevelScene(object):
                     animation.WaitAnimation(0.5, app.controller.switch_scene, type(self), type(self.level)),
                 ).start()
                 break
+
+            if command == 'win_game':
+                self.fade_animation = animation.QueuedAnimation(
+                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+                    animation.WaitAnimation(0.5, app.controller.switch_scene, applib.scenes.victory.VictoryScene),
+                ).start()
+                break
+
         else:
             self.scene_lines = None
             self.dialogue_overlay.visible = False
