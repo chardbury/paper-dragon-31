@@ -133,6 +133,21 @@ class LevelScene(object):
             view_width, view_height = self.interface.get_content_size()
             move_x, move_y = self.compute_position(entity)
 
+            # Cache the texture data for alpha hit testing.
+            if texture not in self._texture_data:
+                texture_data = texture.get_image_data().get_data()
+                self._texture_data[texture] = texture_data
+
+            # Process any alternative sprites early.
+            for alt_sprite_paths in getattr(entity, 'alt_sprites', {}).values():
+                for alt_sprite_path in alt_sprite_paths:
+                    alt_texture = pyglet.resource.texture(alt_sprite_path)
+                    if alt_texture not in self._texture_data:
+                        texture_data = texture.get_image_data().get_data()
+                        self._texture_data[alt_texture] = texture_data
+                    alt_texture.anchor_x = alt_texture.width // 2
+                    alt_texture.anchor_y = alt_texture.height // 2
+
             # Update the sprite indexes.
             self.sprites_by_entity[entity] = sprite
             self.entities_by_sprite[sprite] = entity
@@ -141,10 +156,6 @@ class LevelScene(object):
             if sprite not in self.interface.sprites:
                 self.interface.sprites.append(sprite)
                 sprite._can_click_through = isinstance(entity, applib.model.item.Item)
-
-                # Cache the texture data for alpha hit testing.
-                texture_data = texture.get_image_data().get_data()
-                self._texture_data[texture] = texture_data
             
                 # Get the proprties used to configure the sprite.
                 for entity_class, relative_height, sprite_layer in self._entity_properties:
@@ -301,13 +312,32 @@ class LevelScene(object):
             
             # Move current item sprites to their device.
             if isinstance(entity, applib.model.device.Device):
+
+                # Set alternative texture
+                has_alt_sprite = False
+                if type(entity.current_item) in entity.alt_sprites:
+                    alt_texture_path = entity.alt_sprites[type(entity.current_item)][0]
+                    texture = pyglet.resource.texture(alt_texture_path)
+                    sprite._texture.anchor_x = sprite._texture.width // 2
+                    sprite._texture.anchor_y = sprite._texture.height // 2
+                    if texture not in self._texture_data:
+                        texture_data = texture.get_image_data().get_data()
+                        self._texture_data[texture] = texture_data
+                    has_alt_sprite = True
+                else:
+                    texture = entity.texture
+                if texture != sprite._texture:
+                    sprite._set_texture(texture)
+                    sprite._update_position()
+
                 if entity.sprite.x > view_width / 2 and entity.sprite.scale_x > 0:
                     entity.sprite.scale_x *= -1
                 if entity.current_item is not None:
-                    flipped = (entity.sprite.x > view_width / 2)
                     processed_items.append(entity.current_item)
+                    flipped = (entity.sprite.x > view_width / 2)
                     item_x, item_y = entity.item_position
                     entity.current_item.sprite.layer = sprite.layer + 0.5
+                    entity.current_item.sprite.visible = not has_alt_sprite
                     entity.current_item.sprite.update(
                         x = sprite.x + item_x * sprite.width * (-1 if flipped else 1),
                         y = sprite.y + item_y * sprite.height,
@@ -316,8 +346,8 @@ class LevelScene(object):
         # Postprocessing for items.
         for sprite, entity in self.entities_by_sprite.items():
             if isinstance(entity, applib.model.item.Item):
-                sprite.visible = True
                 if entity not in processed_items:
+                    sprite.visible = True
                     if entity is self.level.held_item:
                         sprite.visible = False
                     elif DEBUG:

@@ -32,6 +32,8 @@ class Device(entity.Entity):
     # input-item, current-item : held-item, new-current-item
     recipes = {}
 
+    alt_sprites = {}
+
     item_position = (0.0, 0.0)
 
     def __init_subclass__(cls):
@@ -204,6 +206,15 @@ class Cooking(Device):
     ruined_time = 5.0
 
     item_position = (0.0, 0.10)
+
+    alt_sprites = {
+        item.DoughnutUncooked: ('devices/station_cooking_uncooked.png',),
+        item.DoughnutCooked: ('devices/station_cooking_cooked.png',),
+        item.DoughnutBurned: (
+            'devices/station_cooking_burned1.png',
+            'devices/station_cooking_burned2.png',
+        ),
+    }
     
     recipes = {
         (item.DoughnutUncooked, None): (None, item.DoughnutUncooked),
