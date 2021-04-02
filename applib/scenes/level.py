@@ -133,6 +133,7 @@ class LevelScene(object):
         self.fade_animation = animation.QueuedAnimation(
             animation.AttributeAnimation(self, 'scene_fade', 0.0, 1.0),
         ).start()
+        self.dialogue_animation = None
 
         self.load_level_sprites()
 
@@ -274,10 +275,12 @@ class LevelScene(object):
                 other_customer.sprite._target_offset_x = move_x * view_height
 
     def on_level_success(self):
-        self.start_scene(self.level.victory_scene)
+        self.start_scene(self.level.victory_scene, 1.0)
+        sound.success()
 
     def on_level_fail(self):
-        self.start_scene(self.level.failure_scene)
+        self.start_scene(self.level.failure_scene, 1.0)
+        sound.sad_trombone()
 
     fade_animation = None
 
@@ -287,12 +290,7 @@ class LevelScene(object):
 
         if self.dialogue_overlay.visible:
             # Do dialogue things here.
-            if self.fade_animation in app.animation:
-                self.fade_animation.tick()
-            for anim in app.animation:
-                if (getattr(anim, 'thing', None) == self) and (getattr(anim, 'name', None) == 'scene_fade'):
-                    anim.tick()
-            return pyglet.event.EVENT_HANDLED
+            return
 
         view_width, view_height = self.interface.get_content_size()
 
@@ -471,7 +469,7 @@ class LevelScene(object):
             padding = -0.05,
             width = 1.0,
             height = 0.15,
-            align_x = 0.5,
+            align_x = 0.0,
             align_y = 0.14,
             text = '',
             text_color = (0, 0, 0, 255),
@@ -493,9 +491,10 @@ class LevelScene(object):
         )
 
         self.name_right = self.character_right.add(
+            padding = -0.05,
             width = 1.0,
             height = 0.15,
-            align_x = 0.5,
+            align_x = 1.0,
             align_y = 0.14,
             text = '',
             text_color = (0, 0, 0, 255),
@@ -531,11 +530,26 @@ class LevelScene(object):
 
         self.scene_lines = None
 
-    def start_scene(self, name):
+    def start_scene(self, name, slowly=None):
         if name is not None:
+            self.name_left.text_update(None)
+            self.name_right.text_update(None)
+            self.name_left.visible = False
+            self.name_right.visible = False
+            self.character_left.image_texture = None
+            self.character_right.image_texture = None
+            self.message_container.visible = False
+            self.message_area.text_update(None)
             self.scene_lines = pyglet.resource.file(f'scenes/{name}.txt', 'r').readlines()
             self.dialogue_overlay.visible = True
-            self.advance_scene()
+            if slowly is not None:
+                self.dialogue_overlay.background_opacity = 0.0
+                self.dialogue_animation = animation.QueuedAnimation(
+                    animation.AttributeAnimation(self.dialogue_overlay, 'background_opacity', 0.8, slowly, 'symmetric'),
+                    animation.WaitAnimation(0.3, self.advance_scene),
+                ).start()
+            else:
+                self.advance_scene()
 
     def advance_scene(self):
         while len(self.scene_lines) > 0:
@@ -561,6 +575,7 @@ class LevelScene(object):
                 self.name_right.text_update(value or None)
 
             if command == 'say_left':
+                self.message_container.visible = True
                 self.message_area.text_update(value)
                 self.name_left.visible = bool(self.name_left.text)
                 self.name_right.visible = False
@@ -568,6 +583,7 @@ class LevelScene(object):
                 self.character_right.image_color = (75, 75, 75, 255)
                 break
             if command == 'say_right':
+                self.message_container.visible = True
                 self.message_area.text_update(value)
                 self.name_right.visible = bool(self.name_right.text)
                 self.name_left.visible = False

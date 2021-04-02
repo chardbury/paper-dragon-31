@@ -71,6 +71,20 @@ class Panel(object):
         self._parent = None
         self._children = []
 
+        self._background_opacity = None
+
+    @property
+    def background_opacity(self):
+        if self._background_opacity is None:
+            self._background_opacity = self.background_color[3] / 255
+        return self._background_opacity
+    
+    @background_opacity.setter
+    def background_opacity(self, value):
+        self._background_opacity = value
+        self.background_color = list(self.background_color)
+        self.background_color[3] = max(0, min(255, int(256 * self._background_opacity)))
+
     # Hierarchy
 
     def add(self, panel=None, **kwargs):
