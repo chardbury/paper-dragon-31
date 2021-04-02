@@ -107,12 +107,11 @@ class LevelScene(object):
         '''
 
         # Ensure we have an appropriate level.
-        advance_levels = app.settings.level - 1
-        if advance_levels < 0:
+        if app.settings.level < 0:
             level = applib.model.level.TestLevel
         else:
             level = level or applib.model.level.LevelOne
-            for _ in range(advance_levels):
+            for _ in range(app.settings.level - 1):
                 level = level.next_level
         self.level = level()
         applib.model.scenery.Counter(self.level)
