@@ -142,6 +142,11 @@ class LevelScene(object):
         self.start_scene(self.level.opening_scene)
         self.paw_animations = {}
 
+        self.bg_player = applib.engine.sound.bg_mix()
+
+    def on_scene_end(self):
+        self.bg_player.pause()
+
     ## Model
     ## -----
 

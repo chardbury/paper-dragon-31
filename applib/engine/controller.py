@@ -23,6 +23,7 @@ class Controller(pyglet.event.EventDispatcher):
 
     event_types = (
         'on_tick',
+        'on_scene_end',
     )
 
     event_graph = (
@@ -64,6 +65,7 @@ class Controller(pyglet.event.EventDispatcher):
 
         # Tear down the current scene.
         if app.scene is not None:
+            self.dispatch_event('on_scene_end')
             for dispatcher_name, listener_names in self.event_graph:
                 dispatcher = getattr(app, dispatcher_name)
                 for listener_name in reversed(listener_names):
