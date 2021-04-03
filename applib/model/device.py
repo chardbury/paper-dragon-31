@@ -342,7 +342,7 @@ class IcingBlue(Device):
     item_position = (0.15, -0.3)
     
     recipes = {
-        (item.DoughnutCooked, None): (None, item.DoughnutCooked),
+        (item.DoughnutCooked, None): (None, item.DoughnutCooked, applib.engine.sound.whirr),
         (item.Time, item.DoughnutCooked): (None, item.DoughnutIcedBlue, applib.engine.sound.squirt),
         (None, item.DoughnutIcedBlue): (item.DoughnutIcedBlue, None),
     }
@@ -357,7 +357,7 @@ class IcingPink(Device):
     item_position = (0.15, -0.3)
     
     recipes = {
-        (item.DoughnutCooked, None): (None, item.DoughnutCooked),
+        (item.DoughnutCooked, None): (None, item.DoughnutCooked, applib.engine.sound.whirr),
         (item.Time, item.DoughnutCooked): (None, item.DoughnutIcedPink, applib.engine.sound.squirt),
         (None, item.DoughnutIcedPink): (item.DoughnutIcedPink, None),
     }

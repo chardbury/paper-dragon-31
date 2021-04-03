@@ -38,7 +38,7 @@ def make_dialogue_interface(self):
 
     self.name_left = self.character_left.add(
         padding = -0.03,
-        width = 1.2,
+        width = 1.3,
         height = 0.15,
         align_x = 0.5,
         align_y = 1.01,
@@ -64,7 +64,7 @@ def make_dialogue_interface(self):
 
     self.name_right = self.character_right.add(
         padding = -0.03,
-        width = 1.2,
+        width = 1.3,
         height = 0.15,
         align_x = 0.5,
         align_y = 1.01,

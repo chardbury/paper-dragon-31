@@ -314,11 +314,11 @@ class LevelScene(object):
 
     def on_level_success(self):
         self.start_scene(self.level.victory_scene, 1.0)
-        sound.success()
+        sound.success_trumpets()
 
     def on_level_fail(self):
         self.start_scene(self.level.failure_scene, 1.0)
-        sound.sad_trombone()
+        sound.siren()
 
     fade_animation = None
 
