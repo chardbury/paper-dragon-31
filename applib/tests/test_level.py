@@ -55,7 +55,7 @@ def slow_level():
 def alt_level():
     example_level = ExampleLevel()
     example_level.alt_suspicion_mode = True
-    example_level.alt_suspicion_time = 30.0
+    example_level.alt_suspicion_time = 40.0
     return example_level
 
 
@@ -584,15 +584,54 @@ def test_alt_suspicion_increases_automatically(alt_level):
     alt_level.tick()
     assert alt_level.score > 0.0
 
-def test_alt_lose_after_30_seconds(alt_level):
+def test_alt_lose_after_40_seconds(alt_level):
     assert alt_level.score == 0.0
-    alt_level.wait_for(30.0, -1)
+    alt_level.wait_for(40.0, -1)
     assert alt_level.score < alt_level.fail_score
     alt_level.tick()
     assert alt_level.score >= alt_level.fail_score
     assert alt_level.has_level_ended()
 
-# def test_alt_serving_reduces_suspicion(alt_level):
-#     assert alt_level.score == 0.0
-#     alt_level.tick()
-#     assert alt_level.score > 0.0
+def test_alt_serving_reduces_suspicion(alt_level):
+    assert alt_level.score == 0.0
+    alt_level.wait_for(5.0)
+    assert len(alt_level.customers) == 1
+    customer = alt_level.customers[0]
+    alt_level.held_item == item.DoughnutCooked(alt_level)
+    assert alt_level.score == pytest.approx(12.0)
+    alt_level.interact(customer)
+    assert alt_level.score == pytest.approx(12.0)
+
+def test_alt_leaving_does_not_reduce_suspicion(alt_level):
+    assert alt_level.score == 0.0
+    alt_level.wait_for(5.0)
+    assert len(alt_level.customers) == 1
+    alt_level.wait_for(30.0, -1)
+    assert len(alt_level.customers) == 2
+    assert alt_level.score == pytest.approx(83.96)
+    alt_level.tick()
+    assert alt_level.score == pytest.approx(84.0)
+
+
+@pytest.mark.parametrize(['bracket', 'time', 'score'], [
+    [0, 28.5, 10.0],
+    [1, 24.0, 10.0],
+    [2, 18.0, 15.0],
+    [3, 6.0, 20.0],
+    [4, 0.0, 30.0],
+])
+def test_alt_level_score_brackets(alt_level, bracket, time, score):
+    alt_level.customer_specification = [
+        (5, 'cop_rabbit', [item.DoughnutCooked]),
+    ]
+    alt_level.wait_for(5.0)
+    assert len(alt_level.customers) == 1
+    customer = alt_level.customers[0]
+    alt_level.wait_for(time, 1)
+    assert customer.get_score_bracket() == bracket
+    ordered_item = item.DoughnutCooked(alt_level)
+    alt_level.held_item = ordered_item
+    assert alt_level.score == pytest.approx(((5.0 + time) * 60 + 1) * 0.04)
+    alt_level.interact(customer)
+    alt_level.tick()
+    assert alt_level.score == pytest.approx(max(0.0, ((5.0 + time) * 60 + 2) * 0.04 - score))

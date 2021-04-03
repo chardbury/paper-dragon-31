@@ -152,17 +152,26 @@ class Customer(entity.Entity):
     def compute_score(self):
         bracket = self.get_score_bracket()
         if self.level.alt_suspicion_mode:
-            bracket = 4 - bracket
-        if bracket == 4:
-            return 0
-        elif bracket == 3:
-            return MAX_SCORE_FROM_CUSTOMER * 0.125
-        elif bracket == 2:
-            return MAX_SCORE_FROM_CUSTOMER * 0.25
-        elif bracket == 1:
-            return MAX_SCORE_FROM_CUSTOMER * 0.5
+            bracket = min(3, 4 - bracket)
+            if bracket == 3:
+                return MAX_SCORE_FROM_CUSTOMER * 0.25
+            elif bracket == 2:
+                return MAX_SCORE_FROM_CUSTOMER * 0.375
+            elif bracket == 1:
+                return MAX_SCORE_FROM_CUSTOMER * 0.5
+            else:
+                return MAX_SCORE_FROM_CUSTOMER * 0.75
         else:
-            return MAX_SCORE_FROM_CUSTOMER * 0.75
+            if bracket == 4:
+                return 0
+            elif bracket == 3:
+                return MAX_SCORE_FROM_CUSTOMER * 0.125
+            elif bracket == 2:
+                return MAX_SCORE_FROM_CUSTOMER * 0.25
+            elif bracket == 1:
+                return MAX_SCORE_FROM_CUSTOMER * 0.5
+            else:
+                return MAX_SCORE_FROM_CUSTOMER * 0.75
 
     def tick(self):
         if len(self.order.items) == 0:
