@@ -367,6 +367,7 @@ class LevelScene(object):
                     customer_is_moving = (sprite._animation_offset_x != sprite._target_offset_x)
                     paws_on_counter = (fg.animation_offset_y == 0.0 and fg.layer == 0.1)
                     paws_are_animating = (entity in self.paw_animations) and (self.paw_animations[entity] in app.animation)
+                    customer_is_on_right = (self.level.customers.index(entity) > 2)
 
                     if not paws_are_animating:
                         if customer_is_moving and paws_on_counter:
@@ -379,7 +380,7 @@ class LevelScene(object):
                                 animation.WaitAnimation(0.0, lambda fg=fg, sp=sprite: setattr(fg, 'layer', sp.layer+0.1)),
                                 animation.AttributeAnimation(fg, 'animation_offset_y', -0.1 * fg.height, 0.8, 'symmetric'),
                             ).start()
-                        elif not customer_is_moving and not paws_on_counter:
+                        elif not customer_is_moving and not paws_on_counter and not customer_is_on_right:
                             # Animate on counter
                             fg.visible = True
                             fg.animation_offset_y = -0.1 * fg.height
