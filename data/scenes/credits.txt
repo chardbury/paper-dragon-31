@@ -1,0 +1,5 @@
+say_left : You did it! Now you will be able to make the world's largest apple crumble!
+say_left : This game was an entry in PyWeek 31.
+say_left : It was developed by Joey Anrep, David Birch, Carrie de Lacy, Chris de Lacy, Paul Scrivens, and Richard Thomas
+say_left : Thank you for playing!
+end_game :

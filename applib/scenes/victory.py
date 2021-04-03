@@ -15,19 +15,10 @@ from applib.engine import sound
 
 from pyglet.gl import *
 
-VICTORY_TEXT = [
-    'You did it! Now you will be able to make the world\'s largest apple crumble!',
-    'This game was an entry in PyWeek 31.',
-    'It was developed by Joey Anrep, David Birch, Carrie de Lacy, Chris de Lacy, Paul Scrivens, and Richard Thomas',
-    'Thank you for playing!',
-]
-
 
 class VictoryScene(object):
 
     def __init__(self, level=None):
-
-        self.messages = list(VICTORY_TEXT)
         
         self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
@@ -111,7 +102,7 @@ class VictoryScene(object):
             align_x = 0.0,
             text_color = (0, 0, 0, 255),
             font_size = 0.03,
-            text = self.messages.pop(0),
+            text = None,
         )
 
         self.scene_fade = 1.0
@@ -121,15 +112,71 @@ class VictoryScene(object):
         app.music.switch(pyglet.resource.media('music/badoink_digitaldonut.mp3'))
 
         app.window.set_mouse_cursor(None)
+        self.start_scene('credits')
+
+    def start_scene(self, name, slowly=None):
+        if name is not None:
+            self.name_left.text_update(None)
+            self.name_right.text_update(None)
+            self.name_left.visible = False
+            self.name_right.visible = False
+            self.character_left.image_texture = None
+            self.character_right.image_texture = None
+            self.message_container.visible = False
+            self.message_area.text_update(None)
+            self.scene_lines = pyglet.resource.file(f'scenes/{name}.txt', 'r').readlines()
+            self.dialogue_overlay.visible = True
+            self.advance_scene()
+
+    def advance_scene(self):
+        while len(self.scene_lines) > 0:
+            line = self.scene_lines.pop(0).strip()
+            if len(line) == 0:
+                continue
+            command, value = map(str.strip, line.split(':', 1))
+
+            if command == 'set_left_image':
+                if len(value) > 0:
+                    self.character_left.image_texture = pyglet.resource.texture(f'characters/{value}.png')
+                else:
+                    self.character_left.image_texture = None
+            if command == 'set_right_image':
+                if len(value) > 0:
+                    self.character_right.image_texture = pyglet.resource.texture(f'characters/{value}.png')
+                else:
+                    self.character_right.image_texture = None
+
+            if command == 'set_left_name':
+                self.name_left.text_update(value or None)
+            if command == 'set_right_name':
+                self.name_right.text_update(value or None)
+
+            if command == 'say_left':
+                self.message_container.visible = True
+                self.message_area.text_update(value)
+                self.name_left.visible = bool(self.name_left.text)
+                self.name_right.visible = False
+                self.character_left.image_color = (255, 255, 255, 255)
+                self.character_right.image_color = (75, 75, 75, 255)
+                break
+            if command == 'say_right':
+                self.message_container.visible = True
+                self.message_area.text_update(value)
+                self.name_right.visible = bool(self.name_right.text)
+                self.name_left.visible = False
+                self.character_right.image_color = (255, 255, 255, 255)
+                self.character_left.image_color = (75, 75, 75, 255)
+                break
+
+            if command == 'end_game':
+                animation.QueuedAnimation(
+                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+                    animation.WaitAnimation(0.1, pyglet.app.exit),
+                ).start()
+                break
 
     def on_mouse_release(self, x, y, button, modifiers):
-        if self.messages:
-            self.message_area.text_update(self.messages.pop(0))
-        else:
-            animation.QueuedAnimation(
-                animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
-                animation.WaitAnimation(0.1, pyglet.app.exit),
-            ).start()
+        self.advance_scene()
 
     def on_draw(self):
         glEnable(GL_BLEND)
