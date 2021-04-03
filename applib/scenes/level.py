@@ -602,9 +602,13 @@ class LevelScene(object):
                 break
 
             if command == 'next_level':
+                if value:
+                    next_level = getattr(applib.model.level, value)
+                else:
+                    next_level = self.level.next_level
                 self.fade_animation = animation.QueuedAnimation(
                     animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
-                    animation.WaitAnimation(0.5, app.controller.switch_scene, type(self), self.level.next_level)
+                    animation.WaitAnimation(0.5, app.controller.switch_scene, type(self), next_level)
                 ).start()
                 break
 
