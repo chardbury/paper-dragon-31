@@ -1,2 +1,3 @@
+play_sound : elephant_hello
 say_left : You... won?
 repeat_level :
