@@ -678,10 +678,33 @@ class EndlessLevel(Level):
     customer_time_max = 8
 
     customer_things = {
-        'cop_dog': [1, 1, [item.DoughnutCooked, item.DoughnutIcedBlue, item.DoughnutIcedPink, item.DoughnutFinalBlueYellow, item.DoughnutFinalPinkYellow, item.DoughnutFinalBluePurple, item.DoughnutFinalPinkPurple]],
-        'cop_elephant': [3, 3, [item.DoughnutCooked, item.DoughnutIcedBlue, item.DoughnutIcedPink, item.DoughnutFinalBlueYellow, item.DoughnutFinalPinkYellow, item.DoughnutFinalBluePurple, item.DoughnutFinalPinkPurple]],
-        'cop_rabbit': [1, 3, [item.DoughnutCooked, item.DoughnutIcedBlue, item.DoughnutIcedPink]],
-        'slacker_patches': [1, 1, [item.DoughnutUncooked, item.DoughnutCooked, item.DoughnutBurned]],
+        'cop_dog': [1, 1, [
+            (2, item.DoughnutIcedBlue),
+            (2, item.DoughnutIcedPink),
+            (1, item.DoughnutFinalBlueYellow),
+            (1, item.DoughnutFinalPinkYellow),
+            (1, item.DoughnutFinalBluePurple),
+            (1, item.DoughnutFinalPinkPurple),
+        ]],
+        'cop_elephant': [2, 3, [
+            (3, item.DoughnutCooked),
+            (2, item.DoughnutIcedBlue),
+            (2, item.DoughnutIcedPink),
+            (1, item.DoughnutFinalBlueYellow),
+            (1, item.DoughnutFinalPinkYellow),
+            (1, item.DoughnutFinalBluePurple),
+            (1, item.DoughnutFinalPinkPurple),
+        ]],
+        'cop_rabbit': [1, 3, [
+            (1, item.DoughnutCooked),
+            (1, item.DoughnutIcedBlue),
+            (1, item.DoughnutIcedPink),
+        ]],
+        'slacker_patches': [1, 1, [
+            (1, item.DoughnutUncooked),
+            (1, item.DoughnutCooked),
+            (1, item.DoughnutBurned),
+        ]],
     }
 
     background_scenery = scenery.BackgroundHill
@@ -716,6 +739,7 @@ class EndlessLevel(Level):
             # Add a random customer.
             customer_type = random.choice(list(self.customer_things))
             order_min, order_max, order_options = self.customer_things[customer_type]
+            order_options = sum([[option] * count for count, option in order_options], [])
             order_items = [random.choice(order_options)(self) for _ in range(random.randint(order_min, order_max))]
             Customer(self, Order(*order_items), customer_type)
             self.next_customer_ticks = None
