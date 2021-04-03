@@ -372,6 +372,8 @@ class LevelOne(Level):
         (2, 'cop_rabbit' ,[item.DoughnutCooked] * 3),
     ]
 
+class LevelOneBee(LevelOne):
+    failure_scene = 'level_1B_failure'
 
 class LevelTwo(Level):
 
@@ -398,6 +400,9 @@ class LevelTwo(Level):
         (15, 'cop_rabbit', [item.DoughnutCooked]),
         (17, 'cop_dog', [item.DoughnutIcedBlue]),
     ]
+
+class LevelTwoBee(LevelTwo):
+    failure_scene = 'level_2B_failure'
 
 class LevelThree(Level):
 
@@ -427,6 +432,9 @@ class LevelThree(Level):
         (12, 'cop_dog', [item.DoughnutIcedBlue]),
         (20, 'cop_rabbit', [item.DoughnutIcedBlue, item.DoughnutIcedPink]),
     ]
+
+class LevelThreeBee(LevelThree):
+    failure_scene = 'level_3B_failure'
 
 class LevelFour(Level):
 
@@ -462,6 +470,9 @@ class LevelFour(Level):
         (18, 'cop_rabbit', [item.DoughnutCooked]),
         (25, 'cop_elephant', [item.DoughnutFinalPinkYellow, item.DoughnutFinalPinkPurple, item.DoughnutCooked]),
     ]
+
+class LevelFourBee(LevelFour):
+    failure_scene = 'level_4B_failure'
 
 class LevelOneTutorial(Level):
 

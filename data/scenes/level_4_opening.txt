@@ -2,5 +2,5 @@ set_left_image : cook_flynn
 set_left_name : Flynn
 set_right_image : scrumper_patches
 set_right_name : Patches
-say_left : The cops here are all full up. The cop cake caper won't work anymore.
+say_left : The cops in Scrumpton Village are all full up. The cop cake caper won't work anymore.
 say_right : Let's go to the Vermillion Orchard. There are loads of apples there.
