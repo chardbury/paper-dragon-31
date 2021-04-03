@@ -21,10 +21,10 @@ class Sound(object):
         self.sources = []
 
     @classmethod
-    def _preload(cls, delta):
+    def _preload(cls, delta=None):
         for sound in cls.sounds:
             for source in sound.sources:
-                source = pyglet.resource.media(source, streaming=False)
+                source = pyglet.resource.media(source, streaming=True)
                 source.play().volume = 0.0
 
     def add(self, source_name):
@@ -35,7 +35,7 @@ class Sound(object):
     def __call__(self):
         if len(os.environ.get('PYTEST_CURRENT_TEST', '')) > 0: return
         source = random.choice(self.sources)
-        source = pyglet.resource.media(source, streaming=False)
+        source = pyglet.resource.media(source, streaming=True)
         player = source.play()
         player.volume = app.settings.sound_volume * app.settings.volume
         return player
@@ -52,4 +52,5 @@ def load_sounds():
 load_sounds()
 del load_sounds
 
-# pyglet.clock.schedule_once(Sound._preload, 0.0)
+#Sound._preload()
+#pyglet.clock.schedule_once(Sound._preload, 0.0)

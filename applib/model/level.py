@@ -46,31 +46,37 @@ class Customer(entity.Entity):
     customer_sounds = {
         'cop_dog': {
             'hello': applib.engine.sound.hello_high,
-            'hmm': applib.engine.sound.hmm_high,
+            'no': applib.engine.sound.hmm_high,
         },
         'cop_elephant': {
             'hello': applib.engine.sound.hello_high,
-            'hmm': applib.engine.sound.hmm_high,
+            'no': applib.engine.sound.hmm_high,
         },
         'cop_rabbit': {
             'hello': applib.engine.sound.hello_high,
-            'hmm': applib.engine.sound.hmm_high,
+            'no': applib.engine.sound.hmm_high,
         },
         'friend_patches': {
             'hello': applib.engine.sound.hello_high,
-            'hmm': applib.engine.sound.hmm_high,
+            'no': applib.engine.sound.hmm_high,
         },
         'slacker_patches': {
             'hello': applib.engine.sound.hello_high,
-            'hmm': applib.engine.sound.hmm_high,
+            'no': applib.engine.sound.hmm_high,
         },
     }
 
-    def sound_hello(self):
+    def sound_hello(self, *args, **kwargs):
         self.customer_sounds[self.name]['hello']()
 
-    def sound_hmm(self):
-        self.customer_sounds[self.name]['hmm']()
+    def sound_thanks(self, *args, **kwargs):
+        self.customer_sounds[self.name]['hello']()
+
+    def sound_yes(self, *args, **kwargs):
+        self.customer_sounds[self.name]['hello']()
+
+    def sound_no(self, *args, **kwargs):
+        self.customer_sounds[self.name]['no']()
 
     def __init__(self, level, order, customer_type=None):
         if customer_type is None:
@@ -105,9 +111,9 @@ class Customer(entity.Entity):
     def interact(self, held_item):
         if self.order.remove(held_item):
             held_item.destroy()
-            self.sound_hello()
+            self.sound_thanks()
         else:
-            self.sound_hmm()
+            self.sound_no()
             return held_item
 
     def get_score_bracket(self):

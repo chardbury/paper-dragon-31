@@ -147,14 +147,16 @@ class LevelScene(object):
             applib.model.scenery.BackgroundVillage: applib.engine.sound.bg_mix_village,
             applib.model.scenery.BackgroundHill: applib.engine.sound.bg_mix_hill,
         }[self.level.background_scenery]()
+        self.bg_player.volume = 0.0
+        self.bg_animation = animation.AttributeAnimation(self.bg_player, 'volume', app.settings.sound_volume * app.settings.volume, 5.0).start()
 
         self.overlay = self.interface.add(
             draw_function = self.draw_overlay,
         )
 
         self.scene_fade = 1.0
-        self.fade_animation = animation.QueuedAnimation(
-            animation.AttributeAnimation(self, 'scene_fade', 0.0, 1.0),
+        self.fade_animation = animation.ParallelAnimation(
+            animation.AttributeAnimation(self, 'scene_fade', 0.0, 2.0),
         ).start()
         self.dialogue_animation = None
         app.music.switch(None)
@@ -275,6 +277,7 @@ class LevelScene(object):
                 bounce_speed = CUSTOMER_BOUNCE_SPEED,
             )
         )
+        pyglet.clock.schedule_once(customer.sound_hello, 1.5)
 
         # Have all the customers reposition.
         customer_count = len(self.level.customers)
@@ -317,11 +320,11 @@ class LevelScene(object):
     fade_animation = None
 
     def on_tick(self):
-        if self.scene_fade > 0.0:
-            return
 
         if self.dialogue_overlay.visible:
             # Do dialogue things here.
+            pass
+        elif self.scene_fade:
             pass
         else:
             # Update the level first.
@@ -500,6 +503,7 @@ class LevelScene(object):
             self.message_area.text_update(None)
             self.scene_lines = pyglet.resource.file(f'scenes/{name}.txt', 'r').readlines()
             self.dialogue_overlay.visible = True
+            self.scene_ready = False
             if slowly is not None:
                 self.dialogue_overlay.background_opacity = 0.0
                 self.dialogue_animation = animation.QueuedAnimation(
@@ -510,6 +514,7 @@ class LevelScene(object):
                 self.advance_scene()
 
     def advance_scene(self):
+        self.scene_ready = True
         while len(self.scene_lines) > 0:
             line = self.scene_lines.pop(0).strip()
             if len(line) == 0:
@@ -555,23 +560,35 @@ class LevelScene(object):
                 else:
                     next_level = self.level.next_level
                 self.fade_animation = animation.QueuedAnimation(
-                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+                    animation.ParallelAnimation(
+                        animation.AttributeAnimation(self.bg_player, 'volume', 0.0, 2.0),
+                        animation.AttributeAnimation(self, 'scene_fade', 1.0, 2.0),
+                    ),
                     animation.WaitAnimation(0.5, app.controller.switch_scene, type(self), next_level)
                 ).start()
+                self.scene_ready = False
                 break
 
             if command == 'repeat_level':
                 self.fade_animation = animation.QueuedAnimation(
-                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+                    animation.ParallelAnimation(
+                        animation.AttributeAnimation(self.bg_player, 'volume', 0.0, 2.0),
+                        animation.AttributeAnimation(self, 'scene_fade', 1.0, 2.0),
+                    ),
                     animation.WaitAnimation(0.5, app.controller.switch_scene, type(self), type(self.level)),
                 ).start()
+                self.scene_ready = False
                 break
 
             if command == 'win_game':
                 self.fade_animation = animation.QueuedAnimation(
-                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+                    animation.ParallelAnimation(
+                        animation.AttributeAnimation(self.bg_player, 'volume', 0.0, 2.0),
+                        animation.AttributeAnimation(self, 'scene_fade', 1.0, 2.0),
+                    ),
                     animation.WaitAnimation(0.5, app.controller.switch_scene, applib.scenes.victory.VictoryScene),
                 ).start()
+                self.scene_ready = False
                 break
 
         else:
@@ -686,7 +703,8 @@ class LevelScene(object):
 
     def on_mouse_release(self, x, y, button, modifiers):
         if self.dialogue_overlay.visible:
-            self.advance_scene()
+            if self.scene_ready:
+                self.advance_scene()
         else:
             self._update_mouse_position(x, y)
             if self._clicked_sprite is not None:
