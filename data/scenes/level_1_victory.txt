@@ -4,7 +4,7 @@ set_right_image : cook_flynn
 set_right_name : Flynn
 play_sound : patches_dialogue_pos
 say_left : I did it! I scrumped an apple!
-play_sound : patches_dialogue_short
+play_sound : patches_dialogue_whine
 say_left : Mmm, so red and shiny.
 play_sound : flynn_dialogue_question
 say_right : Wait, what about me? Where's my apple?
