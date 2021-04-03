@@ -314,11 +314,11 @@ class LevelScene(object):
 
     def on_level_success(self):
         self.start_scene(self.level.victory_scene, 1.0)
-        sound.success()
+        sound.success_trumpets()
 
     def on_level_fail(self):
         self.start_scene(self.level.failure_scene, 1.0)
-        sound.sad_trombone()
+        sound.siren()
 
     fade_animation = None
 
@@ -565,6 +565,14 @@ class LevelScene(object):
                 self.name_left.visible = False
                 self.character_right.image_color = (255, 255, 255, 255)
                 self.character_left.image_color = (75, 75, 75, 255)
+                break
+            if command == 'say_both':
+                self.message_container.visible = True
+                self.message_area.text_update(value)
+                self.name_left.visible = bool(self.name_left.text)
+                self.name_right.visible = bool(self.name_right.text)
+                self.character_right.image_color = (255, 255, 255, 255)
+                self.character_right.image_color = (255, 255, 255, 255)
                 break
 
             if command == 'next_level':

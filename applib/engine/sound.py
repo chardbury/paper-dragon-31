@@ -46,6 +46,7 @@ def load_sounds():
     for resource_name in indexed_resources:
         if match := re.match(rf'sounds/((?:[a-z_/]*/)?([a-z_]+)(?:_[0-9]+)?)\.mp3', resource_name):
             asset_name, sound_name = match.groups()
+            #print(asset_name, sound_name)
             assert re.match(r'__', asset_name) is None
             globals().setdefault(sound_name, Sound()).add(asset_name)
 
