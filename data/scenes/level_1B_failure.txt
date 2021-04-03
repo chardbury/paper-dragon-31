@@ -1,8 +1,10 @@
-set_left_image : cop_rabbit
-set_left_name : Constable Iced Bun
-set_right_image : cook_flynn
-set_right_name : Flynn
-say_left : You aren't selling anything, this is a distraction. 
-say_left : Where's your friend Patches. Is she scrumping again?
-say_right : Please don't tell our parents.
+set_left_image : cook_flynn
+set_left_name : Flynn
+set_right_image : cop_rabbit
+set_right_name : Constable Iced Bun
+say_right : Wait a minute, where's your friend Patches? Shouldn't she be helping you?
+say_left : She's scrump- she went to get supplies, she'll be back soon.
+say_right : Supplies for what, you've hardly made anything!
+say_left : ...
+say_left : Please don't tell our parents.
 repeat_level :

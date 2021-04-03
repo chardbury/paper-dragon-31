@@ -2,5 +2,7 @@ set_left_image : cook_flynn
 set_left_name : Flynn
 set_right_image : scrumper_patches
 set_right_name : Patches
-say_left : That was close. We need a way to keep them at the stall longer.
-say_right : I know! Plates! If we give them plates they'll have to stick around to eat them.
+say_left : I'm worried they're starting to catch on. I don't want you to get caught.
+say_right : Well, right after you hit them with the old distraction cake they just leave and wander around eating it.
+say_left : Good point. We need a way to keep them hanging around the wagon.
+say_right : I know! Plates! If we give them plates they'll have to stick around to give the plates back.

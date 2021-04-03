@@ -2,6 +2,6 @@ set_left_image : cop_dog
 set_left_name : Sgt. Dognut
 set_right_image : cop_rabbit
 set_right_name : Constable Iced Bun
-say_left : Commissioner Peanut would really like these.
+say_left : I bet Comissioner Peanut would really like these.
 say_left : It's a pity she's at the police picnic at Vermillion Orchard.
 next_level : LevelFour

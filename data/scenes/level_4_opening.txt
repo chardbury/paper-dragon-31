@@ -2,5 +2,11 @@ set_left_image : cook_flynn
 set_left_name : Flynn
 set_right_image : scrumper_patches
 set_right_name : Patches
-say_left : The cops in Scrumpton Village are all full up. The cop cake caper won't work anymore.
-say_right : Let's go to the Vermillion Orchard. There are loads of apples there.
+say_right : So why are we at the Vermillion Orchard?
+say_left : The cops in the village are all full. They've stopped buying our distraction.
+say_right : Well at least there are lots of apples here. 
+set_right_image : ohno_patches
+say_right : But why are there so many cops?
+say_left : Focus on scrumping and I'll shower them with sprinkles.
+set_right_image : scrumper_patches
+say right : Both colours!? Let's do this!
