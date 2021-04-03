@@ -12,4 +12,7 @@ say_right : Those don't sound like real names.
 say_left : I agree.
 say_left : ...
 say_both : Thanks for playing!
+set_left_image :
+set_right_image :
+show_image : interface/title
 end_game :

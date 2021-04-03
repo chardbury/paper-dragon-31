@@ -27,6 +27,13 @@ def make_dialogue_interface(self):
         visible = False,
     )
 
+    self.image_centre = self.dialogue_overlay.add(
+        width = 0.9,
+        height = 0.9,
+        align_x = 0.5,
+        align_y = 0.5,
+    )
+
     self.character_left = self.dialogue_overlay.add(
         width = 0.25,
         height = 0.5,
@@ -166,7 +173,7 @@ class VictoryScene(object):
                 self.name_right.text_update(value or None)
 
             if command == 'say_left':
-                self.message_container.visible = True
+                self.message_container.visible = bool(value)
                 self.message_area.text_update(value)
                 self.name_left.visible = bool(self.name_left.text)
                 self.name_right.visible = False
@@ -174,7 +181,7 @@ class VictoryScene(object):
                 self.character_right.image_color = (75, 75, 75, 255)
                 break
             if command == 'say_right':
-                self.message_container.visible = True
+                self.message_container.visible = bool(value)
                 self.message_area.text_update(value)
                 self.name_right.visible = bool(self.name_right.text)
                 self.name_left.visible = False
@@ -182,7 +189,7 @@ class VictoryScene(object):
                 self.character_left.image_color = (75, 75, 75, 255)
                 break
             if command == 'say_both':
-                self.message_container.visible = True
+                self.message_container.visible = bool(value)
                 self.message_area.text_update(value)
                 self.name_left.visible = bool(self.name_left.text)
                 self.name_right.visible = bool(self.name_right.text)
@@ -190,11 +197,18 @@ class VictoryScene(object):
                 self.character_right.image_color = (255, 255, 255, 255)
                 break
 
+            if command == 'show_image':
+                self.image_centre.visible = bool(value)
+                self.image_centre.image_texture = pyglet.resource.texture(f'{value}.png')
+                self.name_left.visible = False
+                self.name_right.visible = False
+                self.message_container.visible = False
+                break
+
             if command == 'end_game':
-                frate = app.music.volume / 4.0
-                app.music.switch(None, frate)
                 animation.QueuedAnimation(
-                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 4.0),
+                    animation.WaitAnimation(0.0, app.music.switch, None, app.music.volume / 8.0),
+                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 8.0),
                     animation.WaitAnimation(0.5, app.controller.switch_scene, applib.scenes.menu.MenuScene),
                 ).start()
                 break
