@@ -273,6 +273,19 @@ def test_customer_accepts_plated_food(level):
     level.tick()
     assert len(level.customers) == 0
 
+def test_plates_restore_patience(level):
+    level.wait_for(5.0)
+    assert len(level.customers) == 1
+    customer = level.customers[0]
+    max_patience = customer.compute_patience()
+    assert customer.patience_ticks == max_patience
+    level.wait_for(15.0)
+    assert customer.patience_ticks == max_patience // 2
+    level.held_item = item.Plate(level)
+    level.held_item.holds = item.DoughnutCooked(level)
+    level.interact(customer)
+    assert (customer.patience_ticks - max_patience // 2) == max_patience // 5
+
 
 def test_plate_destroys_previous_item(level):
     plate = level.get_device('station_none')

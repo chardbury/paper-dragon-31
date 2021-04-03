@@ -107,6 +107,7 @@ class MenuScene(object):
             aspect = (16, 9),
             background_color = (255, 255, 255, 255),
             visible = False,
+            draw_function = self.draw_apple_overlay,
         )
 
         self.title_image = self.interface.add(
@@ -325,6 +326,23 @@ class MenuScene(object):
             animation.WaitAnimation(0.1, pyglet.app.exit),
         ).start()
 
+    def draw_apple_overlay(self, draw_x, draw_y):
+        if self._hover_panel:
+            px, py = self._hover_panel.get_offset()
+            pw, ph = self._hover_panel.get_content_size()
+            s = ph
+            px += draw_x + pw + s/2
+            py += draw_y
+            glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+            glEnable(self.apple_tex.target)
+            glBindTexture(self.apple_tex.target, self.apple_tex.id)
+            pyglet.graphics.draw(4, GL_QUADS,
+                ('v2f', [px, py, px+s, py, px+s, py+s, px, py+s]),
+                ('t3f', self.apple_tex.tex_coords),
+                ('c4B', [255] * 16),
+                )
+            glPopAttrib()
+
     def on_draw(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -341,22 +359,6 @@ class MenuScene(object):
 
         self.interface.draw(draw_x=self.interface_x, draw_y=self.interface_y)
         self.logo_sprite.draw()
-
-        if self._hover_panel:
-            px, py = self._hover_panel.get_offset()
-            pw, ph = self._hover_panel.get_content_size()
-            s = ph
-            px += x + pw + s/2
-            py += y
-            glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
-            glEnable(self.apple_tex.target)
-            glBindTexture(self.apple_tex.target, self.apple_tex.id)
-            pyglet.graphics.draw(4, GL_QUADS,
-                ('v2f', [px, py, px+s, py, px+s, py+s, px, py+s]),
-                ('t3f', self.apple_tex.tex_coords),
-                ('c4B', [255] * 16),
-                )
-            glPopAttrib()
 
         # Render overlay
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)

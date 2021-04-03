@@ -2,6 +2,7 @@
 
 '''
 
+import math
 import random
 
 import applib
@@ -85,7 +86,7 @@ class Customer(entity.Entity):
             self.name = customer_type
         super().__init__(level)
         self.order = order
-        self.patience = self.compute_patience()
+        self.patience_ticks = self.compute_patience()
 
     @property
     def texture(self):
@@ -103,13 +104,16 @@ class Customer(entity.Entity):
 
         '''
         self.start_patience = self.customer_patience[self.name]
-        return int(self.start_patience // TICK_LENGTH)
+        self.start_patience_ticks = int(math.ceil(self.start_patience // TICK_LENGTH))
+        return self.start_patience_ticks
 
     def get_patience_ratio(self):
-        return (self.patience / (self.start_patience // TICK_LENGTH))
+        return (self.patience_ticks / self.start_patience_ticks)
 
     def interact(self, held_item):
         if self.order.remove(held_item):
+            if isinstance(held_item, item.Plate):
+                self.patience_ticks = min(self.start_patience_ticks, self.patience_ticks + self.start_patience_ticks / 5)
             held_item.destroy()
             self.sound_thanks()
         else:
@@ -160,8 +164,8 @@ class Customer(entity.Entity):
             score = self.compute_score()
             self.level.remove_customer(self, True, score)
         else:
-            self.patience -= 1
-            if self.patience <= 0:
+            self.patience_ticks -= 1
+            if self.patience_ticks <= 0:
                 self.level.remove_customer(self, False, MAX_SCORE_FROM_CUSTOMER)
 
 
@@ -352,6 +356,9 @@ class Level(pyglet.event.EventDispatcher):
         if self.has_level_ended():
             pass
 
+        for entity in self.entities:
+            entity.tick()
+
         if len(self.customer_specification) > 0 and len(self.customers) < self.customer_spaces_specification:
             # we have the space to spawn a customer, if one is waiting
             # we assume customers are in a queue in the right order!
@@ -360,9 +367,6 @@ class Level(pyglet.event.EventDispatcher):
                 order = Order(*[item_class(self) for item_class in order])
                 new_customer = Customer(self, order, customer_type)
                 self.customer_specification.pop(0)
-
-        for entity in self.entities:
-            entity.tick()
 
 
 class TestLevel(Level):

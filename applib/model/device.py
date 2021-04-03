@@ -237,6 +237,10 @@ class Plating(Device):
         (item.DoughnutCooked, item.Plate): (None, item.Plate),
         (item.DoughnutIcedBlue, item.Plate): (None, item.Plate),
         (item.DoughnutIcedPink, item.Plate): (None, item.Plate),
+        (item.DoughnutFinalBluePurple, item.Plate): (None, item.Plate),
+        (item.DoughnutFinalBlueYellow, item.Plate): (None, item.Plate),
+        (item.DoughnutFinalPinkPurple, item.Plate): (None, item.Plate),
+        (item.DoughnutFinalPinkYellow, item.Plate): (None, item.Plate),
         (item.LadlePurple, item.DoughnutIcedBlue): (None, item.DoughnutFinalBluePurple, (applib.engine.sound.sprinkle_board, applib.engine.sound.sprinkle_plate)),
         (item.LadlePurple, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkPurple, (applib.engine.sound.sprinkle_board, applib.engine.sound.sprinkle_plate)),
         (item.LadleYellow, item.DoughnutIcedBlue): (None, item.DoughnutFinalBlueYellow, (applib.engine.sound.sprinkle_board, applib.engine.sound.sprinkle_plate)),
@@ -262,6 +266,12 @@ class MultiPlating(Device):
     subpositions = [
         (0.0, -0.15),
         (0.0, 0.2),
+    ]
+
+    subpositions = [
+        (0.0, 0.2),
+        (-0.32, -0.15),
+        (0.3, -0.15),
     ]
 
     # subpositions = [
