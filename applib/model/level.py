@@ -433,7 +433,7 @@ class LevelOne(Level):
     serve_style = 'fast'
     fail_ratio = 0.75 
     duration = 33
-    alt_suspicion_rate = 1
+    alt_suspicion_rate = 0.05
     alt_suspicion_time = 31
 
     device_specification = [
@@ -462,7 +462,7 @@ class LevelTwo(Level):
     fail_ratio = 0.4
     duration = 50
     alt_suspicion_rate = 0.05
-    alt_suspicion_time = 20
+    alt_suspicion_time = 21
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
@@ -493,6 +493,8 @@ class LevelThree(Level):
     serve_style = 'fast'
     fail_ratio = 0.55
     duration = 65
+    alt_suspicion_rate = 0.04
+    alt_suspicion_time = 36
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
@@ -527,6 +529,8 @@ class LevelFour(Level):
 
     serve_style = 'fast'
     fail_ratio = 0.8
+    alt_suspicion_rate = 0.04
+    alt_suspicion_time = 40
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
