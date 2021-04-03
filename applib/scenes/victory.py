@@ -189,9 +189,11 @@ class VictoryScene(object):
                 break
 
             if command == 'end_game':
+                frate = app.music.volume / 4.0
+                app.music.switch(None, frate)
                 animation.QueuedAnimation(
-                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
-                    animation.WaitAnimation(0.1, pyglet.app.exit),
+                    animation.AttributeAnimation(self, 'scene_fade', 1.0, 4.0),
+                    animation.WaitAnimation(0.5, pyglet.app.exit),
                 ).start()
                 break
 

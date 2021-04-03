@@ -100,6 +100,8 @@ class Device(entity.Entity):
             if transition_sound is not None:
                 if self._sound_player:
                     self._sound_player.next_source()
+                if isinstance(transition_sound, tuple):
+                    transition_sound = transition_sound[modifying_holds]
                 self._sound_player = transition_sound()
 
         # Trigger timed behaviour when the current item has changed.
@@ -235,10 +237,10 @@ class Plating(Device):
         (item.DoughnutCooked, item.Plate): (None, item.Plate),
         (item.DoughnutIcedBlue, item.Plate): (None, item.Plate),
         (item.DoughnutIcedPink, item.Plate): (None, item.Plate),
-        (item.LadlePurple, item.DoughnutIcedBlue): (None, item.DoughnutFinalBluePurple, applib.engine.sound.sprinkle_plate),
-        (item.LadlePurple, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkPurple, applib.engine.sound.sprinkle_plate),
-        (item.LadleYellow, item.DoughnutIcedBlue): (None, item.DoughnutFinalBlueYellow, applib.engine.sound.sprinkle_plate),
-        (item.LadleYellow, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkYellow, applib.engine.sound.sprinkle_plate),
+        (item.LadlePurple, item.DoughnutIcedBlue): (None, item.DoughnutFinalBluePurple, (applib.engine.sound.sprinkle_board, applib.engine.sound.sprinkle_plate)),
+        (item.LadlePurple, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkPurple, (applib.engine.sound.sprinkle_board, applib.engine.sound.sprinkle_plate)),
+        (item.LadleYellow, item.DoughnutIcedBlue): (None, item.DoughnutFinalBlueYellow, (applib.engine.sound.sprinkle_board, applib.engine.sound.sprinkle_plate)),
+        (item.LadleYellow, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkYellow, (applib.engine.sound.sprinkle_board, applib.engine.sound.sprinkle_plate)),
         (None, item.Plate): (item.Plate, None, applib.engine.sound.plate_pickup),
     }
 
