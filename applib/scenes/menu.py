@@ -105,7 +105,7 @@ class MenuScene(object):
 
         self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
-            background_color = (243, 228, 207, 255),
+            background_color = (225, 208, 183, 255),
             visible = False,
             draw_function = self.draw_apple_overlay,
         )
@@ -373,8 +373,8 @@ class MenuScene(object):
                     x, ftop, x + w, ftop, x + w, y + h, x, y + h,
                 ]),
                 ('c4B',
-                    [243, 228, 207, 255] * 6 +
-                    [243, 228, 207, 0] * 6
+                    [225, 208, 183, 255] * 6 +
+                    [225, 208, 183, 0] * 6
                 ),
             )
 
@@ -406,7 +406,7 @@ class MenuScene(object):
         glEnable(GL_SCISSOR_TEST)
         glScissor(x, y, w, h)
 
-        color = [243, 228, 207, 255]
+        color = [225, 208, 183, 255]
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', [x, y, x+w, y, x+w, y+h, x, y+h]), ('c4B', color * 4))
 
         self.interface.draw(draw_x=self.interface_x, draw_y=self.interface_y)
