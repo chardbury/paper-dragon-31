@@ -8,6 +8,7 @@ play_sound : flynn_dialogue_neg
 say_right : Patches no, we need to stop.
 play_sound : patches_dialogue_long
 say_left : But why. Did someone spot me?
+play_sound : patches_dialogue_question
 say_left : Did the cops get suspicious?
 set_left_image : ohno_patches
 play_sound : patches_dialogue_ohno
