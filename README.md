@@ -44,4 +44,8 @@ The following assets are licensed or attributed thusly:
 - Sound, "Sad Trombone by kirbydx", https://freesound.org/people/kirbydx/sounds/175409/, CC0 1.0
 - Sound, "garbage can open close sound effect by Garuda1982", https://freesound.org/people/Garuda1982/sounds/558109/, CC BY 3.0
 - Sound, "garbage can open close by speedygonzo", https://freesound.org/people/speedygonzo/sounds/235717/, CC0 1.0
+- Sound, "Wind, Realistic, A.wav by InspectorJ", https://freesound.org/people/InspectorJ/sounds/405561/, CC BY 3.0
+- Sound, "Wind, Soft. Cricket.wav by Leandros.Ntounis", https://freesound.org/people/Leandros.Ntounis/sounds/163607/, CC BY 3.0
+- Sound, "Cock.wav by Hotlavaman", https://freesound.org/people/Hotlavaman/sounds/108670/ CC0
+- Sound, "Cock.wav by ariat", https://freesound.org/people/ariat/sounds/164786/ CC BY 3.0
 - Font, "Lato". https://fonts.google.com/specimen/Lato, OFL
