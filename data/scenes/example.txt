@@ -4,5 +4,6 @@ say_left : Woof Woof!
 set_right_image : cop_elephant
 set_right_name : Commissioner Elephant
 say_right : ...
+play_sound : hello_high
 say_left : I mean... hello?
 next_level : LevelFour

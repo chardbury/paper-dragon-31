@@ -504,6 +504,7 @@ class LevelScene(object):
             self.scene_lines = pyglet.resource.file(f'scenes/{name}.txt', 'r').readlines()
             self.dialogue_overlay.visible = True
             self.scene_ready = False
+            self.scene_sound_player = None
             if slowly is not None:
                 self.dialogue_overlay.background_opacity = 0.0
                 self.dialogue_animation = animation.QueuedAnimation(
@@ -534,8 +535,14 @@ class LevelScene(object):
 
             if command == 'set_left_name':
                 self.name_left.text_update(value or None)
+
             if command == 'set_right_name':
                 self.name_right.text_update(value or None)
+
+            if command == 'play_sound':
+                if self.scene_sound_player:
+                    self.scene_sound_player.next_source()
+                self.scene_sound_player = getattr(applib.engine.sound, value)()
 
             if command == 'say_left':
                 self.message_container.visible = True
