@@ -1,13 +1,13 @@
-set_left_image : cook_flynn
-set_left_name : Flynn
-set_right_image : scrumper_patches
-set_right_name : Patches
-say_right : Total success, victory is ours!
-say_left : You got the apples?
-say_right : A scrumptious sackful indeed.
-say_left : Excellent. But why did you need a distraction cake?
-say_right : I wanted to see what they taste like... it was really chewy.
-say_left : Well you did order an uncooked one.
-set_right_image : ohno_patches
-say_right : You can cook them!?
+set_right_image : cook_flynn
+set_right_name : Flynn
+set_left_image : scrumper_patches
+set_left_name : Patches
+say_left : Total success, victory is ours!
+say_right : You got the apples?
+say_left : A scrumptious sackful indeed.
+say_right : Excellent. But why did you need a distraction cake?
+say_left : I wanted to see what they taste like... it was really chewy.
+say_right : Well you did order an uncooked one.
+set_left_image : ohno_patches
+say_left : You can cook them!?
 next_level : LevelThree

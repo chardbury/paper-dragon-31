@@ -5,13 +5,13 @@ say_left : The punishment for disrupting our picnic is...
 say_left : LITTER PICKING.
 set_right_image : scrumper_patches
 set_right_name : Patches
-say_right : oh no.
+say_right : Oh no.
 say_left : And I'm telling your parents.
 set_right_image : cook_flynn
 set_right_name : Flynn
-say_right : Oh no
-say left: And I'm confiscating those apples
+say_right : Oh no.
+say_left: And I'm confiscating those apples!
 set_right_image : both
-set_right_name : Patches and Flynn
+set_right_name : Patches & Flynn
 say_right : Oh no!
 repeat_level :

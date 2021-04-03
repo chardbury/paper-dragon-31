@@ -1,10 +1,14 @@
-set_left_image : cook_flynn
-set_left_name : Flynn
-set_right_image : cop_rabbit
-set_right_name : Constable Iced Bun
-say_right : Wait a minute, where's your friend Patches? Shouldn't she be helping you?
-say_left : She's scrump- she went to get supplies, she'll be back soon.
-say_right : Supplies for what, you've hardly made anything!
-say_left : ...
-say_left : Please don't tell our parents.
+set_right_image : cook_flynn
+set_right_name : Flynn
+set_left_image : cop_rabbit
+set_left_name : Constable Iced Bun
+play_sound : rabbit_neg
+say_left : Wait a minute, where's your friend Patches? Shouldn't she be helping you?
+play_sound : flynn_dialogue_uptone
+say_right : She's scrump- she went to get supplies, she'll be back soon.
+play_sound : rabbit_pos
+say_left : Supplies for what, you've hardly made anything!
+say_right : ...
+play_sound : flynn_dialogue_neg
+say_right : Please don't tell our parents.
 repeat_level :

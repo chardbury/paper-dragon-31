@@ -1,12 +1,12 @@
-set_left_image : cook_flynn
-set_left_name : Flynn
-set_right_image : scrumper_patches
-set_right_name : Patches
-say_right : So why are we at the Vermillion Orchard?
-say_left : The cops in the village are all full. They've stopped buying our distraction.
-say_right : Well at least there are lots of apples here. 
-set_right_image : ohno_patches
-say_right : But why are there so many cops?
-say_left : Focus on scrumping and I'll shower them with sprinkles.
-set_right_image : scrumper_patches
-say right : Both colours!? Let's do this!
+set_right_image : cook_flynn
+set_right_name : Flynn
+set_left_image : scrumper_patches
+set_left_name : Patches
+say_left : So why are we at the Vermillion Orchard?
+say_right : The cops in the village are all full. They've stopped buying our distraction.
+say_left : Well at least there are lots of apples here. 
+set_left_image : ohno_patches
+say_left : But why are there so many cops?
+say_right : Focus on scrumping and I'll shower them with sprinkles.
+set_left_image : scrumper_patches
+say left : Both colours!? Let's do this!

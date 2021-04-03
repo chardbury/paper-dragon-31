@@ -1,11 +1,12 @@
-set_left_image : cook_flynn
-set_left_name_left : Flynn
-set_right_image : scrumper_patches
-set_right_name : Patches
-say_right : There are so many apple trees here. It seems like they never end.
-say_left : Patches no, we need to stop.
-say_right : But why. Did someone spot me?
-say_right : Did the cops get suspicious?
-say_right : Did the bin catch fire... again?
-say_left : Better! The wagon is so full of apples there's no more room.
+set_right_image : cook_flynn
+set_right_name_right : Flynn
+set_left_image : scrumper_patches
+set_left_name : Patches
+say_left : There are so many apple trees here. It seems like they never end.
+say_right : Patches no, we need to stop.
+say_left : But why. Did someone spot me?
+say_left : Did the cops get suspicious?
+set_left_image : ohno_patches
+say_left : Did the bin catch fire... again?
+say_right : Better! The wagon is so full of apples there's no more room.
 win_game :
