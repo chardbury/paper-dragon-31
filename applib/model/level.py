@@ -392,6 +392,8 @@ class LevelOne(Level):
 
     background_scenery = scenery.BackgroundVillage
 
+    duration = 33
+
     opening_scene = 'level_1_opening'
     victory_scene = 'level_1_victory'
     failure_scene = 'level_1_failure'
@@ -422,20 +424,21 @@ class LevelTwo(Level):
     failure_scene = 'level_2_failure'
 
     serve_style = 'fast'
-    fail_ratio = 0.5
+    fail_ratio = 0.4
+    duration = 50
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
         (device.Cooking, 0.25, -0.15),
-        (device.IcingBlue, 0.5, -0.05),
+        (device.IcingPink, 0.5, -0.05),
         (device.Bin, 0.75, -0.4),
     ]
 
     customer_specification = [
-        (2, 'cop_dog', [item.DoughnutIcedBlue]),
+        (2, 'cop_dog', [item.DoughnutIcedPink]),
         (10, 'slacker_patches', [item.DoughnutUncooked]),
         (15, 'cop_rabbit', [item.DoughnutCooked]),
-        (17, 'cop_dog', [item.DoughnutIcedBlue]),
+        (17, 'cop_dog', [item.DoughnutIcedPink]),
     ]
 
 class LevelTwoBee(LevelTwo):
@@ -451,23 +454,24 @@ class LevelThree(Level):
     failure_scene = 'level_3_failure'
 
     serve_style = 'fast'
-    fail_ratio = 0.75
+    fail_ratio = 0.55
+    duration = 65
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
         (device.Cooking, 0.25, -0.15),
-        (device.IcingBlue, 0.5, -0.05),
-        (device.IcingPink, 0.6, -0.15),
+        (device.IcingPink, 0.5, -0.05),
+        (device.IcingBlue, 0.6, -0.15),
         (device.MultiPlating, 0.0, -0.1),
         (device.Plate, 0.0, -0.29),
         (device.Bin, 0.75, -0.4),
     ]
 
     customer_specification = [
-        (2, 'cop_dog', [item.DoughnutIcedPink]),
-        (8, 'cop_rabbit', [item.DoughnutIcedPink, item.DoughnutCooked]),
-        (12, 'cop_dog', [item.DoughnutIcedBlue]),
-        (20, 'cop_rabbit', [item.DoughnutIcedBlue, item.DoughnutIcedPink]),
+        (2, 'cop_dog', [item.DoughnutIcedBlue]),
+        (8, 'cop_rabbit', [item.DoughnutIcedBlue, item.DoughnutCooked]),
+        (12, 'cop_dog', [item.DoughnutIcedPink]),
+        (25, 'cop_rabbit', [item.DoughnutIcedPink, item.DoughnutIcedBlue]),
     ]
 
 class LevelThreeBee(LevelThree):
@@ -478,21 +482,21 @@ class LevelFour(Level):
     background_scenery = scenery.BackgroundHill
     customer_spaces_specification = 3
 
-    duration = 60
+    duration = 90
 
     opening_scene = 'level_4_opening'
     victory_scene = 'level_4_victory'
     failure_scene = 'level_4_failure'
 
     serve_style = 'fast'
-    fail_ratio = 0.9
+    fail_ratio = 0.8
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
         (device.Cooking, 0.25, -0.1),
         (device.Cooking, 0.35, -0.275),
-        (device.IcingBlue, 0.5, -0.05),
-        (device.IcingPink, 0.6, -0.15),
+        (device.IcingPink, 0.5, -0.05),
+        (device.IcingBlue, 0.6, -0.15),
         (device.MultiPlating, 0.0, -0.1),
         (device.Plate, 0.075, -0.28),
         (device.Bin, 0.75, -0.4),
@@ -521,6 +525,7 @@ class LevelOneTutorial(Level):
 
     serve_style = 'fast'
     fail_ratio = 1 
+    duration = 120
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
@@ -541,7 +546,8 @@ class LevelTwoTutorial(Level):
     failure_scene = 'tutorial_level_2_complete'
 
     serve_style = 'fast'
-    fail_ratio = 0.75
+    fail_ratio = 1
+    duration = 120
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
@@ -563,7 +569,8 @@ class LevelThreeTutorial(Level):
     failure_scene = 'tutorial_level_3_complete'
 
     serve_style = 'fast'
-    fail_ratio = 1 
+    fail_ratio = 1
+    duration = 120
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
@@ -588,7 +595,8 @@ class LevelFourTutorial(Level):
     failure_scene = 'tutorial_level_4_complete'
 
     serve_style = 'fast'
-    fail_ratio = 1 
+    fail_ratio = 1
+    duration = 120
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
