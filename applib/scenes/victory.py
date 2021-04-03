@@ -18,85 +18,85 @@ from pyglet.gl import *
 
 def make_dialogue_interface(self):
 
-        self.dialogue_overlay = self.interface.add(
-            width = 1.0,
-            height = 1.0,
-            align_x = 0.5,
-            align_y = 0.5,
-            background_color = (255, 255, 255, 150),
-            visible = False,
-        )
+    self.dialogue_overlay = self.interface.add(
+        width = 1.0,
+        height = 1.0,
+        align_x = 0.5,
+        align_y = 0.5,
+        background_color = (255, 255, 255, 150),
+        visible = False,
+    )
 
-        self.character_left = self.dialogue_overlay.add(
-            width = 0.25,
-            height = 0.5,
-            align_x = 0.15,
-            align_y = 0.38,
-            anchor_y = 0.0,
-        )
+    self.character_left = self.dialogue_overlay.add(
+        width = 0.25,
+        height = 0.5,
+        align_x = 0.15,
+        align_y = 0.38,
+        anchor_y = 0.0,
+    )
 
-        self.name_left = self.character_left.add(
-            padding = -0.05,
-            width = 1.0,
-            height = 0.15,
-            align_x = 0.5,
-            align_y = 1.0,
-            anchor_y = 0.0,
-            text = '',
-            text_color = (0, 0, 0, 255),
-            text_bold = True,
-            text_wrap = False,
-            font_size = 0.04,
-            visible = False,
-            background_color = (244, 236, 186, 255),
-            frame_texture = pyglet.resource.texture('interface/border_plain.png'),
-            frame_width = 0.15,
-        )
+    self.name_left = self.character_left.add(
+        padding = -0.05,
+        width = 1.0,
+        height = 0.15,
+        align_x = 0.5,
+        align_y = 1.0,
+        anchor_y = 0.0,
+        text = '',
+        text_color = (0, 0, 0, 255),
+        text_bold = True,
+        text_wrap = False,
+        font_size = 0.04,
+        visible = False,
+        background_color = (244, 236, 186, 255),
+        frame_texture = pyglet.resource.texture('interface/border_plain.png'),
+        frame_width = 0.15,
+    )
 
-        self.character_right = self.dialogue_overlay.add(
-            width = 0.25,
-            height = 0.5,
-            align_x = 0.85,
-            align_y = 0.38,
-            anchor_y = 0.0,
-        )
+    self.character_right = self.dialogue_overlay.add(
+        width = 0.25,
+        height = 0.5,
+        align_x = 0.85,
+        align_y = 0.38,
+        anchor_y = 0.0,
+    )
 
-        self.name_right = self.character_right.add(
-            padding = -0.05,
-            width = 1.0,
-            height = 0.15,
-            align_x = 0.5,
-            align_y = 1.0,
-            anchor_y = 0.0,
-            text = '',
-            text_color = (0, 0, 0, 255),
-            text_bold = True,
-            text_wrap = False,
-            font_size = 0.04,
-            visible = False,
-            background_color = (244, 236, 186, 255),
-            frame_texture = pyglet.resource.texture('interface/border_plain.png'),
-            frame_width = 0.15,
-        )
+    self.name_right = self.character_right.add(
+        padding = -0.05,
+        width = 1.0,
+        height = 0.15,
+        align_x = 0.5,
+        align_y = 1.0,
+        anchor_y = 0.0,
+        text = '',
+        text_color = (0, 0, 0, 255),
+        text_bold = True,
+        text_wrap = False,
+        font_size = 0.04,
+        visible = False,
+        background_color = (244, 236, 186, 255),
+        frame_texture = pyglet.resource.texture('interface/border_plain.png'),
+        frame_width = 0.15,
+    )
 
-        self.message_container = self.dialogue_overlay.add(
-            width = 0.8,
-            height = 0.2,
-            padding = -0.02,
-            align_x = 0.5,
-            align_y = 0.36,
-            anchor_y = 1.0,
-            background_color = (244, 236, 186, 255),
-            frame_texture = pyglet.resource.texture('interface/border.png'),
-            frame_width = 0.15,
-        )
+    self.message_container = self.dialogue_overlay.add(
+        width = 0.8,
+        height = 0.2,
+        padding = -0.02,
+        align_x = 0.5,
+        align_y = 0.36,
+        anchor_y = 1.0,
+        background_color = (244, 236, 186, 255),
+        frame_texture = pyglet.resource.texture('interface/border.png'),
+        frame_width = 0.15,
+    )
 
-        self.message_area = self.message_container.add(
-            align_y = 1.0,
-            align_x = 0.0,
-            text_color = (0, 0, 0, 255),
-            font_size = 0.04,
-        )
+    self.message_area = self.message_container.add(
+        align_y = 1.0,
+        align_x = 0.0,
+        text_color = (0, 0, 0, 255),
+        font_size = 0.04,
+    )
 
 
 
@@ -106,8 +106,13 @@ class VictoryScene(object):
         
         self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
-            background_color = (255, 255, 255, 255),
+            background_color = (255, 255, 255, 0),
         )
+
+        self.bg_textures = [
+            pyglet.resource.texture('scenery/background_village.png'),
+            pyglet.resource.texture('scenery/counter.png'),
+        ]
         
         make_dialogue_interface(self)
         self.dialogue_overlay.visible = True
@@ -201,6 +206,16 @@ class VictoryScene(object):
         w, h = map(int, self.interface.get_content_size())
         glEnable(GL_SCISSOR_TEST)
         glScissor(x, y, w, h)
+        for tex in self.bg_textures:
+            glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+            glEnable(tex.target)
+            glBindTexture(tex.target, tex.id)
+            pyglet.graphics.draw(4, GL_QUADS,
+                ('v2f', [x, y, x+w, y, x+w, y+h, x, y+h]),
+                ('t3f', tex.tex_coords),
+                ('c4B', [255] * 16),
+            )
+            glPopAttrib()
         self.interface.draw()
         if self.scene_fade > 0.0:
             w, h = app.window.get_size()
