@@ -105,7 +105,7 @@ class MenuScene(object):
 
         self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
-            background_color = (255, 255, 255, 255),
+            background_color = (243, 228, 207, 255),
             visible = False,
             draw_function = self.draw_apple_overlay,
         )
@@ -122,9 +122,9 @@ class MenuScene(object):
 
         self.title_box = self.interface.add(
             width = 0.45,
-            height = 0.45,
-            align_x = 0.75,
-            align_y = 0.6,
+            height = 0.25,
+            align_x = 0.70,
+            align_y = 0.7,
             anchor_x = 0.5,
             anchor_y = 0.0,
             text = 'Copcake Caper',
@@ -134,8 +134,8 @@ class MenuScene(object):
         )
 
         self.play_button = self.interface.add(
-            align_x = 0.75,
-            align_y = 0.5,
+            align_x = 0.70,
+            align_y = 0.6,
             anchor_x = 0.5,
             anchor_y = 1.0,
             height = 0.1,
@@ -146,8 +146,8 @@ class MenuScene(object):
         )
 
         self.endless_button = self.interface.add(
-            align_x = 0.75,
-            align_y = 0.35,
+            align_x = 0.70,
+            align_y = 0.45,
             anchor_x = 0.5,
             anchor_y = 1.0,
             height = 0.1,
@@ -158,8 +158,8 @@ class MenuScene(object):
         )
 
         self.quit_button = self.interface.add(
-            align_x = 0.75,
-            align_y = 0.2,
+            align_x = 0.70,
+            align_y = 0.3,
             anchor_x = 0.5,
             anchor_y = 1.0,
             height = 0.1,
@@ -373,8 +373,8 @@ class MenuScene(object):
                     x, ftop, x + w, ftop, x + w, y + h, x, y + h,
                 ]),
                 ('c4B',
-                    [255, 255, 255, 255] * 6 +
-                    [255, 255, 255, 0] * 6
+                    [243, 228, 207, 255] * 6 +
+                    [243, 228, 207, 0] * 6
                 ),
             )
 
@@ -398,7 +398,7 @@ class MenuScene(object):
     def on_draw(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glClearColor(0.0, 0.0, 0.0, 0.0)
+        glClearColor(0.9529, 0.8941, 0.8118, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
         
         x, y = map(int, self.interface.get_offset())
@@ -406,7 +406,7 @@ class MenuScene(object):
         glEnable(GL_SCISSOR_TEST)
         glScissor(x, y, w, h)
 
-        color = [255, 255, 255, 255]
+        color = [243, 228, 207, 255]
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', [x, y, x+w, y, x+w, y+h, x, y+h]), ('c4B', color * 4))
 
         self.interface.draw(draw_x=self.interface_x, draw_y=self.interface_y)
