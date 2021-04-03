@@ -1,4 +1,4 @@
-# Cop Cake Caper
+# Copcake Caper
 
 This is our entry in PyWeek 31; the contest entry page is here: https://pyweek.org/e/paper-dragon-31/.
 
@@ -59,7 +59,6 @@ The image assets of this game are available under the CC BY-NC-SA 4.0 license: h
 
 The following assets are licensed or attributed thusly:
 
-- Music, "Love by Ketsa", https://freemusicarchive.org/music/Ketsa/abundance/love, CC BY-NC-ND 4.0
 - Music, "Rocket Boat by Scott Gratton", https://freemusicarchive.org/music/Scott_Gratton/progress-and-regress/rocket-boat-1, CC BY-NC-ND 4.0
 - Music, "Digital Donut by BaDoink", https://freesound.org/people/BaDoink/sounds/531866/, CC0 1.0
 - Sound, "Rawr by wintuh", https://freesound.org/people/wintuh/sounds/471880/, CC0 1.0
@@ -77,4 +76,4 @@ The following assets are licensed or attributed thusly:
 - Sound, "police2.wav by guitarguy1985", https://freesound.org/people/guitarguy1985/sounds/70938/ CC0
 - Sound, "Success Fanfare Trumpets by FunWithSound", https://freesound.org/people/FunWithSound/sounds/456966/, CC0 
 - Sound, "Expresso machine by f-r-a-g-i-l-e", https://freesound.org/people/f-r-a-g-i-l-e/sounds/450884/, CC0
-- Font, "Lato". https://fonts.google.com/specimen/Lato, OFL
+- Font, "Fredoka One". https://fonts.google.com/specimen/Fredoka+One, OFL
