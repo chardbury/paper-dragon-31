@@ -3,7 +3,7 @@ set_left_name : Flynn
 set_right_image : scrumper_patches
 set_right_name : Patches
 play_sound : flynn_dialogue_long
-say_left : I'm worried they're starting to catch on. I don't want you to get caught.
+say_left : I'm worried they're starting to catch on. I don't want you to get spotted.
 play_sound : patches_dialogue_long
 say_right : Well, right after you hit them with the old distraction cake they just leave and wander around eating it.
 play_sound : flynn_dialogue_short
