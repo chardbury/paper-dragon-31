@@ -2,9 +2,10 @@
 
 This is our entry in PyWeek 31; the contest entry page is here: https://pyweek.org/e/paper-dragon-31/.
 
+
 ## Game Summary
 
-FIXME
+
 
 ## Running The Game
 
@@ -15,7 +16,17 @@ pip install pyglet
 python run_game.py
 ```
 
-## License
+The game was developed using Python 3.9 and Pyglet 1.5.15. It was tested on Windows 10 and macOS 11.0.
+
+
+## Playing The Game
+
+- All you need is a mouse with one button.
+- If your mouse has more than one button pick your favourite one.
+- Click on stuff to make things happen.
+
+
+## Licenses
 
 The code for this game are available under the following license:
 

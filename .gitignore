@@ -14,5 +14,9 @@ build/
 dist/
 
 # Automated testing-related directories
+.coverage
 .pytest_cache/
-data/.DS_Store
+htmlcov/
+
+# Temporary and system files
+.DS_Store

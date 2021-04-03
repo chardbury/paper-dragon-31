@@ -1,3 +1,5 @@
+import math
+
 import pytest
 
 import applib
@@ -14,19 +16,27 @@ class ExampleLevel(level.Level):
     device_specification = [
         (device.Dough, 0.0, 0.0),
         (device.Cooking, 0.0, 0.0),
-        (device.Plating, 0.0, 0.0),
+        (device.IcingBlue, 0.0, 0.0),
+        (device.IcingPink, 0.0, 0.0),
+        (device.SprinklesPurple, 0.0, 0.0),
+        (device.SprinklesYellow, 0.0, 0.0),
+        (device.MultiPlating, 0.0, 0.0),
+        (device.Plate, 0.0, 0.0),
         (device.Bin, 0.0, 0.0),
     ]
 
     customer_specification = [
         (5, 'cop_rabbit', [item.DoughnutCooked]),
-        (15, 'cop_rabbit', [item.DoughnutCooked, item.DoughnutIcedBlue])
+        (15, 'cop_rabbit', [item.DoughnutCooked, item.DoughnutIcedBlue]),
     ]
 
     customer_spaces_specification = 2
 
     fail_ratio = 0.5
 
+    def wait_for(self, time, extra=0):
+        for _ in range(extra + int(math.ceil(time // TICK_LENGTH))):
+            self.tick()
 
 @pytest.fixture
 def level():
@@ -316,10 +326,13 @@ def test_fail_level_from_score(level):
     from applib.model.level import Customer, Order
     test = level.has_level_ended()
     assert test is False
-    for _ in range(int(36 // TICK_LENGTH)):
+    ticks = int(36 // TICK_LENGTH)
+    for _ in range(ticks):
         level.tick()
+    assert level.get_time_ratio() == 36 / 60
     assert level.fail_score == 40
     assert level.score == 40
+    assert level.get_score_ratio() == 1.0
     test = level.has_level_ended()
     assert test is True
 
@@ -351,3 +364,197 @@ def test_ruined_doughnut(level):
         level.tick()
     level.interact(device)
     assert level.held_item.name == 'doughnut_burned'
+
+
+def test_station_dough(level):
+    station_dough = level.get_device('station_dough')
+    assert level.held_item is None
+    assert len(level.items) == 0
+    level.interact(station_dough)
+    assert isinstance(level.held_item, item.DoughnutUncooked)
+    assert level.held_item.level is level
+    assert len(level.items) == 1
+    original_item = level.held_item
+    level.interact(station_dough)
+    assert isinstance(level.held_item, item.DoughnutUncooked)
+    assert level.held_item.level is level
+    assert len(level.items) == 1
+
+def test_station_icing(level):
+    station_icing_blue = level.get_device('station_icing_blue')
+    station_icing_pink = level.get_device('station_icing_pink')
+    station_bin = level.get_device('station_bin')
+
+    original_item = item.DoughnutCooked(level)
+    level.held_item = original_item
+    level.interact(station_icing_blue)
+    level.wait_for(station_icing_blue.duration)
+    level.interact(station_icing_blue)
+    assert isinstance(level.held_item, item.DoughnutIcedBlue)
+    assert level.held_item.level is level
+    assert original_item.level is None
+    level.interact(station_bin)
+    assert level.held_item is None
+
+    original_item = item.DoughnutCooked(level)
+    level.held_item = original_item
+    level.interact(station_icing_pink)
+    level.wait_for(station_icing_pink.duration, -1)
+    level.tick()
+    level.interact(station_icing_pink)
+    assert isinstance(level.held_item, item.DoughnutIcedPink)
+    assert level.held_item.level is level
+    assert original_item.level is None
+    level.interact(station_bin)
+    assert level.held_item is None
+
+
+def test_station_icing(level):
+    station_icing_blue = level.get_device('station_icing_blue')
+    station_icing_pink = level.get_device('station_icing_pink')
+    station_bin = level.get_device('station_bin')
+
+    original_item = item.DoughnutCooked(level)
+    level.held_item = original_item
+    level.interact(station_icing_blue)
+    level.wait_for(station_icing_blue.duration)
+    level.interact(station_icing_blue)
+    assert isinstance(level.held_item, item.DoughnutIcedBlue)
+    assert level.held_item.level is level
+    assert original_item.level is None
+    level.interact(station_bin)
+    assert level.held_item is None
+
+    original_item = item.DoughnutCooked(level)
+    level.held_item = original_item
+    level.interact(station_icing_pink)
+    level.wait_for(station_icing_pink.duration, -1)
+    level.tick()
+    level.interact(station_icing_pink)
+    assert isinstance(level.held_item, item.DoughnutIcedPink)
+    assert level.held_item.level is level
+    assert original_item.level is None
+    level.interact(station_bin)
+    assert level.held_item is None
+
+def test_invalid_device_raises_error(level):
+    with pytest.raises(ValueError):
+        level.get_device('does_not_exist')
+
+def test_removing_devices(level):
+    device = level.get_device('station_bin')
+    level.remove_entity(device)
+
+def test_scenery(level):
+    counter = applib.model.scenery.Counter(level)
+    background = applib.model.scenery.BackgroundVillage(level)
+    assert background.get_layer() < counter.get_layer()
+    assert counter.level is level
+    counter.destroy()
+    assert counter.level is None
+
+def test_debug_print_works(level, capsys):
+    counter = applib.model.scenery.Counter(level)
+    background = applib.model.scenery.BackgroundVillage(level)
+    level.interact(level.get_device('station_dough'))
+    level.interact(level.get_device('station_cooking'))
+    level.interact(level.get_device('station_dough'))
+    level.wait_for(5.0)
+    level.debug_print()
+    captured = capsys.readouterr()
+    assert captured.out.startswith('level:')
+
+def test_multiplating_slots(level):
+    plate_slots = level.get_devices('station_none')
+    assert len(plate_slots) == len(applib.model.device.MultiPlating.subpositions)
+    level.get_device('station_plating').destroy()
+    for p in plate_slots:
+        assert p.level is None
+
+
+def test_level_with_customers_left_at_end(level):
+    level.customer_specification = [
+        (50, 'cop_rabbit', [item.DoughnutCooked]),
+        (50, 'cop_rabbit', [item.DoughnutCooked]),
+    ]
+    level.customer_spaces_specification = 1
+    level.wait_for(50.0)
+    assert len(level.customers) == 1
+    assert level.customers[0].name == 'cop_rabbit'
+    level.wait_for(10.0)
+    assert level.has_level_ended()
+    assert level.score == 80
+
+
+def test_level_score_bracket_4(level):
+    level.customer_specification = [
+        (30, 'cop_rabbit', [item.DoughnutCooked]),
+    ]
+    level.wait_for(30.0)
+    assert len(level.customers) == 1
+    customer = level.customers[0]
+    ordered_item = item.DoughnutCooked(level)
+    level.held_item = ordered_item
+    level.interact(customer)
+    level.tick()
+    assert level.score == 0
+
+
+def test_level_score_bracket_3(level):
+    level.customer_specification = [
+        (30, 'cop_rabbit', [item.DoughnutCooked]),
+    ]
+    level.wait_for(30.0)
+    assert len(level.customers) == 1
+    customer = level.customers[0]
+    level.wait_for(6.0, 1)
+    ordered_item = item.DoughnutCooked(level)
+    level.held_item = ordered_item
+    level.interact(customer)
+    level.tick()
+    assert level.score == 5
+
+
+def test_level_score_bracket_2(level):
+    level.customer_specification = [
+        (30, 'cop_rabbit', [item.DoughnutCooked]),
+    ]
+    level.wait_for(30.0)
+    assert len(level.customers) == 1
+    customer = level.customers[0]
+    level.wait_for(18.0, 1)
+    ordered_item = item.DoughnutCooked(level)
+    level.held_item = ordered_item
+    level.interact(customer)
+    level.tick()
+    assert level.score == 10
+
+
+def test_level_score_bracket_1(level):
+    level.customer_specification = [
+        (30, 'cop_rabbit', [item.DoughnutCooked]),
+    ]
+    level.wait_for(30.0)
+    assert len(level.customers) == 1
+    customer = level.customers[0]
+    level.wait_for(24.0, 1)
+    ordered_item = item.DoughnutCooked(level)
+    level.held_item = ordered_item
+    level.interact(customer)
+    level.tick()
+    assert level.score == 20
+
+
+def test_level_score_bracket_0(level):
+    level.customer_specification = [
+        (30, 'cop_rabbit', [item.DoughnutCooked]),
+    ]
+    level.wait_for(30.0)
+    assert len(level.customers) == 1
+    customer = level.customers[0]
+    level.wait_for(28.5, 1)
+    ordered_item = item.DoughnutCooked(level)
+    level.held_item = ordered_item
+    level.interact(customer)
+    level.tick()
+    assert level.score == 30

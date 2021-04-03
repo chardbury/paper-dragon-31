@@ -105,40 +105,22 @@ class Customer(entity.Entity):
                 score = 0
         return score
     
-    def compute_score_fast(self):
-        percentage_remaining_patience = self.get_patience_ratio() * 100
-        if percentage_remaining_patience >= 80:
+    def compute_score(self):
+        bracket = self.get_score_bracket()
+        if bracket == 4:
             return 0
-        elif percentage_remaining_patience >= 40:
+        elif bracket == 3:
             return MAX_SCORE_FROM_CUSTOMER * 0.125
-        elif percentage_remaining_patience >= 20:
+        elif bracket == 2:
             return MAX_SCORE_FROM_CUSTOMER * 0.25
-        elif percentage_remaining_patience >= 5:
+        elif bracket == 1:
             return MAX_SCORE_FROM_CUSTOMER * 0.5
         else:
             return MAX_SCORE_FROM_CUSTOMER * 0.75
-
-    def compute_score_slow(self):
-        percentage_remaining_patience = self.get_patience_ratio() * 100
-        if percentage_remaining_patience >= 80:
-            return MAX_SCORE_FROM_CUSTOMER * 0.75
-        elif percentage_remaining_patience >= 40:
-            return MAX_SCORE_FROM_CUSTOMER * 0.5
-        elif percentage_remaining_patience >= 20:
-            return MAX_SCORE_FROM_CUSTOMER * 0.25
-        elif percentage_remaining_patience >= 5:
-            return MAX_SCORE_FROM_CUSTOMER * 0.125
-        else:
-            return 0
 
     def tick(self):
         if len(self.order.items) == 0:
-            if self.level.serve_style == 'slow':
-                score = self.compute_score_slow()
-            elif self.level.serve_style == 'fast':
-                score = self.compute_score_fast()
-            else:
-                raise ValueError
+            score = self.compute_score()
             self.level.remove_customer(self, True, score)
         else:
             self.patience -= 1
@@ -336,11 +318,7 @@ class Level(pyglet.event.EventDispatcher):
         if len(self.customer_specification) > 0 and len(self.customers) < self.customer_spaces_specification:
             # we have the space to spawn a customer, if one is waiting
             # we assume customers are in a queue in the right order!
-            if len(self.customer_specification[0]) == 2:
-                time, order = self.customer_specification[0]
-                customer_type = None
-            else:
-                time, customer_type, order = self.customer_specification[0]
+            time, customer_type, order = self.customer_specification[0]
             if (int(time / TICK_LENGTH) <= self.tick_running):
                 order = Order(*[item_class(self) for item_class in order])
                 new_customer = Customer(self, order, customer_type)
