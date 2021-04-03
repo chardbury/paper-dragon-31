@@ -216,11 +216,11 @@ class MenuScene(object):
     poem_animation = None
     def do_show_poem(self):
         self.fade_poem = 0.0
-        self.fade_width = 0.3
+        self.fade_width = 0.1
         self.poem_animation = animation.QueuedAnimation(
                 SpiralAnimation(self, 'interface_x', 'interface_y', self.interface.get_content_size()[0], 0.5 * self.interface.get_content_size()[1], 0.25 * math.pi, 1.0),
                 animation.WaitAnimation(1.0),
-                animation.AttributeAnimation(self, 'fade_poem', 1.0, 10.0),
+                animation.AttributeAnimation(self, 'fade_poem', 1.0, 20.0),
                 animation.WaitAnimation(3.0, self.do_start),
         ).start()
 
@@ -243,7 +243,7 @@ class MenuScene(object):
             SpiralAnimation(self, 'interface_x', 'interface_y', 0.0, 0.0, 0.85 * math.pi, 2.0),
         ).start()
 
-    def end_poem(self):
+    def end_poem(self, now=True):
         if self.poem_animation:
             self.poem_animation.stop()
 
@@ -295,7 +295,12 @@ class MenuScene(object):
         if self.interface.visible:
             self._update_mouse_position(x, y)
             if self.fade_poem is not None:
-                self.end_poem()
+                for anim in app.animation:
+                    if getattr(anim, 'name', '') == 'fade_poem':
+                        anim.elapsed += 2.0
+                        break
+                else:
+                    self.end_poem()
             else:
                 if (self._press_button is not None) and (self._hover_button == self._press_button):
                     getattr(self, f'do_button_{self._press_button}')()

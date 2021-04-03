@@ -5,6 +5,20 @@ This is our entry in PyWeek 31; the contest entry page is here: https://pyweek.o
 
 ## Game Summary
 
+Patches and Flynn were the bane of the wood;
+They got up to all of the mischief they could.
+They scrumped from Sam's orchard and littered the cores.
+They filched them from poor Mrs Appleby's stores.
+
+But now that the fuzz is on to their stuff;
+Patches and Flynn are finding it rough
+To steal the apples and all their hi-jinks.
+"We need a decoy", say Patches. Flynn thinks.
+
+Then Flynn says, "Hey! I've got just the plan!"
+So Patches and Flynn did set up a stand
+In front of the places they're pulling their jobs
+So rather than chase them, The Blue stuff their gobs!
 
 
 ## Running The Game
