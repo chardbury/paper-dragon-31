@@ -42,7 +42,7 @@ class Customer(entity.Entity):
         'cop_elephant': 50,
         'cop_rabbit': 30,
         'friend_patches': 120,
-        'slacker_patches': 20,
+        'slacker_patches': 5,
     }
 
     customer_sounds = {
@@ -417,14 +417,15 @@ class LevelOne(Level):
 
     background_scenery = scenery.BackgroundVillage
 
-    duration = 33
-
     opening_scene = 'level_1_opening'
     victory_scene = 'level_1_victory'
     failure_scene = 'level_1_failure'
 
     serve_style = 'fast'
     fail_ratio = 0.75 
+    duration = 33
+    alt_suspicion_rate = 1
+    alt_suspicion_time = 31
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
@@ -451,6 +452,8 @@ class LevelTwo(Level):
     serve_style = 'fast'
     fail_ratio = 0.4
     duration = 50
+    alt_suspicion_rate = 0.05
+    alt_suspicion_time = 20
 
     device_specification = [
         (device.Dough, -0.5, -0.2),
