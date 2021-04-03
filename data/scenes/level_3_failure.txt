@@ -10,7 +10,7 @@ set_left_image : cook_flynn
 set_left_name : Flynn
 say_right : They saw me!
 say_left : They caught on!
-set_right_image : none
+set_right_image : 
 set_left_image : both
 set_left_name : Patches & Flynn
 say_left : Abandon the wagon!
