@@ -25,7 +25,7 @@ They filched them from poor Mrs Appleby's stores.
 But now that the fuzz is on to their stuff;
 Patches and Flynn are finding it rough
 To steal the apples and all their hijinks.
-"We need a decoy", say Patches. Flynn thinks.
+"We need a decoy", says Patches. Flynn thinks.
 
 Then Flynn says, "Hey! I've got just the plan!"
 So Patches and Flynn did set up a stand
