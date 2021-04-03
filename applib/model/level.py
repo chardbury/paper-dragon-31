@@ -443,9 +443,9 @@ class LevelOne(Level):
     alt_suspicion_time = 31
 
     device_specification = [
-        (device.Dough, -0.5, -0.2),
-        (device.Cooking, 0.25, -0.15),
-        (device.Bin, 0.75, -0.4),
+        (device.Dough, -0.5, -0.14),
+        (device.Cooking, 0.3, -0.18),
+        (device.Bin, 0.65, -0.44),
     ]
 
     customer_specification = [
@@ -471,10 +471,10 @@ class LevelTwo(Level):
     alt_suspicion_time = 21
 
     device_specification = [
-        (device.Dough, -0.5, -0.2),
-        (device.Cooking, 0.25, -0.15),
+        (device.Dough, -0.5, -0.14),
+        (device.Cooking, 0.3, -0.18),
         (device.IcingPink, 0.5, -0.05),
-        (device.Bin, 0.75, -0.4),
+        (device.Bin, 0.65, -0.44),
     ]
 
     customer_specification = [
@@ -503,13 +503,13 @@ class LevelThree(Level):
     alt_suspicion_time = 36
 
     device_specification = [
-        (device.Dough, -0.5, -0.2),
-        (device.Cooking, 0.25, -0.15),
+        (device.Dough, -0.5, -0.14),
+        (device.Cooking, 0.3, -0.18),
         (device.IcingPink, 0.5, -0.05),
         (device.IcingBlue, 0.6, -0.15),
         (device.MultiPlating, 0.0, -0.1),
-        (device.Plate, 0.0, -0.29),
-        (device.Bin, 0.75, -0.4),
+        (device.Plate, 0.0, -0.28),
+        (device.Bin, 0.65, -0.44),
     ]
 
     customer_specification = [
@@ -539,16 +539,16 @@ class LevelFour(Level):
     alt_suspicion_time = 40
 
     device_specification = [
-        (device.Dough, -0.5, -0.2),
-        (device.Cooking, 0.25, -0.1),
+        (device.Dough, -0.5, -0.14),
+        (device.Cooking, 0.25, -0.11),
         (device.Cooking, 0.35, -0.275),
         (device.IcingPink, 0.5, -0.05),
         (device.IcingBlue, 0.6, -0.15),
         (device.MultiPlating, 0.0, -0.1),
-        (device.Plate, 0.075, -0.28),
-        (device.Bin, 0.75, -0.4),
-        (device.SprinklesPurple, -0.25, -0.1),
-        (device.SprinklesYellow, -0.2, -0.25),
+        (device.Plate, 0.0, -0.28),
+        (device.Bin, 0.65, -0.44),
+        (device.SprinklesPurple, -0.22, -0.17),
+        (device.SprinklesYellow, -0.35, -0.27),
     ]
 
     customer_specification = [
@@ -575,9 +575,9 @@ class LevelOneTutorial(Level):
     duration = 120
 
     device_specification = [
-        (device.Dough, -0.5, -0.2),
-        (device.Cooking, 0.25, -0.15),
-        (device.Bin, 0.75, -0.4),
+        (device.Dough, -0.5, -0.14),
+        (device.Cooking, 0.3, -0.18),
+        (device.Bin, 0.65, -0.44),
     ]
 
     customer_specification = [
@@ -597,10 +597,10 @@ class LevelTwoTutorial(Level):
     duration = 120
 
     device_specification = [
-        (device.Dough, -0.5, -0.2),
-        (device.Cooking, 0.25, -0.15),
+        (device.Dough, -0.5, -0.14),
+        (device.Cooking, 0.3, -0.18),
         (device.IcingPink, 0.5, -0.05),
-        (device.Bin, 0.75, -0.4),
+        (device.Bin, 0.65, -0.44),
     ]
 
     customer_specification = [
@@ -620,13 +620,13 @@ class LevelThreeTutorial(Level):
     duration = 120
 
     device_specification = [
-        (device.Dough, -0.5, -0.2),
-        (device.Cooking, 0.25, -0.15),
-        (device.IcingBlue, 0.5, -0.05),
-        (device.IcingPink, 0.6, -0.15),
+        (device.Dough, -0.5, -0.14),
+        (device.Cooking, 0.3, -0.18),
+        (device.IcingPink, 0.5, -0.05),
+        (device.IcingBlue, 0.6, -0.15),
         (device.MultiPlating, 0.0, -0.1),
-        (device.Plate, 0.0, -0.29),
-        (device.Bin, 0.75, -0.4),
+        (device.Plate, 0.0, -0.28),
+        (device.Bin, 0.65, -0.44),
     ]
 
     customer_specification = [
@@ -646,16 +646,16 @@ class LevelFourTutorial(Level):
     duration = 120
 
     device_specification = [
-        (device.Dough, -0.5, -0.2),
-        (device.Cooking, 0.25, -0.1),
+        (device.Dough, -0.5, -0.14),
+        (device.Cooking, 0.25, -0.11),
         (device.Cooking, 0.35, -0.275),
-        (device.IcingBlue, 0.5, -0.05),
-        (device.IcingPink, 0.6, -0.15),
+        (device.IcingPink, 0.5, -0.05),
+        (device.IcingBlue, 0.6, -0.15),
         (device.MultiPlating, 0.0, -0.1),
-        (device.Plate, 0.075, -0.28),
-        (device.Bin, 0.75, -0.4),
-        (device.SprinklesPurple, -0.25, -0.1),
-        (device.SprinklesYellow, -0.2, -0.25),
+        (device.Plate, 0.0, -0.28),
+        (device.Bin, 0.65, -0.44),
+        (device.SprinklesPurple, -0.22, -0.17),
+        (device.SprinklesYellow, -0.35, -0.27),
     ]
 
     customer_specification = [
@@ -697,16 +697,16 @@ class EndlessLevel(Level):
     alt_suspicion_time = 90
 
     device_specification = [
-        (device.Dough, -0.5, -0.2),
-        (device.Cooking, 0.25, -0.1),
+        (device.Dough, -0.5, -0.14),
+        (device.Cooking, 0.25, -0.11),
         (device.Cooking, 0.35, -0.275),
         (device.IcingPink, 0.5, -0.05),
         (device.IcingBlue, 0.6, -0.15),
         (device.MultiPlating, 0.0, -0.1),
-        (device.Plate, 0.075, -0.28),
-        (device.Bin, 0.75, -0.4),
-        (device.SprinklesPurple, -0.25, -0.1),
-        (device.SprinklesYellow, -0.2, -0.25),
+        (device.Plate, 0.0, -0.28),
+        (device.Bin, 0.65, -0.44),
+        (device.SprinklesPurple, -0.22, -0.17),
+        (device.SprinklesYellow, -0.35, -0.27),
     ]
 
     def check_and_add_customer(self):
