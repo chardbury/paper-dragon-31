@@ -34,6 +34,7 @@ class Panel(object):
         font_size = 0.1,
         image_texture = None,
         image_color = (255, 255, 255, 255),
+        image_flip_x = False,
         draw_function = None,
         visible = True,
         ):
@@ -66,6 +67,7 @@ class Panel(object):
         # Image
         self.image_texture = image_texture
         self.image_color = image_color
+        self.image_flip_x = image_flip_x
 
         # Hierarchy
         self._parent = None
@@ -214,6 +216,10 @@ class Panel(object):
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
         glEnable(self.image_texture.target)
         glBindTexture(self.image_texture.target, self.image_texture.id)
+        tx = list(self.image_texture.tex_coords)
+        if self.image_flip_x:
+            tx[0], tx[3] = tx[3], tx[0]
+            tx[6], tx[9] = tx[9], tx[6]
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
             ('v2f', [
                 draw_x, draw_y,
@@ -221,7 +227,7 @@ class Panel(object):
                 draw_x + width, draw_y + height,
                 draw_x, draw_y + height,
             ]),
-            ('t3f', self.image_texture.tex_coords),
+            ('t3f', tx),
             ('c4B', list(self.image_color) * 4),
         )
         glPopAttrib()

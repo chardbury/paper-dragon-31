@@ -33,6 +33,7 @@ def make_dialogue_interface(self):
         align_x = 0.15,
         align_y = 0.38,
         anchor_y = 0.0,
+        image_flip_x = True,
     )
 
     self.name_left = self.character_left.add(
