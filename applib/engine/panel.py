@@ -220,13 +220,15 @@ class Panel(object):
         if self.image_flip_x:
             tx[0], tx[3] = tx[3], tx[0]
             tx[6], tx[9] = tx[9], tx[6]
+        verts = [
+            draw_x, draw_y,
+            draw_x + width, draw_y,
+            draw_x + width, draw_y + height,
+            draw_x, draw_y + height,
+        ]
+        vertes = list(map(int, verts))
         pyglet.graphics.draw(4, pyglet.gl.GL_QUADS,
-            ('v2f', [
-                draw_x, draw_y,
-                draw_x + width, draw_y,
-                draw_x + width, draw_y + height,
-                draw_x, draw_y + height,
-            ]),
+            ('v2f', verts),
             ('t3f', tx),
             ('c4B', list(self.image_color) * 4),
         )
@@ -365,6 +367,7 @@ class Panel(object):
                 draw_x + padding + width, draw_y + padding + height + frame_width,
                 draw_x + padding + width + frame_width, draw_y + padding + height + frame_width,
             ]
+            vertex_data = list(map(int, vertex_data))
             tx1, ty1 = tex_coords[0:2]
             tx2, ty2 = tex_coords[6:8]
             txm = (tx1 + tx2) / 2
