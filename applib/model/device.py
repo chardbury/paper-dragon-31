@@ -295,9 +295,11 @@ class MultiPlating(Device):
 
 
 class MultiPlatingRight(MultiPlating):
+    
     name = 'station_plating_right'
 
 class MultiPlatingLeft(MultiPlating):
+
     name = 'station_plating_left'
 
 
