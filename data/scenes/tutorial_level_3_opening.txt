@@ -1,5 +1,8 @@
 set_left_image : scrumper_patches
 set_left_name : Patches
+play_sound : patches_dialogue_pos
 say_left : Lets practice a bit.
+play_sound : patches_dialogue_long
 say_left : While the cake is frying, pick up a plate from the stack and put it on the plating board.
+play_sound : patches_dialogue_agreeable
 say_left : Put the cake on the plate before you hand it to me.

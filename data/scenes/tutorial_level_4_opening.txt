@@ -1,5 +1,8 @@
 set_left_image : scrumper_patches
 set_left_name : Patches
+play_sound : patches_dialogue_pos
 say_left : Lets practice a bit.
+play_sound : patches_dialogue_long
 say_left : Once you have iced the cake and put it on a plate, you can take a scoop of sprinkles and tip them onto the cake.
+play_sound : patches_dialogue_question
 say_left : Did you know we have two colours of sprinkles?
