@@ -6,4 +6,4 @@ say_left: Cook the cake, put icing on it, hand it to me.
 say_left: It isn't difficult. Are you distracted?
 say_left: Where's Patches? Is she stealing Granny Smith's apples again?
 say_right: No...
-repeat_level :
+next_level : LevelTwoTutorial

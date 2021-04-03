@@ -468,8 +468,8 @@ class LevelOneTutorial(Level):
     background_scenery = scenery.BackgroundVillage
 
     opening_scene = 'tutorial_level_1_opening'
-    victory_scene = 'todo'
-    failure_scene = 'todo'
+    victory_scene = 'tutorial_level_1_complete'
+    failure_scene = 'tutorial_level_1_complete'
 
     serve_style = 'fast'
     fail_ratio = 1 
@@ -489,8 +489,8 @@ class LevelTwoTutorial(Level):
     background_scenery = scenery.BackgroundVillage
 
     opening_scene = 'tutorial_level_2_opening'
-    victory_scene = 'todo'
-    failure_scene = 'todo'
+    victory_scene = 'tutorial_level_2_complete'
+    failure_scene = 'tutorial_level_2_complete'
 
     serve_style = 'fast'
     fail_ratio = 0.75
@@ -511,8 +511,8 @@ class LevelThreeTutorial(Level):
     background_scenery = scenery.BackgroundVillage
 
     opening_scene = 'tutorial_level_3_opening'
-    victory_scene = 'todo'
-    failure_scene = 'todo'
+    victory_scene = 'tutorial_level_3_complete'
+    failure_scene = 'tutorial_level_3_complete'
 
     serve_style = 'fast'
     fail_ratio = 1 
@@ -533,11 +533,11 @@ class LevelThreeTutorial(Level):
 
 class LevelFourTutorial(Level):
 
-    background_scenery = scenery.BackgroundVillage
+    background_scenery = scenery.BackgroundHill
 
     opening_scene = 'tutorial_level_4_opening'
-    victory_scene = 'todo'
-    failure_scene = 'todo'
+    victory_scene = 'tutorial_level_4_complete'
+    failure_scene = 'tutorial_level_4_complete'
 
     serve_style = 'fast'
     fail_ratio = 1 
