@@ -1,5 +1,5 @@
 set_left_image : cop_elephant
-set_left_name : Constable Peanut
+set_left_name : Commissioner Peanut
 say_left : Ho ho ho. I've caught you, you naughty scrumpers
 say_left : The punishment for disrupting our picnic is...
 say_left : LITTER PICKING.
