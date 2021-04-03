@@ -813,12 +813,14 @@ class LevelScene(object):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         # Clear the buffers.
-        app.window.clear()
+        glClearColor(0, 0, 0, 0)
+        glClear(GL_COLOR_BUFFER_BIT)
         
         x, y = map(int, self.interface.get_offset())
         w, h = map(int, self.interface.get_content_size())
         glEnable(GL_SCISSOR_TEST)
-        glScissor(x, y, w, h)
+        r = app.window.get_pixel_ratio()
+        glScissor(int(x*r), int(y*r), int(w*r), int(h*r))
 
         self.set_cursor()
 

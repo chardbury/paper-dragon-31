@@ -219,11 +219,13 @@ class VictoryScene(object):
     def on_draw(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        app.window.clear()
+        glClearColor(0, 0, 0, 0)
+        glClear(GL_COLOR_BUFFER_BIT)
         x, y = map(int, self.interface.get_offset())
         w, h = map(int, self.interface.get_content_size())
         glEnable(GL_SCISSOR_TEST)
-        glScissor(x, y, w, h)
+        r = app.window.get_pixel_ratio()
+        glScissor(int(x*r), int(y*r), int(w*r), int(h*r))
         for tex in self.bg_textures:
             glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
             glEnable(tex.target)

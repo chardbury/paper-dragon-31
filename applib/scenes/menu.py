@@ -398,13 +398,14 @@ class MenuScene(object):
     def on_draw(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glClearColor(0.9529, 0.8941, 0.8118, 1.0)
+        glClearColor(0, 0, 0, 0)
         glClear(GL_COLOR_BUFFER_BIT)
         
         x, y = map(int, self.interface.get_offset())
         w, h = map(int, self.interface.get_content_size())
         glEnable(GL_SCISSOR_TEST)
-        glScissor(x, y, w, h)
+        r = app.window.get_pixel_ratio()
+        glScissor(int(x*r), int(y*r), int(w*r), int(h*r))
 
         color = [225, 208, 183, 255]
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', [x, y, x+w, y, x+w, y+h, x, y+h]), ('c4B', color * 4))
