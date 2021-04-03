@@ -9,6 +9,7 @@ import applib
 import pyglet
 
 from applib.constants import TICK_LENGTH
+from applib.constants import TICK_RATE
 from applib.constants import MAX_SCORE_FROM_CUSTOMER
 from applib.model import device
 from applib.model import entity
@@ -198,6 +199,7 @@ class Level(pyglet.event.EventDispatcher):
     next_level = None
     alt_suspicion_mode = True
     alt_suspicion_rate = 0.04
+    alt_suspicion_time = 60.0
 
     #seconds
     duration = 60
@@ -324,6 +326,8 @@ class Level(pyglet.event.EventDispatcher):
 
     @property
     def fail_score(self):
+        if self.alt_suspicion_mode:
+            return self.alt_suspicion_time * self.alt_suspicion_rate * TICK_RATE
         return int(self.fail_ratio * len(type(self).customer_specification) * MAX_SCORE_FROM_CUSTOMER)
 
     def get_score_ratio(self):
