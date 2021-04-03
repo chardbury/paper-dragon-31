@@ -1,0 +1,9 @@
+set_left_image: cop_dog
+set_left_name: Sgt. Dognut
+set_right_image: cook_flynn
+set_right_name: Flynn
+say_left: Cook the cake, put icing on it, hand it to me.
+say_left: It isn't difficult. Are you distracted?
+say_left: Where's Patches? Is she stealing Granny Smith's apples again?
+say_right: No...
+repeat_level :
