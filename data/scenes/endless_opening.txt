@@ -1,0 +1,8 @@
+set_left_image : cook_flynn
+set_left_name : Flynn
+set_right_image : scrumper_patches
+set_right_name : Patches
+say_left : There's so many cops here, Patches!
+say_right : It's perfect! We can sell them cakes.
+say_left : But there aren't even any apples.
+say_right : Any what?

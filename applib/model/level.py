@@ -11,6 +11,9 @@ import pyglet
 from applib.constants import TICK_LENGTH
 from applib.constants import TICK_RATE
 from applib.constants import MAX_SCORE_FROM_CUSTOMER
+from applib.constants import PLATE_EFFICIENCY
+from applib.constants import ENDLESS_SAD_GROWTH_RATE
+from applib.constants import ENDLESS_HAPPY_GROWTH_RATE
 from applib.model import device
 from applib.model import entity
 from applib.model import item
@@ -116,8 +119,9 @@ class Customer(entity.Entity):
     def interact(self, held_item):
         if self.order.remove(held_item):
             if isinstance(held_item, item.Plate):
-                self.patience_ticks = min(self.start_patience_ticks, self.patience_ticks + self.start_patience_ticks / 5)
+                self.patience_ticks = min(self.start_patience_ticks, self.patience_ticks + PLATE_EFFICIENCY * self.start_patience_ticks)
             held_item.destroy()
+            self.level.sold_cakes += 1
             self.sound_yes()
         else:
             self.sound_no()
@@ -207,6 +211,7 @@ class Level(pyglet.event.EventDispatcher):
     alt_suspicion_mode = True
     alt_suspicion_rate = 0.04
     alt_suspicion_time = 60.0
+    sold_cakes = 0
 
     #seconds
     duration = 60
@@ -349,11 +354,10 @@ class Level(pyglet.event.EventDispatcher):
             # we gained to much suspision and have been caught
             self.end_level(False)
             return True
-        elif self.tick_running >= self.duration_ticks:
+        elif not self.alt_suspicion_mode and (self.tick_running >= self.duration_ticks):
             # we have run out of time
             # any reminaing customers in queue or at counter show score max sus (and we should probably fail?)
-            if not self.alt_suspicion_mode:
-                self.score += (len(self.customers) + len(self.customer_specification)) * MAX_SCORE_FROM_CUSTOMER
+            self.score += (len(self.customers) + len(self.customer_specification)) * MAX_SCORE_FROM_CUSTOMER
             self.end_level(False)
             return True
         elif len(self.customers) + len(self.customer_specification) == 0:
@@ -389,6 +393,9 @@ class Level(pyglet.event.EventDispatcher):
         if self.alt_suspicion_mode:
             self.score = max(0.0, self.score + self.alt_suspicion_rate)
 
+        self.check_and_add_customer()
+                
+    def check_and_add_customer(self):
         if len(self.customer_specification) > 0 and len(self.customers) < self.customer_spaces_specification:
             # we have the space to spawn a customer, if one is waiting
             # we assume customers are in a queue in the right order!
@@ -397,7 +404,6 @@ class Level(pyglet.event.EventDispatcher):
                 order = Order(*[item_class(self) for item_class in order])
                 new_customer = Customer(self, order, customer_type)
                 self.customer_specification.pop(0)
-
 
 class TestLevel(Level):
 
@@ -653,7 +659,7 @@ class LevelFourTutorial(Level):
     ]
 
     customer_specification = [
-        (0, 'friend_patches' ,[item.DoughnutFinalBluePurple]),
+        (0, 'friend_patches', [item.DoughnutFinalBluePurple]),
     ]
 
 
@@ -661,3 +667,63 @@ default_level = LevelOne
 LevelOne.next_level = LevelTwo
 LevelTwo.next_level = LevelThree
 LevelThree.next_level = LevelFour
+
+
+
+
+class EndlessLevel(Level):
+
+    next_customer_ticks = None
+    customer_time_min = 4
+    customer_time_max = 8
+
+    customer_things = {
+        'cop_dog': [1, 1, [item.DoughnutCooked, item.DoughnutIcedBlue, item.DoughnutIcedPink, item.DoughnutFinalBlueYellow, item.DoughnutFinalPinkYellow, item.DoughnutFinalBluePurple, item.DoughnutFinalPinkPurple]],
+        'cop_elephant': [3, 3, [item.DoughnutCooked, item.DoughnutIcedBlue, item.DoughnutIcedPink, item.DoughnutFinalBlueYellow, item.DoughnutFinalPinkYellow, item.DoughnutFinalBluePurple, item.DoughnutFinalPinkPurple]],
+        'cop_rabbit': [1, 3, [item.DoughnutCooked, item.DoughnutIcedBlue, item.DoughnutIcedPink]],
+        'slacker_patches': [1, 1, [item.DoughnutUncooked, item.DoughnutCooked, item.DoughnutBurned]],
+    }
+
+    background_scenery = scenery.BackgroundHill
+    customer_specification = [None]
+    customer_spaces_specification = 3
+
+    opening_scene = 'endless_opening'
+    victory_scene = 'endless_victory'
+    failure_scene = 'endless_failure'
+
+    serve_style = 'fast'
+    alt_suspicion_rate = 0.03
+    alt_suspicion_time = 90
+
+    device_specification = [
+        (device.Dough, -0.5, -0.2),
+        (device.Cooking, 0.25, -0.1),
+        (device.Cooking, 0.35, -0.275),
+        (device.IcingPink, 0.5, -0.05),
+        (device.IcingBlue, 0.6, -0.15),
+        (device.MultiPlating, 0.0, -0.1),
+        (device.Plate, 0.075, -0.28),
+        (device.Bin, 0.75, -0.4),
+        (device.SprinklesPurple, -0.25, -0.1),
+        (device.SprinklesYellow, -0.2, -0.25),
+    ]
+
+    def check_and_add_customer(self):
+        if self.next_customer_ticks is None:
+            self.next_customer_ticks = self.tick_running + int(math.ceil((random.random() * (self.customer_time_max - self.customer_time_min) + self.customer_time_min) / TICK_LENGTH))
+        if (len(self.customers) < self.customer_spaces_specification) and (self.tick_running >= self.next_customer_ticks):
+            # Add a random customer.
+            customer_type = random.choice(list(self.customer_things))
+            order_min, order_max, order_options = self.customer_things[customer_type]
+            order_items = [random.choice(order_options)(self) for _ in range(random.randint(order_min, order_max))]
+            Customer(self, Order(*order_items), customer_type)
+            self.next_customer_ticks = None
+
+    def remove_customer(self, customer, success, score):
+        super().remove_customer(customer, success, score)
+        self.alt_suspicion_rate = (
+            type(self).alt_suspicion_rate +
+            (ENDLESS_SAD_GROWTH_RATE * self.sad_customer) +
+            (ENDLESS_HAPPY_GROWTH_RATE * self.happy_customer)
+        )

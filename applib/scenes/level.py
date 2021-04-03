@@ -522,6 +522,9 @@ class LevelScene(object):
 
     def advance_scene(self):
         self.scene_ready = True
+        format_vars = dict(
+            sold_cakes=self.level.sold_cakes,
+        )
         while len(self.scene_lines) > 0:
             line = self.scene_lines.pop(0).strip()
             if len(line) == 0:
@@ -552,7 +555,7 @@ class LevelScene(object):
 
             if command == 'say_left':
                 self.message_container.visible = True
-                self.message_area.text_update(value)
+                self.message_area.text_update(value.format(**format_vars))
                 self.name_left.visible = bool(self.name_left.text)
                 self.name_right.visible = False
                 self.character_left.image_color = (255, 255, 255, 255)
@@ -560,7 +563,7 @@ class LevelScene(object):
                 break
             if command == 'say_right':
                 self.message_container.visible = True
-                self.message_area.text_update(value)
+                self.message_area.text_update(value.format(**format_vars))
                 self.name_right.visible = bool(self.name_right.text)
                 self.name_left.visible = False
                 self.character_right.image_color = (255, 255, 255, 255)
@@ -568,7 +571,7 @@ class LevelScene(object):
                 break
             if command == 'say_both':
                 self.message_container.visible = True
-                self.message_area.text_update(value)
+                self.message_area.text_update(value.format(**format_vars))
                 self.name_left.visible = bool(self.name_left.text)
                 self.name_right.visible = bool(self.name_right.text)
                 self.character_right.image_color = (255, 255, 255, 255)
@@ -753,6 +756,8 @@ class LevelScene(object):
     def on_key_press(self, symbol, modifiers):
         if DEBUG and symbol == pyglet.window.key.L:
             self.level.debug_print()
+        if DEBUG and symbol == pyglet.window.key.E:
+            app.controller.switch_scene(LevelScene, applib.model.level.EndlessLevel)
         if DEBUG and symbol == pyglet.window.key.D:
             self.start_scene('example')
         if DEBUG and symbol == pyglet.window.key.P:

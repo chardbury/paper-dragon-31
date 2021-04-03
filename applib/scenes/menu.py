@@ -124,7 +124,7 @@ class MenuScene(object):
             width = 0.45,
             height = 0.45,
             align_x = 0.75,
-            align_y = 0.55,
+            align_y = 0.6,
             anchor_x = 0.5,
             anchor_y = 0.0,
             text = 'Copcake Caper',
@@ -135,11 +135,23 @@ class MenuScene(object):
 
         self.play_button = self.interface.add(
             align_x = 0.75,
-            align_y = 0.45,
+            align_y = 0.5,
             anchor_x = 0.5,
             anchor_y = 1.0,
             height = 0.1,
-            text = 'Play',
+            text = 'Story',
+            text_color = (0, 0, 0, 255),
+            text_bold = True,
+            font_size = 0.06,
+        )
+
+        self.endless_button = self.interface.add(
+            align_x = 0.75,
+            align_y = 0.35,
+            anchor_x = 0.5,
+            anchor_y = 1.0,
+            height = 0.1,
+            text = 'Endless',
             text_color = (0, 0, 0, 255),
             text_bold = True,
             font_size = 0.06,
@@ -147,7 +159,7 @@ class MenuScene(object):
 
         self.quit_button = self.interface.add(
             align_x = 0.75,
-            align_y = 0.3,
+            align_y = 0.2,
             anchor_x = 0.5,
             anchor_y = 1.0,
             height = 0.1,
@@ -251,6 +263,8 @@ class MenuScene(object):
         if self.poem_animation:
             self.poem_animation.stop()
 
+    _buttons = ['play', 'quit', 'endless']
+
     _hover_button = None
     _hover_panel = None
 
@@ -259,21 +273,18 @@ class MenuScene(object):
     def _update_mouse_position(self, x, y):
         x -= self.interface_x
         y -= self.interface_y
-        new_hover_button = \
-            'play' if self.play_button.contains(x, y) else \
-            'quit' if self.quit_button.contains(x, y) else \
-            None
+        for button in self._buttons:
+            if getattr(self, f'{button}_button').contains(x, y):
+                new_hover_button = button
+                break
+        else:
+            new_hover_button = None
 
         if (new_hover_button is not None) and (new_hover_button != self._hover_button):
             sound.click()
-        self._hover_button = new_hover_button
-        self._hover_panel = \
-            self.play_button if new_hover_button == 'play' else \
-            self.quit_button if new_hover_button == 'quit' else \
-            None
 
-        #self.play_button.text_color = (80, 80, 80, 255) if self._hover_button == 'play' else (0, 0, 0, 255)
-        #self.quit_button.text_color = (80, 80, 80, 255) if self._hover_button == 'quit' else (0, 0, 0, 255)
+        self._hover_button = new_hover_button
+        self._hover_panel = getattr(self, f'{new_hover_button}_button') if new_hover_button else None
 
     def on_mouse_enter(self, x, y):
         if self.interface.visible:
@@ -324,6 +335,13 @@ class MenuScene(object):
         animation.QueuedAnimation(
             animation.AttributeAnimation(self, 'scene_fade', 1.0, 0.3),
             animation.WaitAnimation(0.1, pyglet.app.exit),
+        ).start()
+
+    def do_button_endless(self):
+        self.scene_fade = 0.0
+        animation.QueuedAnimation(
+            animation.AttributeAnimation(self, 'scene_fade', 1.0, 1.0),
+            animation.WaitAnimation(0.2, app.controller.switch_scene, applib.scenes.level.LevelScene, applib.model.level.EndlessLevel),
         ).start()
 
     def draw_apple_overlay(self, draw_x, draw_y):
