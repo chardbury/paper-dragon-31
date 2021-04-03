@@ -2,10 +2,17 @@ set_left_image: cop_rabbit
 set_left_name: Constable Iced Bun
 set_right_image: cook_flynn
 set_right_name: Flynn
+play_sound : rabbit_dialogue_question
 say_left : Hello there Flynn. What are you up to today?
+play_sound : flynn_dialogue_long
 say_right : No need for suspicion. I am just selling distra- umm, copcakes.
-say_left : Iced Bun: Copcakes? 
+play_sound : rabbit_pos
+say_left : Copcakes? 
+play_sound : flynn_dialogue_short
 say_right : Yes... copcakes. Very tasty.
+play_sound : rabbit_dialogue_one
 say_left : Let me see... Oh, these are just do-
+play_sound : flynn_dialogue_uptone
 say_right : Copcakes!
+play_sound : rabbit_dialogue_two
 say_left : Well... They look very nice, I'll take three.
