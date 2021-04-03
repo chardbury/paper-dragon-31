@@ -76,11 +76,8 @@ class Customer(entity.Entity):
     def sound_hello(self, *args, **kwargs):
         self.customer_sounds[self.name]['hello']()
 
-    def sound_thanks(self, *args, **kwargs):
-        self.customer_sounds[self.name]['hello']()
-
     def sound_yes(self, *args, **kwargs):
-        self.customer_sounds[self.name]['hello']()
+        self.customer_sounds[self.name]['yes']()
 
     def sound_no(self, *args, **kwargs):
         self.customer_sounds[self.name]['no']()
@@ -121,7 +118,7 @@ class Customer(entity.Entity):
             if isinstance(held_item, item.Plate):
                 self.patience_ticks = min(self.start_patience_ticks, self.patience_ticks + self.start_patience_ticks / 5)
             held_item.destroy()
-            self.sound_thanks()
+            self.sound_yes()
         else:
             self.sound_no()
             return held_item
@@ -174,7 +171,8 @@ class Customer(entity.Entity):
         else:
             self.patience_ticks -= 1
             if self.patience_ticks <= 0:
-                self.level.remove_customer(self, False, MAX_SCORE_FROM_CUSTOMER)
+                score = 0 if self.level.alt_suspicion_mode else MAX_SCORE_FROM_CUSTOMER
+                self.level.remove_customer(self, False, score)
 
 
 class Level(pyglet.event.EventDispatcher):
@@ -328,7 +326,8 @@ class Level(pyglet.event.EventDispatcher):
     def fail_score(self):
         if self.alt_suspicion_mode:
             return self.alt_suspicion_time * self.alt_suspicion_rate * TICK_RATE
-        return int(self.fail_ratio * len(type(self).customer_specification) * MAX_SCORE_FROM_CUSTOMER)
+        else:
+            return int(self.fail_ratio * len(type(self).customer_specification) * MAX_SCORE_FROM_CUSTOMER)
 
     def get_score_ratio(self):
         return self.score / self.fail_score

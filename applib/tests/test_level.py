@@ -51,6 +51,13 @@ def slow_level():
     example_level.serve_style = 'slow'
     return example_level
 
+@pytest.fixture
+def alt_level():
+    example_level = ExampleLevel()
+    example_level.alt_suspicion_mode = True
+    example_level.alt_suspicion_time = 30.0
+    return example_level
+
 
 def test_dough_station_gives_you_doughnuts(level):
     device = level.get_device('station_dough')
@@ -570,3 +577,22 @@ def test_level_score_bracket_0(level):
     level.interact(customer)
     level.tick()
     assert level.score == 30
+
+
+def test_alt_suspicion_increases_automatically(alt_level):
+    assert alt_level.score == 0.0
+    alt_level.tick()
+    assert alt_level.score > 0.0
+
+def test_alt_lose_after_30_seconds(alt_level):
+    assert alt_level.score == 0.0
+    alt_level.wait_for(30.0, -1)
+    assert alt_level.score < alt_level.fail_score
+    alt_level.tick()
+    assert alt_level.score >= alt_level.fail_score
+    assert alt_level.has_level_ended()
+
+# def test_alt_serving_reduces_suspicion(alt_level):
+#     assert alt_level.score == 0.0
+#     alt_level.tick()
+#     assert alt_level.score > 0.0
