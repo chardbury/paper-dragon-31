@@ -45,6 +45,9 @@ class HeldItemMouseCursor(pyglet.window.ImageMouseCursor):
         self.height = height
     
     def draw(self, x, y):
+        hot_x = self.hot_x
+        hot_y = self.hot_y
+
         held = self.scene.level.held_item
         if held is None:
             texture = self.texture
@@ -52,10 +55,14 @@ class HeldItemMouseCursor(pyglet.window.ImageMouseCursor):
         else:
             texture = held.sprite._texture
 
+        rel_x, rel_y = held.center_position
+        hot_x += rel_x * texture.width
+        hot_y += rel_y * texture.height
+
         # Compute the coordinates of the cursor box.
         scale = self.height / texture.height
-        x1 = x - self.hot_x * scale
-        y1 = y - self.hot_y * scale
+        x1 = x - hot_x * scale
+        y1 = y - hot_y * scale
         x2 = x1 + texture.width * scale
         y2 = y1 + texture.height * scale
 
@@ -79,8 +86,8 @@ class HeldItemMouseCursor(pyglet.window.ImageMouseCursor):
             off_x *= held.sprite.width
             off_y *= held.sprite.height
             scale = self.height / subtexture.height
-            x1 = x - self.hot_x * scale + off_x
-            y1 = y - self.hot_y * scale + off_y
+            x1 = x - hot_x * scale + off_x
+            y1 = y - hot_y * scale + off_y
             x2 = x1 + subtexture.width * scale
             y2 = y1 + subtexture.height * scale
             glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
@@ -95,6 +102,14 @@ class HeldItemMouseCursor(pyglet.window.ImageMouseCursor):
                 ('c4B', [255] * 16),
             )
             glPopAttrib()
+
+        # if DEBUG:
+        #     s = self.height / 10.0
+        #     pyglet.graphics.draw_indexed(4, GL_TRIANGLES,
+        #         [0, 1, 2, 0, 2, 3],
+        #         ('v2f', [x-s, y, x, y-s, x+s, y, x, y+s]),
+        #         ('c4B', [0, 255, 0, 127] * 4),
+        #     )
 
 
 class LevelScene(object):

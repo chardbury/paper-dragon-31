@@ -38,6 +38,17 @@ class Plate(Item):
     holds_position = (0.0, 0.2)
 
 
+class LadlePurple(Item):
+
+    name = 'ladle_purple'
+    center_position = (-0.1, -0.3)
+
+class LadleYellow(Item):
+
+    name = 'ladle_yellow'
+    center_position = (-0.1, -0.3)
+
+
 def load_items():
     indexed_resources = list(pyglet.resource._default_loader._index)
     for resource_name in indexed_resources:
