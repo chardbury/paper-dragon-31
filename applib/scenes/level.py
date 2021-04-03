@@ -108,12 +108,13 @@ class LevelScene(object):
         '''
 
         # Ensure we have an appropriate level.
-        if app.settings.level < 0:
-            level = applib.model.level.TestLevel
-        else:
-            level = level or applib.model.level.default_level
-            for _ in range(app.settings.level - 1):
-                level = level.next_level
+        if level is None:
+            if app.settings.level < 0:
+                level = applib.model.level.TestLevel
+            else:
+                level = applib.model.level.default_level
+                for _ in range(app.settings.level - 1):
+                    level = level.next_level
         self.level = level()
         applib.model.scenery.Counter(self.level)
         self.level.background_scenery(self.level)
