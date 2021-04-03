@@ -25,13 +25,15 @@ class MusicManager(object):
         self.player = None
         self.next = None
         self.grace = None
+        self.frate = None
 
-    def switch(self, source):
+    def switch(self, source, frate=None):
         '''Switch the music manager to a different source.
 
         '''
         if self.player:
             self.state = 'fadeout'
+            self.frate = frate
         self.next = source
 
     def on_tick(self):
@@ -40,7 +42,7 @@ class MusicManager(object):
         '''
         # While in 'fadeout', adjust the volume down each tick...
         if self.state == 'fadeout':
-            self.player.volume = max(0.0, self.player.volume - MUSIC_FADE_RATE * TICK_LENGTH)
+            self.player.volume = max(0.0, self.player.volume - (self.frate or MUSIC_FADE_RATE) * TICK_LENGTH)
             # Until we reach the target volume, then move to 'fadegrace'.
             if self.player.volume == 0.0:
                 self.state = 'fadegrace'
