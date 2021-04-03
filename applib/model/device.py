@@ -256,7 +256,6 @@ def _populate_plating_recipes():
 _populate_plating_recipes()
 del _populate_plating_recipes
 
-
 class MultiPlating(Device):
 
     name = 'station_plating'
@@ -293,6 +292,10 @@ class MultiPlating(Device):
         super().destroy()
         for device in self.subdevices:
             device.destroy()
+
+
+class MultiPlatingHalf(MultiPlating):
+    name = 'station_plating_right'
 
 
 class Dough(AutomaticDevice):

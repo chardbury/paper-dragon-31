@@ -1,5 +1,8 @@
 set_left_image : scrumper_patches
 set_left_name : Patches
+play_sound : patches_dialogue_pos
 say_left : Lets practice a bit.
+play_sound : patches_dialogue_long
 say_left : Pick up some dough from the left. Put it into the fryer. Wait until it turns golden-brown.
+play_sound : patches_dialogue_agreeable
 say_left : Give it to me. If you leave it too long it'll burn and you'll have to throw it in the bin.
