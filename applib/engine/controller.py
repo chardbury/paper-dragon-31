@@ -50,7 +50,7 @@ class Controller(pyglet.event.EventDispatcher):
         #: The global key state handler.
         app.keystate = pyglet.window.key.KeyStateHandler()
         #: The global music manager.
-        app.music = music.MusicManager(volume=app.settings.volume)
+        app.music = music.MusicManager()
         #: The global animation manager.
         app.animation = animation.AnimationManager()
 

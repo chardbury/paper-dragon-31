@@ -134,6 +134,7 @@ class LevelScene(object):
             animation.AttributeAnimation(self, 'scene_fade', 0.0, 1.0),
         ).start()
         self.dialogue_animation = None
+        app.music.switch(None)
 
         self.load_level_sprites()
 

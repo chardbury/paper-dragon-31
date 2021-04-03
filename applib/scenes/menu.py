@@ -173,6 +173,8 @@ class MenuScene(object):
             animation.AttributeAnimation(self, 'scene_fade', 0.0, 1.0),
         ).start()
 
+        app.music.switch(pyglet.resource.media('music/ketsa_love.mp3'))
+
     fade_poem = None
     fade_width = None
 

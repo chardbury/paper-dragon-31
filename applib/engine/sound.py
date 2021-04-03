@@ -34,7 +34,7 @@ class Sound(object):
     def __call__(self):
         if len(os.environ.get('PYTEST_CURRENT_TEST', '')) > 0: return
         player = random.choice(self.sources).play()
-        player.volume = app.settings.volume
+        player.volume = app.settings.sound_volume * app.settings.volume
         return player
 
 

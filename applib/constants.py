@@ -10,7 +10,7 @@ DEBUG = bool(__import__('os').environ.get('APPLIB_DEBUG', '').strip())
 
 ## Application
 
-APPLICATION_NAME = 'Untitled Application'
+APPLICATION_NAME = 'Copcake Caper'
 
 APPLICATION_VERSION = '0.1'
 
@@ -39,7 +39,9 @@ SETTINGS_DEFAULTS = {
     'fullscreen': not DEBUG,
     'start_scene': 'applib.scenes.menu.MenuScene',
     'level': 0,
-    'volume': 0.5,
+    'music_volume': 0.4,
+    'sound_volume': 1.0,
+    'volume': 1.0,
 }
 
 

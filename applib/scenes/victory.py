@@ -118,6 +118,7 @@ class VictoryScene(object):
         animation.QueuedAnimation(
             animation.AttributeAnimation(self, 'scene_fade', 0.0, 1.0),
         ).start()
+        app.music.switch(pyglet.resource.media('music/badoink_digitaldonut.mp3'))
 
         app.window.set_mouse_cursor(None)
 

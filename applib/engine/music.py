@@ -16,11 +16,11 @@ class MusicManager(object):
 
     '''
     
-    def __init__(self, volume=0.5):
+    def __init__(self):
         '''Construct a MusicManager object.
 
         '''
-        self.volume = volume
+        self.volume = app.settings.music_volume * app.settings.volume
         self.state = 'normal'
         self.player = None
         self.next = None
@@ -63,6 +63,10 @@ class MusicManager(object):
 
     def on_setting_change(self, name, value):
         if name == 'volume':
-            self.volume = value
+            self.volume = app.settings.music_volume * value
             if self.state == 'normal':
-                self.player.volume = value
+                self.player.volume = self.volume
+        if name == 'music_volume':
+            self.volume = value * app.settings.volume
+            if self.state == 'normal':
+                self.player.volume = self.volume
