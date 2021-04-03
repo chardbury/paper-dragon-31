@@ -2,6 +2,7 @@
 
 '''
 
+import colorsys
 import math
 import pprint
 import random
@@ -849,6 +850,11 @@ class LevelScene(object):
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t3f', bg_texture.tex_coords), ('c4B', [255] * 16))
         glPopAttrib()
 
+        hue = (1.0 - self._score_ratio) * 0.4 + self._score_ratio * -0.1
+        col = list(colorsys.hsv_to_rgb(hue, 0.6, 0.8))
+        for i in range(3):
+            col[i] = max(0, min(255, int(256 * col[i])))
+        col.append(255)
         left_offset = 0.15
         bottom_offset = 0.25
         right_offset = 0.12
@@ -871,7 +877,7 @@ class LevelScene(object):
         )
         vertex_data_filled[4] = min(vertex_data_filled[4], left + width - top_right_slope_threshold * width)
         vertex_data_filled[12] = min(vertex_data_filled[12], left + width - top_right_slope_threshold * width)
-        pyglet.graphics.draw(8, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', [230, 80, 50, 255] * 4 + [220, 200, 20, 100] * 4))
+        pyglet.graphics.draw(8, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', col * 4 + [255, 255, 255, 100] * 4))
 
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
         glEnable(fg_texture.target)
