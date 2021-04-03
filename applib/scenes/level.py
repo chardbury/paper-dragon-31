@@ -473,86 +473,8 @@ class LevelScene(object):
     ## --------
 
     def load_dialogue_overlay(self):
-
-        self.dialogue_overlay = self.interface.add(
-            width = 1.0,
-            height = 1.0,
-            align_x = 0.5,
-            align_y = 0.5,
-            background_color = (255, 255, 255, 150),
-            visible = False,
-        )
-
-        self.character_left = self.dialogue_overlay.add(
-            width = 0.25,
-            height = 0.5,
-            align_x = 0.15,
-            align_y = 0.38,
-            anchor_y = 0.0,
-        )
-
-        self.name_left = self.character_left.add(
-            padding = -0.05,
-            width = 1.0,
-            height = 0.15,
-            align_x = 0.0,
-            align_y = 0.14,
-            text = '',
-            text_color = (0, 0, 0, 255),
-            text_bold = True,
-            text_wrap = False,
-            font_size = 0.03,
-            visible = False,
-            background_color = (244, 236, 186, 255),
-            frame_texture = pyglet.resource.texture('interface/border_plain.png'),
-            frame_width = 0.15,
-        )
-
-        self.character_right = self.dialogue_overlay.add(
-            width = 0.25,
-            height = 0.5,
-            align_x = 0.85,
-            align_y = 0.38,
-            anchor_y = 0.0,
-        )
-
-        self.name_right = self.character_right.add(
-            padding = -0.05,
-            width = 1.0,
-            height = 0.15,
-            align_x = 1.0,
-            align_y = 0.14,
-            text = '',
-            text_color = (0, 0, 0, 255),
-            text_bold = True,
-            text_wrap = False,
-            font_size = 0.03,
-            visible = False,
-            background_color = (244, 236, 186, 255),
-            frame_texture = pyglet.resource.texture('interface/border_plain.png'),
-            frame_width = 0.15,
-        )
-
-        self.message_container = self.dialogue_overlay.add(
-            width = 0.8,
-            height = 0.2,
-            padding = 0.02,
-            align_x = 0.5,
-            align_y = 0.3,
-            anchor_y = 1.0,
-            background_color = (244, 236, 186, 255),
-            frame_texture = pyglet.resource.texture('interface/border.png'),
-            frame_width = 0.15,
-        )
-
-        self.message_area = self.message_container.add(
-            align_y = 1.0,
-            align_x = 0.0,
-            text_color = (0, 0, 0, 255),
-            font_size = 0.03,
-        )
-
-        self.message_area.text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec neque ut metus suscipit pretium vel sit amet nulla. Sed rhoncus scelerisque nunc, in lobortis risus tempus in. Nullam vitae nunc ipsum. Quisque sit amet mattis nunc, non dapibus massa. Ut porta ex quis sem tempor aliquam. Fusce semper cursus elit, iaculis rhoncus magna accumsan nec. Maecenas sagittis tempus ligula at congue.'
+        
+        applib.scenes.victory.make_dialogue_interface(self)
 
         self.scene_lines = None
 

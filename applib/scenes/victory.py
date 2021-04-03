@@ -16,21 +16,15 @@ from applib.engine import sound
 from pyglet.gl import *
 
 
-class VictoryScene(object):
-
-    def __init__(self, level=None):
-        
-        self.interface = applib.engine.panel.Panel(
-            aspect = (16, 9),
-            background_color = (255, 255, 255, 255),
-        )
+def make_dialogue_interface(self):
 
         self.dialogue_overlay = self.interface.add(
             width = 1.0,
             height = 1.0,
             align_x = 0.5,
             align_y = 0.5,
-            background_color = (255, 255, 255, 255),
+            background_color = (255, 255, 255, 150),
+            visible = False,
         )
 
         self.character_left = self.dialogue_overlay.add(
@@ -45,13 +39,14 @@ class VictoryScene(object):
             padding = -0.05,
             width = 1.0,
             height = 0.15,
-            align_x = 0.0,
-            align_y = 0.14,
+            align_x = 0.5,
+            align_y = 1.0,
+            anchor_y = 0.0,
             text = '',
             text_color = (0, 0, 0, 255),
             text_bold = True,
             text_wrap = False,
-            font_size = 0.03,
+            font_size = 0.04,
             visible = False,
             background_color = (244, 236, 186, 255),
             frame_texture = pyglet.resource.texture('interface/border_plain.png'),
@@ -70,25 +65,26 @@ class VictoryScene(object):
             padding = -0.05,
             width = 1.0,
             height = 0.15,
-            align_x = 1.0,
-            align_y = 0.14,
+            align_x = 0.5,
+            align_y = 1.0,
+            anchor_y = 0.0,
             text = '',
             text_color = (0, 0, 0, 255),
             text_bold = True,
             text_wrap = False,
-            font_size = 0.03,
+            font_size = 0.04,
             visible = False,
             background_color = (244, 236, 186, 255),
             frame_texture = pyglet.resource.texture('interface/border_plain.png'),
             frame_width = 0.15,
         )
 
-        self.message_container = self.interface.add(
+        self.message_container = self.dialogue_overlay.add(
             width = 0.8,
             height = 0.2,
-            padding = 0.02,
+            padding = -0.02,
             align_x = 0.5,
-            align_y = 0.3,
+            align_y = 0.36,
             anchor_y = 1.0,
             background_color = (244, 236, 186, 255),
             frame_texture = pyglet.resource.texture('interface/border.png'),
@@ -99,9 +95,22 @@ class VictoryScene(object):
             align_y = 1.0,
             align_x = 0.0,
             text_color = (0, 0, 0, 255),
-            font_size = 0.03,
-            text = None,
+            font_size = 0.04,
         )
+
+
+
+class VictoryScene(object):
+
+    def __init__(self, level=None):
+        
+        self.interface = applib.engine.panel.Panel(
+            aspect = (16, 9),
+            background_color = (255, 255, 255, 255),
+        )
+        
+        make_dialogue_interface(self)
+        self.dialogue_overlay.visible = True
 
         self.scene_fade = 1.0
         animation.QueuedAnimation(
