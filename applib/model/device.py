@@ -36,6 +36,8 @@ class Device(entity.Entity):
 
     item_position = (0.0, 0.0)
 
+    default_sound = applib.engine.sound.pop
+
     def __init_subclass__(cls):
         super().__init_subclass__()
         cls.duration_ticks = int(cls.duration // TICK_LENGTH)
@@ -57,15 +59,20 @@ class Device(entity.Entity):
     def compute_transition(self, first_item_class, second_item_class):
         # Case 1: We have a recipe for the input item and current item; use it.
         if (first_item_class, second_item_class) in self.recipes:
-            new_first_item_class, new_second_item_class = self.recipes[first_item_class, second_item_class]
+            recipe = self.recipes[first_item_class, second_item_class]
+            if len(recipe) == 2:
+                new_first_item_class, new_second_item_class = recipe
+                transition_sound = self.default_sound
+            else:
+                new_first_item_class, new_second_item_class, transition_sound = recipe
         # Case 2: There was no input item; pick up the current item.
         elif first_item_class is None:
-            new_first_item_class, new_second_item_class = second_item_class, None
+            new_first_item_class, new_second_item_class, transition_sound = second_item_class, None, applib.engine.sound.pop
         # Case 3: Invalid operation; keep the input item (if any).
         else:
-            new_first_item_class, new_second_item_class = first_item_class, second_item_class
+            new_first_item_class, new_second_item_class, transition_sound = first_item_class, second_item_class, None
         # Return the results of the transition.
-        return new_first_item_class, new_second_item_class
+        return new_first_item_class, new_second_item_class, transition_sound
 
     def add_item(self, input_item):
         
@@ -80,13 +87,18 @@ class Device(entity.Entity):
         # Compute the results of the transition.
         input_item_class = type(input_item) if isinstance(input_item, item.Item) else input_item
         current_item_class = type(current_item) if isinstance(current_item, item.Item) else current_item
-        output_item_class, new_item_class = self.compute_transition(input_item_class, current_item_class)
+        output_item_class, new_item_class, transition_sound = self.compute_transition(input_item_class, current_item_class)
 
         # Determine which sides of the transition have changed.
         changed_input = not isinstance(input_item, output_item_class or type(None))
         changed_current = not isinstance(current_item, new_item_class or type(None))
 
-        # Trigger things when items have changed.
+        # Trigger sound when anything has changed.
+        if changed_input or changed_current:
+            if transition_sound is not None:
+                transition_sound()
+
+        # Trigger timed behaviour when the current item has changed.
         if changed_current:
             # If we changed over time then the device starts a new cycle.
             if input_item_class is item.Time:
@@ -146,10 +158,6 @@ class Device(entity.Entity):
 
     def interact(self, held_item):
         return self.add_item(held_item)
-        if not self.is_running or self.is_finished:
-            return self.add_item(held_item)
-        else:
-            return held_item
 
     def tick(self):
         super().tick()
@@ -170,15 +178,21 @@ class AutomaticDevice(Device):
 
     duration = 0.0
 
+    sound = None
+
     def add_item(self, input_item):
         # Bins simply consume the input item.
         if self.product is None:
             self.ticks_remaining = self.duration_ticks
             if input_item is not None:
+                if self.sound is not None:
+                    self.sound()
                 input_item.destroy()
             return None
         # Non-bins give you their product if you aren't hold anything
         elif input_item is None:
+            if self.sound is not None:
+                self.sound()
             self.ticks_remaining = self.duration_ticks
             return self.product(self.level)
         # Otherwise you keep what you are holding.
@@ -194,12 +208,16 @@ class Bin(AutomaticDevice):
 
     product = None
 
+    sound = applib.engine.sound.throw_away
+
 
 class Plate(AutomaticDevice):
 
     name = 'station_plate'
 
     product = item.Plate
+
+    sound = applib.engine.sound.plate_pickup
 
 
 class Plating(Device):
@@ -209,15 +227,16 @@ class Plating(Device):
     duration = 0.0
 
     recipes = {
-        (item.Plate, None): (None, item.Plate),
+        (item.Plate, None): (None, item.Plate, applib.engine.sound.plate_putdown),
         (item.DoughnutUncooked, item.Plate): (None, item.Plate),
         (item.DoughnutCooked, item.Plate): (None, item.Plate),
         (item.DoughnutIcedBlue, item.Plate): (None, item.Plate),
         (item.DoughnutIcedPink, item.Plate): (None, item.Plate),
-        (item.LadlePurple, item.DoughnutIcedBlue): (None, item.DoughnutFinalBluePurple),
-        (item.LadlePurple, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkPurple),
-        (item.LadleYellow, item.DoughnutIcedBlue): (None, item.DoughnutFinalBlueYellow),
-        (item.LadleYellow, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkYellow),
+        (item.LadlePurple, item.DoughnutIcedBlue): (None, item.DoughnutFinalBluePurple, applib.engine.sound.sprinkle_plate),
+        (item.LadlePurple, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkPurple, applib.engine.sound.sprinkle_plate),
+        (item.LadleYellow, item.DoughnutIcedBlue): (None, item.DoughnutFinalBlueYellow, applib.engine.sound.sprinkle_plate),
+        (item.LadleYellow, item.DoughnutIcedPink): (None, item.DoughnutFinalPinkYellow, applib.engine.sound.sprinkle_plate),
+        (None, item.Plate): (item.Plate, None, applib.engine.sound.plate_pickup),
     }
 
 def _populate_plating_recipes():
@@ -233,6 +252,8 @@ class Dough(AutomaticDevice):
     name = 'station_dough'
 
     product = item.DoughnutUncooked
+
+    sound = applib.engine.sound.pop
 
 
 class Cooking(Device):
@@ -255,11 +276,13 @@ class Cooking(Device):
     }
     
     recipes = {
-        (item.DoughnutUncooked, None): (None, item.DoughnutUncooked),
-        (item.Time, item.DoughnutUncooked): (None, item.DoughnutCooked),
+        (item.DoughnutUncooked, None): (None, item.DoughnutUncooked, applib.engine.sound.deep_fry),
+        (item.Time, item.DoughnutUncooked): (None, item.DoughnutCooked, None),
         (None, item.DoughnutCooked): (item.DoughnutCooked, None),
-        (item.Time, item.DoughnutCooked): (None, item.DoughnutBurned),
+        (item.Time, item.DoughnutCooked): (None, item.DoughnutBurned, applib.engine.sound.fire_start),
     }
+
+    #sound = applib.engine.sound.deep_fry
 
 
 class IcingBlue(Device):
@@ -272,7 +295,7 @@ class IcingBlue(Device):
     
     recipes = {
         (item.DoughnutCooked, None): (None, item.DoughnutCooked),
-        (item.Time, item.DoughnutCooked): (None, item.DoughnutIcedBlue),
+        (item.Time, item.DoughnutCooked): (None, item.DoughnutIcedBlue, applib.engine.sound.squirt),
         (None, item.DoughnutIcedBlue): (item.DoughnutIcedBlue, None),
     }
 
@@ -287,7 +310,7 @@ class IcingPink(Device):
     
     recipes = {
         (item.DoughnutCooked, None): (None, item.DoughnutCooked),
-        (item.Time, item.DoughnutCooked): (None, item.DoughnutIcedPink),
+        (item.Time, item.DoughnutCooked): (None, item.DoughnutIcedPink, applib.engine.sound.squirt),
         (None, item.DoughnutIcedPink): (item.DoughnutIcedPink, None),
     }
 
@@ -298,9 +321,13 @@ class SprinklesPurple(AutomaticDevice):
 
     product = item.LadlePurple
 
+    sound = applib.engine.sound.sprinkle_scoop
+
 
 class SprinklesYellow(AutomaticDevice):
 
     name = 'station_sprinkles_yellow'
 
     product = item.LadleYellow
+
+    sound = applib.engine.sound.sprinkle_scoop

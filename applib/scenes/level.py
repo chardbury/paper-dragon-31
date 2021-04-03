@@ -728,7 +728,6 @@ class LevelScene(object):
                     target = self.entities_by_sprite[self._clicked_sprite]
                     if self._is_interactable(target):
                         self.level.interact(target)
-                        sound.pop()
                 self._clicked_sprite = None
 
     ## Debugging
