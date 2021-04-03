@@ -38,6 +38,8 @@ class Device(entity.Entity):
 
     default_sound = applib.engine.sound.pop
 
+    _sound_player = None
+
     def __init_subclass__(cls):
         super().__init_subclass__()
         cls.duration_ticks = int(cls.duration // TICK_LENGTH)
@@ -96,7 +98,9 @@ class Device(entity.Entity):
         # Trigger sound when anything has changed.
         if changed_input or changed_current:
             if transition_sound is not None:
-                transition_sound()
+                if self._sound_player:
+                    self._sound_player.next_source()
+                self._sound_player = transition_sound()
 
         # Trigger timed behaviour when the current item has changed.
         if changed_current:

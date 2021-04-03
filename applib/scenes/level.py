@@ -269,8 +269,8 @@ class LevelScene(object):
         # Have the leaving customer walk off.
         customer.sprite.layer = -1.5
         customer.sprite._target_offset_x = -view_width
-        self.persisting_sprites[customer.sprite] = (lambda:
-            abs(customer.sprite.animation_offset_x) > view_width / 2)
+        self.persisting_sprites[customer.sprite] = (lambda c=customer:
+            abs(c.sprite.animation_offset_x) > view_width / 2)
 
         # Have the remaining customers reposition.
         customer_count = len(self.level.customers)
@@ -360,7 +360,8 @@ class LevelScene(object):
                         fg = sprite.foreground_sprite
                         fg.visible = False
                         fg.layer = sprite.layer
-                        self.persisting_sprites[fg] = lambda: False
+                        self.persisting_sprites[fg] = (lambda c=entity:
+                            abs(c.sprite.animation_offset_x) > view_width / 2)
                         self.interface.sprites.append(fg)
                     sprite.update_foreground_sprite()
                     fg = sprite.foreground_sprite
@@ -368,7 +369,7 @@ class LevelScene(object):
                     customer_is_moving = (sprite._animation_offset_x != sprite._target_offset_x)
                     paws_on_counter = (fg.animation_offset_y == 0.0 and fg.layer == 0.1)
                     paws_are_animating = (entity in self.paw_animations) and (self.paw_animations[entity] in app.animation)
-                    customer_is_on_right = (self.level.customers.index(entity) > 2)
+                    customer_is_on_right = (entity in self.level.customers) and (self.level.customers.index(entity) > 2)
 
                     if not paws_are_animating:
                         if customer_is_moving and paws_on_counter:

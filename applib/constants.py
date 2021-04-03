@@ -39,9 +39,9 @@ SETTINGS_DEFAULTS = {
     'fullscreen': not DEBUG,
     'start_scene': 'applib.scenes.menu.MenuScene',
     'level': 0,
-    'music_volume': 0.4,
+    'music_volume': 0.6,
     'sound_volume': 1.0,
-    'volume': 1.0,
+    'volume': 0.7,
 }
 
 
