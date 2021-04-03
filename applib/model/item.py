@@ -54,8 +54,11 @@ class Apple(Item):
 
     name = 'apple'
 
-    def interact(self):
-        print('hi')
+    def interact(self, held_item):
+        if held_item is None:
+            return type(self)(self.level)
+        else:
+            return held_item
 
 
 def load_items():

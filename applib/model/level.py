@@ -321,6 +321,8 @@ class Level(pyglet.event.EventDispatcher):
             self.held_item = interactable.interact(self.held_item)
         elif isinstance(interactable, Customer):
             self.held_item = interactable.interact(self.held_item)
+        elif isinstance(interactable, item.Apple):
+            self.held_item = interactable.interact(self.held_item)
 
     def remove_customer(self, customer, success, score):
         '''Remove a customer from level
@@ -449,7 +451,7 @@ class LevelOne(Level):
     ]
 
     customer_specification = [
-        (2, 'cop_rabbit' ,[item.DoughnutCooked] * 3),
+        (2, 'cop_rabbit', [item.DoughnutCooked] * 3),
     ]
 
 class LevelOneBee(LevelOne):
