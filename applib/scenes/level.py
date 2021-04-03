@@ -142,6 +142,7 @@ class LevelScene(object):
             background_color = (255, 255, 255, 255),
         )
 
+        self._score_ratio = self.level.get_score_ratio()
         
         self.bg_player = {
             applib.model.scenery.BackgroundVillage: applib.engine.sound.bg_mix_village,
@@ -320,6 +321,9 @@ class LevelScene(object):
     fade_animation = None
 
     def on_tick(self):
+
+        score_ratio = self.level.get_score_ratio()
+        self._score_ratio += (score_ratio - self._score_ratio) * 0.01
 
         if self.dialogue_overlay.visible:
             # Do dialogue things here.
@@ -741,6 +745,12 @@ class LevelScene(object):
             self.level.debug_print()
         if DEBUG and symbol == pyglet.window.key.D:
             self.start_scene('example')
+        if DEBUG and symbol == pyglet.window.key.P:
+            self.level.score += 40
+        if DEBUG and symbol == pyglet.window.key.S:
+            if self.level.customers:
+                item = self.level.customers[0].order.items[0]
+                self.level.held_item = type(item)(self.level)
         if DEBUG and symbol == pyglet.window.key.F:
             self.level.dispatch_event('on_level_fail')
         if DEBUG and symbol == pyglet.window.key.W:
@@ -836,21 +846,29 @@ class LevelScene(object):
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t3f', bg_texture.tex_coords), ('c4B', [255] * 16))
         glPopAttrib()
 
-        progress = max(0.0, min(1.0, self.level.get_score_ratio()))
         left_offset = 0.15
         bottom_offset = 0.25
         right_offset = 0.12
         top_offset = 0.25
         top_right_slope_threshold = 0.22
+        progress = max(0.0, min(1.0, self._score_ratio))
         fill_width = max(0, (width - (left_offset + right_offset) * height) * progress)
+        progress_2 = max(0.0, min(1.0, self.level.get_score_ratio()))
+        fill_width_2 = max(0, (width - (left_offset + right_offset) * height) * progress_2)
         vertex_data_filled = make_rect(
             left + left_offset * height,
             bottom + bottom_offset * height,
             fill_width,
             height - (bottom_offset + top_offset) * height,
+        ) + make_rect(
+            left + left_offset * height + fill_width,
+            bottom + bottom_offset * height,
+            fill_width_2 - fill_width,
+            height - (bottom_offset + top_offset) * height,
         )
         vertex_data_filled[4] = min(vertex_data_filled[4], left + width - top_right_slope_threshold * width)
-        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', [0, 0, 255, 255] * 4))
+        vertex_data_filled[12] = min(vertex_data_filled[12], left + width - top_right_slope_threshold * width)
+        pyglet.graphics.draw(8, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', [230, 80, 50, 255] * 4 + [220, 200, 20, 100] * 4))
 
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
         glEnable(fg_texture.target)
@@ -895,7 +913,7 @@ class LevelScene(object):
             height - (bottom_offset + top_offset) * height,
         )
         vertex_data_filled[6] = max(vertex_data_filled[6], left + top_left_slope_threshold * width)
-        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', [0, 0, 255, 255] * 4))
+        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', [80, 200, 50, 255] * 4))
 
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
         glEnable(fg_texture.target)

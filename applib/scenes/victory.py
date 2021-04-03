@@ -31,7 +31,7 @@ def make_dialogue_interface(self):
         width = 0.25,
         height = 0.5,
         align_x = 0.15,
-        align_y = 0.38,
+        align_y = 0.39,
         anchor_y = 0.0,
         image_flip_x = True,
     )
@@ -41,7 +41,7 @@ def make_dialogue_interface(self):
         width = 1.0,
         height = 0.15,
         align_x = 0.5,
-        align_y = 1.0,
+        align_y = 1.02,
         anchor_y = 0.0,
         text = '',
         text_color = (0, 0, 0, 255),
@@ -58,7 +58,7 @@ def make_dialogue_interface(self):
         width = 0.25,
         height = 0.5,
         align_x = 0.85,
-        align_y = 0.38,
+        align_y = 0.39,
         anchor_y = 0.0,
     )
 
@@ -67,7 +67,7 @@ def make_dialogue_interface(self):
         width = 1.0,
         height = 0.15,
         align_x = 0.5,
-        align_y = 1.0,
+        align_y = 1.02,
         anchor_y = 0.0,
         text = '',
         text_color = (0, 0, 0, 255),
@@ -82,10 +82,10 @@ def make_dialogue_interface(self):
 
     self.message_container = self.dialogue_overlay.add(
         width = 0.8,
-        height = 0.2,
+        height = 0.15,
         padding = -0.02,
         align_x = 0.5,
-        align_y = 0.36,
+        align_y = 0.31,
         anchor_y = 1.0,
         background_color = (244, 236, 186, 255),
         frame_texture = pyglet.resource.texture('interface/border.png'),
@@ -93,8 +93,9 @@ def make_dialogue_interface(self):
     )
 
     self.message_area = self.message_container.add(
-        align_y = 1.0,
+        align_y = 1.05,
         align_x = 0.0,
+        anchor_y = 1.0,
         text_color = (0, 0, 0, 255),
         font_size = 0.04,
     )
