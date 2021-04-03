@@ -1,6 +1,5 @@
 set_left_image : scrumper_patches
 set_left_name : Patches
 say_left : Lets practice a bit.
-say_left : Once you've cooked it
-say_left : Put it under the icing machine.
+say_left : Once you've cooked it, put it under the icing machine.
 say_left : It'll take a few seconds for the icing machine to ice it.

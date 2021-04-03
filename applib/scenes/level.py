@@ -142,6 +142,12 @@ class LevelScene(object):
             background_color = (255, 255, 255, 255),
         )
 
+        
+        self.bg_player = {
+            applib.model.scenery.BackgroundVillage: applib.engine.sound.bg_mix_village,
+            applib.model.scenery.BackgroundHill: applib.engine.sound.bg_mix_hill,
+        }[self.level.background_scenery]()
+
         self.overlay = self.interface.add(
             draw_function = self.draw_overlay,
         )
@@ -159,8 +165,6 @@ class LevelScene(object):
         self.on_tick()
         self.start_scene(self.level.opening_scene)
         self.paw_animations = {}
-
-        self.bg_player = applib.engine.sound.bg_mix()
 
     def on_scene_end(self):
         self.bg_player.pause()

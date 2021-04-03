@@ -237,10 +237,10 @@ class MenuScene(object):
         self.interface.visible = True
         width, height = self.interface.get_content_size()
         animations = []
-        animation.QueuedAnimation(
+        animation.ParallelAnimation(
+            animation.WaitAnimation(1.0, app.music.switch, pyglet.resource.media('music/ketsa_love.mp3')),
             SpiralAnimation(self, 'interface_x', 'interface_y', 0.0, 0.0, 0.85 * math.pi, 2.0),
         ).start()
-        app.music.switch(pyglet.resource.media('music/ketsa_love.mp3'))
 
     def end_poem(self, now=True):
         if self.poem_animation:
