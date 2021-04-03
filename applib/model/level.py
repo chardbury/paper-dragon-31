@@ -46,24 +46,29 @@ class Customer(entity.Entity):
 
     customer_sounds = {
         'cop_dog': {
-            'hello': applib.engine.sound.hello_high,
-            'no': applib.engine.sound.hmm_high,
+            'hello': applib.engine.sound.dog_hello,
+            'no': applib.engine.sound.dog_neg,
+            'yes': applib.engine.sound.dog_pos,
         },
         'cop_elephant': {
-            'hello': applib.engine.sound.hello_high,
-            'no': applib.engine.sound.hmm_high,
+            'hello': applib.engine.sound.elephant_hello,
+            'no': applib.engine.sound.elephant_neg,
+            'yes': applib.engine.sound.elephant_pos,
         },
         'cop_rabbit': {
-            'hello': applib.engine.sound.hello_high,
-            'no': applib.engine.sound.hmm_high,
+            'hello': applib.engine.sound.rabbit_hello,
+            'no': applib.engine.sound.rabbit_neg,
+            'yes': applib.engine.sound.rabbit_pos,
         },
         'friend_patches': {
-            'hello': applib.engine.sound.hello_high,
-            'no': applib.engine.sound.hmm_high,
+            'hello': applib.engine.sound.patches_hello,
+            'no': applib.engine.sound.patches_neg,
+            'yes': applib.engine.sound.patches_pos,
         },
         'slacker_patches': {
-            'hello': applib.engine.sound.hello_high,
-            'no': applib.engine.sound.hmm_high,
+            'hello': applib.engine.sound.patches_hello,
+            'no': applib.engine.sound.patches_neg,
+            'yes': applib.engine.sound.patches_pos,
         },
     }
 

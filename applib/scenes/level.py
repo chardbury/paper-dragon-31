@@ -27,6 +27,7 @@ from applib.constants import CUSTOMER_WALK_SPEED
 from applib.constants import DEBUG
 from applib.constants import DEVICE_SCALE
 from applib.constants import ITEM_SCALE
+from applib.constants import MAX_SCORE_FROM_CUSTOMER
 from applib.constants import PROGRESS_BAR_HEIGHT
 from applib.constants import PROGRESS_BAR_MARGIN
 from applib.constants import PROGRESS_BAR_WIDTH
@@ -746,9 +747,11 @@ class LevelScene(object):
         if DEBUG and symbol == pyglet.window.key.D:
             self.start_scene('example')
         if DEBUG and symbol == pyglet.window.key.P:
-            self.level.score += 40
+            self.level.score += MAX_SCORE_FROM_CUSTOMER / 2
         if DEBUG and symbol == pyglet.window.key.S:
             if self.level.customers:
+                if self.level.held_item:
+                    self.level.held_item.destroy()
                 item = self.level.customers[0].order.items[0]
                 self.level.held_item = type(item)(self.level)
         if DEBUG and symbol == pyglet.window.key.F:
