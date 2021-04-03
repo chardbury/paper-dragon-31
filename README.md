@@ -60,6 +60,7 @@ The image assets of this game are available under the CC BY-NC-SA 4.0 license: h
 The following assets are licensed or attributed thusly:
 
 - Music, "Love by Ketsa", https://freemusicarchive.org/music/Ketsa/abundance/love, CC BY-NC-ND 4.0
+- Music, "Rocket Boat by Scott Gratton", https://freemusicarchive.org/music/Scott_Gratton/progress-and-regress/rocket-boat-1, CC BY-NC-ND 4.0
 - Music, "Digital Donut by BaDoink", https://freesound.org/people/BaDoink/sounds/531866/, CC0 1.0
 - Sound, "Rawr by wintuh", https://freesound.org/people/wintuh/sounds/471880/, CC0 1.0
 - Sound, "Bird Whistling by InspectorJ", https://freesound.org/people/InspectorJ/sounds/339326/, CC BY 3.0
