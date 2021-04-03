@@ -35,11 +35,13 @@ The image assets of this game are available under the CC BY-NC-SA 4.0 license: h
 The following assets are licensed or attributed thusly:
 
 - Music, "Love by Ketsa", https://freemusicarchive.org/music/Ketsa/abundance/love, CC BY-NC-ND 4.0
+- Music, "Digital Donut by BaDoink", https://freesound.org/people/BaDoink/sounds/531866/, CC0 1.0
 - Sound, "Rawr by wintuh", https://freesound.org/people/wintuh/sounds/471880/, CC0 1.0
-- Sound, "Digital Donut by BaDoink", https://freesound.org/people/BaDoink/sounds/531866/, CC0 1.0
 - Sound, "Bird Whistling by InspectorJ", https://freesound.org/people/InspectorJ/sounds/339326/, CC BY 3.0
 - Sound, "Gas Fire by Fogma", https://freesound.org/people/fogma/sounds/32647/, CC BY 3.0
 - Sound, "Deep Frying by Benboncan", https://freesound.org/people/Benboncan/sounds/80082/, CC BY 3.0
 - Sound, "Success Jingle by Kastenfrosch", https://freesound.org/people/Kastenfrosch/sounds/521949/, CC0 1.0
 - Sound, "Sad Trombone by kirbydx", https://freesound.org/people/kirbydx/sounds/175409/, CC0 1.0
+- Sound, "garbage can open close sound effect by Garuda1982", https://freesound.org/people/Garuda1982/sounds/558109/, CC BY 3.0
+- Sound, "garbage can open close by speedygonzo", https://freesound.org/people/speedygonzo/sounds/235717/, CC0 1.0
 - Font, "Lato". https://fonts.google.com/specimen/Lato, OFL
