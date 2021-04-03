@@ -152,7 +152,7 @@ class Customer(entity.Entity):
     def compute_score(self):
         bracket = self.get_score_bracket()
         if self.level.alt_suspicion_mode:
-            bracket = 4 - bracket
+            bracket = min(3, 4 - bracket)
         if bracket == 4:
             return 0
         elif bracket == 3:
