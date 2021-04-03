@@ -2,6 +2,10 @@ set_left_image: cop_dog
 set_left_name: Sgt. Dognut
 set_right_image : cook_flynn
 set_right_name : Flynn
+play_sound : dog_dialogue_one
 say_left : You've sold {sold_cakes} cakes... WITHOUT A PERMIT!
+set_right_image : ohno_patches
+set_right_name : Patches
+play_sound : patches_dialogue_uhoh
 say_right : Oh no!
 end_game : menu
