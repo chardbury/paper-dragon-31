@@ -244,7 +244,8 @@ class Plating(Device):
 
 def _populate_plating_recipes():
     for item_name, item_class in entity.Entity.index['items'].items():
-        Plating.recipes[item_class, None] = (None, item_class)
+        if item_name.startswith('doughnut_'):
+            Plating.recipes[item_class, None] = (None, item_class)
 
 _populate_plating_recipes()
 del _populate_plating_recipes

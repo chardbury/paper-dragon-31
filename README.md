@@ -2,9 +2,24 @@
 
 This is our entry in PyWeek 31; the contest entry page is here: https://pyweek.org/e/paper-dragon-31/.
 
+
 ## Game Summary
 
-FIXME
+Patches and Flynn were the bane of the wood;
+They got up to all of the mischief they could.
+They scrumped from Sam's orchard and littered the cores.
+They filched them from poor Mrs Appleby's stores.
+
+But now that the fuzz is on to their stuff;
+Patches and Flynn are finding it rough
+To steal the apples and all their hi-jinks.
+"We need a decoy", say Patches. Flynn thinks.
+
+Then Flynn says, "Hey! I've got just the plan!"
+So Patches and Flynn did set up a stand
+In front of the places they're pulling their jobs
+So rather than chase them, The Blue stuff their gobs!
+
 
 ## Running The Game
 
@@ -15,7 +30,17 @@ pip install pyglet
 python run_game.py
 ```
 
-## License
+The game was developed using Python 3.9 and Pyglet 1.5.15. It was tested on Windows 10 and macOS 11.0.
+
+
+## Playing The Game
+
+- All you need is a mouse with one button.
+- If your mouse has more than one button pick your favourite one.
+- Click on stuff to make things happen.
+
+
+## Licenses
 
 The code for this game are available under the following license:
 
