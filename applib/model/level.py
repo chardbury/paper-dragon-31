@@ -686,8 +686,8 @@ class EndlessLevel(Level):
             (1, item.DoughnutFinalBluePurple),
             (1, item.DoughnutFinalPinkPurple),
         ]],
-        'cop_elephant': [2, 3, [
-            (3, item.DoughnutCooked),
+        'cop_elephant': [3, 3, [
+            (4, item.DoughnutCooked),
             (2, item.DoughnutIcedBlue),
             (2, item.DoughnutIcedPink),
             (1, item.DoughnutFinalBlueYellow),
