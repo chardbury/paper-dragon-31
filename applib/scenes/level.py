@@ -896,14 +896,17 @@ class LevelScene(object):
             bottom + bottom_offset * height,
             fill_width,
             height - (bottom_offset + top_offset) * height,
-        ) + make_rect(
+        )
+        vertex_data_filled_2 = make_rect(
             left + left_offset * height + fill_width,
             bottom + bottom_offset * height,
             fill_width_2 - fill_width,
             height - (bottom_offset + top_offset) * height,
         )
         vertex_data_filled[4] = min(vertex_data_filled[4], left + width - top_right_slope_threshold * width)
-        vertex_data_filled[12] = min(vertex_data_filled[12], left + width - top_right_slope_threshold * width)
+        vertex_data_filled_2[4] = min(vertex_data_filled[4], left + width - top_right_slope_threshold * width)
+        vertex_data_filled_2[:4] = vertex_data_filled[-4:]
+        vertex_data_filled += vertex_data_filled_2
         pyglet.graphics.draw(8, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', col * 4 + [255, 255, 255, 100] * 4))
 
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
