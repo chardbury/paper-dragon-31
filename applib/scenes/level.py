@@ -632,7 +632,7 @@ class LevelScene(object):
     _texture_data = {}
 
     def _is_interactable(self, entity):
-        return hasattr(entity, 'interact')
+        return hasattr(entity, 'interact') and (entity.level is self.level)
 
     def _change_sprite_focus(self, new_sprite, old_sprite):
         if new_sprite is not None:
