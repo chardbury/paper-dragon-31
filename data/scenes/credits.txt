@@ -1,5 +1,26 @@
-say_left : You did it! Now you will be able to make the world's largest apple crumble!
-say_left : This game was an entry in PyWeek 31.
-say_left : It was developed by Joey Anrep, David Birch, Carrie de Lacy, Chris de Lacy, Paul Scrivens, and Richard Thomas
-say_left : Thank you for playing!
+set_left_image : cook_flynn
+set_left_name : Flynn
+set_right_image : scrumper_patches
+set_right_name :  Patches
+
+say_left : Hello. Thank you for helping us steal all these apples.
+
+say_right : Yes, thank you. These are delicious.
+
+say_left : They told me this was an entry in a something called "PyWeek"?
+
+say_right : Pie week? Were we supposed to make a pie from these apples?
+
+say_left : I think so.
+
+say_left : Anyway, they also said it was developed by Joey Anrep, David Birch, Carrie de Lacy, Chris de Lacy, Paul Scrivens, and Richard Thomas.
+
+say_right : Those don't sound like real names.
+
+say_left : I agree.
+
+say_left : ...
+
+say_both : Thanks for playing!
+
 end_game :

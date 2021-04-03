@@ -39,7 +39,6 @@ class VictoryScene(object):
             align_x = 0.15,
             align_y = 0.38,
             anchor_y = 0.0,
-            visible = False,
         )
 
         self.name_left = self.character_left.add(
@@ -65,7 +64,6 @@ class VictoryScene(object):
             align_x = 0.85,
             align_y = 0.38,
             anchor_y = 0.0,
-            visible = False,
         )
 
         self.name_right = self.character_right.add(
@@ -166,6 +164,14 @@ class VictoryScene(object):
                 self.name_left.visible = False
                 self.character_right.image_color = (255, 255, 255, 255)
                 self.character_left.image_color = (75, 75, 75, 255)
+                break
+            if command == 'say_both':
+                self.message_container.visible = True
+                self.message_area.text_update(value)
+                self.name_left.visible = bool(self.name_left.text)
+                self.name_right.visible = bool(self.name_right.text)
+                self.character_right.image_color = (255, 255, 255, 255)
+                self.character_right.image_color = (255, 255, 255, 255)
                 break
 
             if command == 'end_game':
