@@ -349,7 +349,7 @@ class MenuScene(object):
             px, py = self._hover_panel.get_offset()
             pw, ph = self._hover_panel.get_content_size()
             s = ph
-            px += draw_x + pw + s/2
+            px += draw_x - s - s/2
             py += draw_y
             glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
             glEnable(self.apple_tex.target)

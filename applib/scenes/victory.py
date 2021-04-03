@@ -195,7 +195,7 @@ class VictoryScene(object):
                 app.music.switch(None, frate)
                 animation.QueuedAnimation(
                     animation.AttributeAnimation(self, 'scene_fade', 1.0, 4.0),
-                    animation.WaitAnimation(0.5, pyglet.app.exit),
+                    animation.WaitAnimation(0.5, app.controller.switch_scene, applib.scenes.menu.MenuScene),
                 ).start()
                 break
 
