@@ -701,6 +701,7 @@ class EndlessLevel(Level):
             (1, item.DoughnutIcedPink),
         ]],
         'slacker_patches': [1, 1, [
+            # (1, item.Apple),
             (1, item.DoughnutUncooked),
             (1, item.DoughnutCooked),
             (1, item.DoughnutBurned),

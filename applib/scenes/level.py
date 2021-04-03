@@ -221,7 +221,10 @@ class LevelScene(object):
             # Ensure the sprite is in the interface
             if sprite not in self.interface.sprites:
                 self.interface.sprites.append(sprite)
-                sprite._can_click_through = isinstance(entity, applib.model.item.Item)
+                sprite._can_click_through = (
+                    isinstance(entity, applib.model.item.Item) and
+                    not isinstance(entity, applib.model.item.Apple)
+                )
             
                 # Get the proprties used to configure the sprite.
                 for entity_class, relative_height, sprite_layer in self._entity_properties:
