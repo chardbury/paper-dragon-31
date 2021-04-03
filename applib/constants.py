@@ -12,7 +12,7 @@ DEBUG = bool(__import__('os').environ.get('APPLIB_DEBUG', '').strip())
 
 APPLICATION_NAME = 'Copcake Caper'
 
-APPLICATION_VERSION = '1.1'
+APPLICATION_VERSION = '1.2'
 
 DEFAULT_SCREEN_SIZE = (960, 540)
 
