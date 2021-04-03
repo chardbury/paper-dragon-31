@@ -110,7 +110,7 @@ class LevelScene(object):
         if app.settings.level < 0:
             level = applib.model.level.TestLevel
         else:
-            level = level or applib.model.level.LevelOne
+            level = level or applib.model.level.default_level
             for _ in range(app.settings.level - 1):
                 level = level.next_level
         self.level = level()

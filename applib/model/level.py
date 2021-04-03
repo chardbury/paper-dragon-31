@@ -582,6 +582,7 @@ class LevelFourTutorial(Level):
     ]
 
 
+default_level = LevelOne
 LevelOne.next_level = LevelTwo
 LevelTwo.next_level = LevelThree
 LevelThree.next_level = LevelFour
