@@ -1,17 +1,21 @@
 set_left_image : cop_elephant
 set_left_name : Commissioner Peanut
+play_sound : elephant_dialogue
 say_left : Ho ho ho. I've caught you, you naughty scrumpers
 say_left : The punishment for disrupting our picnic is...
 say_left : LITTER PICKING.
 set_right_image : scrumper_patches
 set_right_name : Patches
+play_sound : patches_dialogue_ohno
 say_right : Oh no.
 say_left : And I'm telling your parents.
 set_right_image : cook_flynn
 set_right_name : Flynn
+play_sound : flynn_dialogue_neg
 say_right : Oh no.
 say_left: And I'm confiscating those apples!
 set_right_image : both
 set_right_name : Patches & Flynn
+play_sound : patches_and_flynn_dialogue_panic
 say_right : Oh no!
 next_level : LevelFourTutorial
