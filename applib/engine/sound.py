@@ -52,4 +52,4 @@ def load_sounds():
 load_sounds()
 del load_sounds
 
-pyglet.clock.schedule_once(Sound._preload, 0.0)
+# pyglet.clock.schedule_once(Sound._preload, 0.0)
