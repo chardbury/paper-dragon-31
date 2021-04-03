@@ -1,17 +1,22 @@
 set_left_image : cop_rabbit
 set_left_name : Constable Iced Bun
+play_sound : rabbit_dialogue_three
 say_left : Patches! I see you climbing over the garden fence!
 set_right_image : cop_dog
 set_right_name : Sgt. Dognut
+play_sound : dog_neg
 say_right : Flynn, where's my order?
 set_left_image : scrumper_patches
 set_left_name : Patches
 set_right_image : cook_flynn
 set_right_name : Flynn
+play_sound : flynn_dialogue_uhoh
 say_left : They saw me!
+play_sound : patches_dialogue_ohno
 say_right : They caught on!
 set_right_image : 
 set_left_image : both
 set_left_name : Patches & Flynn
+play_sound : flynn_patches_uhoh
 say_left : Abandon the wagon!
 repeat_level :
