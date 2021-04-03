@@ -294,8 +294,11 @@ class MultiPlating(Device):
             device.destroy()
 
 
-class MultiPlatingHalf(MultiPlating):
+class MultiPlatingRight(MultiPlating):
     name = 'station_plating_right'
+
+class MultiPlatingLeft(MultiPlating):
+    name = 'station_plating_left'
 
 
 class Dough(AutomaticDevice):

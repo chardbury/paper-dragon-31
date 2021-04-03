@@ -50,6 +50,16 @@ class LadleYellow(Item):
     name = 'ladle_yellow'
     center_position = (-0.1, -0.3)
 
+class Apple(Item):
+
+    name = 'apple'
+
+    def interact(self, held_item):
+        if held_item is None:
+            return type(self)(self.level)
+        else:
+            return held_item
+
 
 def load_items():
     indexed_resources = list(pyglet.resource._default_loader._index)
