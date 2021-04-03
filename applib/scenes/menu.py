@@ -101,6 +101,8 @@ class MenuScene(object):
             animation.WaitAnimation(1.0, self.end_logo),
         ).start()
 
+        self.apple_tex = pyglet.resource.texture('items/apple.png')
+
         self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
             background_color = (255, 255, 255, 255),
@@ -108,18 +110,33 @@ class MenuScene(object):
         )
 
         self.title_image = self.interface.add(
-            width = 1.0,
-            height = 0.84,
-            align_y = 0.58,
+            width = 0.4,
+            height = 0.9,
+            align_x = 0.25,
+            align_y = 0.5,
+            anchor_x = 0.5,
             anchor_y = 0.5,
-            image_texture = pyglet.resource.texture('interface/title.png')
+            image_texture = pyglet.resource.texture('interface/title.png'),
+        )
+
+        self.title_box = self.interface.add(
+            width = 0.45,
+            height = 0.45,
+            align_x = 0.75,
+            align_y = 0.55,
+            anchor_x = 0.5,
+            anchor_y = 0.0,
+            text = 'Cop Cake Caper',
+            text_color = (0, 0, 0, 255),
+            text_bold = True,
+            font_size = 0.08,
         )
 
         self.play_button = self.interface.add(
-            align_x = 0.17,
-            align_y = 0.08,
+            align_x = 0.75,
+            align_y = 0.45,
             anchor_x = 0.5,
-            anchor_y = 0.5,
+            anchor_y = 1.0,
             height = 0.1,
             text = 'Play',
             text_color = (0, 0, 0, 255),
@@ -127,24 +144,11 @@ class MenuScene(object):
             font_size = 0.06,
         )
 
-        self.continue_button = self.interface.add(
-            align_x = 0.5,
-            align_y = 0.08,
-            anchor_x = 0.5,
-            anchor_y = 0.5,
-            height = 0.1,
-            text = 'Unused',
-            text_bold = True,
-            text_color = (0, 0, 0, 255),
-            font_size = 0.06,
-            visible = False
-        )
-
         self.quit_button = self.interface.add(
-            align_x = 0.83,
-            align_y = 0.08,
+            align_x = 0.75,
+            align_y = 0.3,
             anchor_x = 0.5,
-            anchor_y = 0.5,
+            anchor_y = 1.0,
             height = 0.1,
             text = 'Quit',
             text_bold = True,
@@ -247,6 +251,7 @@ class MenuScene(object):
             self.poem_animation.stop()
 
     _hover_button = None
+    _hover_panel = None
 
     _press_button = None
 
@@ -261,9 +266,13 @@ class MenuScene(object):
         if (new_hover_button is not None) and (new_hover_button != self._hover_button):
             sound.click()
         self._hover_button = new_hover_button
+        self._hover_panel = \
+            self.play_button if new_hover_button == 'play' else \
+            self.quit_button if new_hover_button == 'quit' else \
+            None
 
-        self.play_button.text_color = (80, 80, 80, 255) if self._hover_button == 'play' else (0, 0, 0, 255)
-        self.quit_button.text_color = (80, 80, 80, 255) if self._hover_button == 'quit' else (0, 0, 0, 255)
+        #self.play_button.text_color = (80, 80, 80, 255) if self._hover_button == 'play' else (0, 0, 0, 255)
+        #self.quit_button.text_color = (80, 80, 80, 255) if self._hover_button == 'quit' else (0, 0, 0, 255)
 
     def on_mouse_enter(self, x, y):
         if self.interface.visible:
@@ -311,7 +320,10 @@ class MenuScene(object):
         self.do_show_poem()
 
     def do_button_quit(self):
-        pyglet.app.exit()
+        animation.QueuedAnimation(
+            animation.AttributeAnimation(self, 'scene_fade', 1.0, 0.3),
+            animation.WaitAnimation(0.1, pyglet.app.exit),
+        ).start()
 
     def on_draw(self):
         glEnable(GL_BLEND)
@@ -329,6 +341,22 @@ class MenuScene(object):
 
         self.interface.draw(draw_x=self.interface_x, draw_y=self.interface_y)
         self.logo_sprite.draw()
+
+        if self._hover_panel:
+            px, py = self._hover_panel.get_offset()
+            pw, ph = self._hover_panel.get_content_size()
+            s = ph
+            px += x + pw + s/2
+            py += y
+            glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+            glEnable(self.apple_tex.target)
+            glBindTexture(self.apple_tex.target, self.apple_tex.id)
+            pyglet.graphics.draw(4, GL_QUADS,
+                ('v2f', [px, py, px+s, py, px+s, py+s, px, py+s]),
+                ('t3f', self.apple_tex.tex_coords),
+                ('c4B', [255] * 16),
+                )
+            glPopAttrib()
 
         # Render overlay
         glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
