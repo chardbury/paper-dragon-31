@@ -148,6 +148,8 @@ class Customer(entity.Entity):
     
     def compute_score(self):
         bracket = self.get_score_bracket()
+        if self.level.alt_suspicion_mode:
+            bracket = 4 - bracket
         if bracket == 4:
             return 0
         elif bracket == 3:
@@ -189,6 +191,8 @@ class Level(pyglet.event.EventDispatcher):
     victory_scene = None
     failure_scene = None
     next_level = None
+    alt_suspicion_mode = True
+    alt_suspicion_rate = 0.04
 
     #seconds
     duration = 60
@@ -212,6 +216,7 @@ class Level(pyglet.event.EventDispatcher):
         self.tick_running = 0
         self.customer_specification = list(self.customer_specification)
         self.held_item = None
+        
 
         # Create devices.
         self.device_locations = {}
@@ -307,7 +312,10 @@ class Level(pyglet.event.EventDispatcher):
             self.happy_customer += 1
         else:
             self.sad_customer += 1
-        self.score += score
+        if self.alt_suspicion_mode:
+            self.score -= score
+        else:
+            self.score += score
 
     @property
     def fail_score(self):
@@ -350,14 +358,18 @@ class Level(pyglet.event.EventDispatcher):
         '''Advance the level state by a single tick.
 
         '''
-        self.tick_running += 1
 
+        self.tick_running += 1
+        
         # check if level has ended, we won't be continuing if we have
         if self.has_level_ended():
-            pass
+            return
 
         for entity in self.entities:
             entity.tick()
+
+        if self.alt_suspicion_mode:
+            self.score = max(0.0, self.score + self.alt_suspicion_rate)
 
         if len(self.customer_specification) > 0 and len(self.customers) < self.customer_spaces_specification:
             # we have the space to spawn a customer, if one is waiting

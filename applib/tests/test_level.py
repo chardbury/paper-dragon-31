@@ -34,6 +34,8 @@ class ExampleLevel(level.Level):
 
     fail_ratio = 0.5
 
+    alt_suspicion_mode = False
+
     def wait_for(self, time, extra=0):
         for _ in range(extra + int(math.ceil(time // TICK_LENGTH))):
             self.tick()
@@ -231,17 +233,14 @@ def test_bin_destroys_items(level):
 
 def test_customer_arrival_and_leave(level):
     # this test depends on the customer default patience
-    for _ in range(int(10 // TICK_LENGTH)):
-        level.tick()
+    level.fail_ratio = 1.0
+    level.wait_for(5.0, 1)
     assert len(level.customers) == 1
-    for _ in range(int(10 // TICK_LENGTH)):
-        level.tick()
+    level.wait_for(10.0, 1)
     assert len(level.customers) == 2
-    for _ in range(int(20 // TICK_LENGTH)):
-        level.tick()
+    level.wait_for(20.0, 1)
     assert len(level.customers) == 1
-    for _ in range(int(5 // TICK_LENGTH)):
-        level.tick()
+    level.wait_for(10.0, 1)
     assert len(level.customers) == 0
     assert level.sad_customer == 2
     assert level.score == 80
@@ -342,7 +341,7 @@ def test_fail_level_from_score(level):
     ticks = int(36 // TICK_LENGTH)
     for _ in range(ticks):
         level.tick()
-    assert level.get_time_ratio() == 36 / 60
+    assert level.get_time_ratio() == pytest.approx(36 / 60)
     assert level.fail_score == 40
     assert level.score == 40
     assert level.get_score_ratio() == 1.0
