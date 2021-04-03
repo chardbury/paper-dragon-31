@@ -16,6 +16,7 @@ VALID_SCENE_DIRECTIVES = {
     'set_left_name',
     'set_right_image',
     'set_right_name',
+    'show_image',
     'win_game',
 }
 

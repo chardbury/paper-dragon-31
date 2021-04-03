@@ -290,7 +290,7 @@ def test_plates_restore_patience(level):
     level.held_item = item.Plate(level)
     level.held_item.holds = item.DoughnutCooked(level)
     level.interact(customer)
-    assert (customer.patience_ticks - max_patience // 2) == max_patience // 5
+    assert (customer.patience_ticks - max_patience // 2) == 3 * max_patience // 10
 
 
 def test_plate_destroys_previous_item(level):

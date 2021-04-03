@@ -701,6 +701,7 @@ class EndlessLevel(Level):
             (1, item.DoughnutIcedPink),
         ]],
         'slacker_patches': [1, 1, [
+            # (1, item.Apple),
             (1, item.DoughnutUncooked),
             (1, item.DoughnutCooked),
             (1, item.DoughnutBurned),
@@ -725,8 +726,8 @@ class EndlessLevel(Level):
         (device.Cooking, 0.37, -0.275),
         (device.IcingPink, 0.5, -0.05),
         (device.IcingBlue, 0.6, -0.15),
-        (device.MultiPlatingHalf, 0.065, -0.1),
-        (device.MultiPlatingHalf, -0.065, -0.1),
+        (device.MultiPlatingLeft, 0.1, -0.1),
+        (device.MultiPlatingRight, -0.1, -0.1),
         (device.Plate, 0.0, -0.28),
         (device.Bin, 0.65, -0.44),
         (device.SprinklesPurple, -0.3, -0.17),

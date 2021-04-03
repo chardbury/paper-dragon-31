@@ -105,7 +105,7 @@ class MenuScene(object):
 
         self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
-            background_color = (255, 255, 255, 255),
+            background_color = (225, 208, 183, 255),
             visible = False,
             draw_function = self.draw_apple_overlay,
         )
@@ -122,9 +122,9 @@ class MenuScene(object):
 
         self.title_box = self.interface.add(
             width = 0.45,
-            height = 0.45,
-            align_x = 0.75,
-            align_y = 0.6,
+            height = 0.25,
+            align_x = 0.70,
+            align_y = 0.7,
             anchor_x = 0.5,
             anchor_y = 0.0,
             text = 'Copcake Caper',
@@ -134,8 +134,8 @@ class MenuScene(object):
         )
 
         self.play_button = self.interface.add(
-            align_x = 0.75,
-            align_y = 0.5,
+            align_x = 0.70,
+            align_y = 0.6,
             anchor_x = 0.5,
             anchor_y = 1.0,
             height = 0.1,
@@ -146,8 +146,8 @@ class MenuScene(object):
         )
 
         self.endless_button = self.interface.add(
-            align_x = 0.75,
-            align_y = 0.35,
+            align_x = 0.70,
+            align_y = 0.45,
             anchor_x = 0.5,
             anchor_y = 1.0,
             height = 0.1,
@@ -158,8 +158,8 @@ class MenuScene(object):
         )
 
         self.quit_button = self.interface.add(
-            align_x = 0.75,
-            align_y = 0.2,
+            align_x = 0.70,
+            align_y = 0.3,
             anchor_x = 0.5,
             anchor_y = 1.0,
             height = 0.1,
@@ -181,8 +181,9 @@ class MenuScene(object):
 
         self.poem_text = self.poem.add(
             text = POEM_TEXT,
-            text_color = (0, 0, 0, 0),
+            text_color = (0, 0, 0, 255),
             font_size = 0.03,
+            draw_function = self.draw_poem_overlay,
         )
 
         self.scene_fade = 1.0
@@ -196,30 +197,43 @@ class MenuScene(object):
     def on_tick(self):
         if self.scene_fade > 0.0:
             return
-        if self.fade_poem is not None:
-            self.poem_text.get_content_size()
-            lines = self.poem_text._text_layout.lines
-            yvals = []
-            trips = []
-            for line in lines:
-                for vlist in line.vertex_lists:
-                    verts = vlist.vertices
-                    for i in range(0, len(verts)//2):
-                        yv = verts[2*i+1]
-                        yvals.append(yv)
-                        trips.append((vlist, i, yv))
-            maxy = max(yvals)
-            miny = min(yvals)
-            fade_width = self.fade_width * (maxy - miny)
-            fade_max = miny + (1.0 - self.fade_poem) * (maxy - miny + fade_width)
-            fade_min = fade_max - fade_width
-            for vlist, i, yval in trips:
-                col = 0
-                if yval > fade_max:
-                    col = 255
-                elif yval > fade_min:
-                    col = min(255, int(256 * (yval - fade_min) / fade_width))
-                vlist.colors[4*i+3] = col
+        # if self.fade_poem is not None:
+        #     self.poem_text.get_content_size()
+        #     lines = self.poem_text._text_layout.lines
+        #     yvals = []
+        #     line_yvals = []
+        #     trips = []
+        #     for li, line in enumerate(lines):
+        #         line_yvals.append([])
+        #         for vlist in line.vertex_lists:
+        #             verts = vlist.vertices
+        #             for i in range(0, len(verts)//2):
+        #                 yv = verts[2*i+1]
+        #                 yvals.append(yv)
+        #                 line_yvals[-1].append(yv)
+        #                 trips.append((vlist, i, li, yv))
+        #     line_maxy = list(map(max, line_yvals))
+        #     line_miny = list(map(min, line_yvals))
+        #     maxy = max(yvals)
+        #     miny = min(yvals)
+        #     fade_width = self.fade_width * (maxy - miny)
+        #     fade_max = miny + (1.0 - self.fade_poem) * (maxy - miny + fade_width)
+        #     fade_min = fade_max - fade_width
+        #     fade_y = (1 - self.fade_poem) * (maxy - miny)
+        #     for vlist, i, li, yval in trips:
+        #         col = 0
+        #         lmin = line_miny[li]
+        #         lmax = line_maxy[li]
+        #         if lmin > fade_y:
+        #             col = 255
+        #         elif lmax < fade_y:
+        #             col = 0
+        #         elif lmax > lmin:
+        #             colf = (fade_y - line_miny[li]) / (line_maxy[li] - line_miny[li])
+        #             col = max(0, min(255, int(256 * colf)))
+        #         else:
+        #             col = 0
+        #         vlist.colors[4*i+3] = col
             
     rawr_player = None
 
@@ -230,12 +244,13 @@ class MenuScene(object):
 
     poem_animation = None
     def do_show_poem(self):
-        self.fade_poem = 0.0
+        self.fade_poem = 0.05
         self.fade_width = 0.1
         self.poem_animation = animation.QueuedAnimation(
-                SpiralAnimation(self, 'interface_x', 'interface_y', self.interface.get_content_size()[0], 0.5 * self.interface.get_content_size()[1], 0.25 * math.pi, 1.0),
-                animation.WaitAnimation(1.0),
-                animation.AttributeAnimation(self, 'fade_poem', 1.0, 20.0),
+                animation.ParallelAnimation(
+                    SpiralAnimation(self, 'interface_x', 'interface_y', self.interface.get_content_size()[0], 0.5 * self.interface.get_content_size()[1], 0.25 * math.pi, 1.0),
+                    animation.AttributeAnimation(self, 'fade_poem', 1.0, 20.0),
+                ),
                 animation.WaitAnimation(10.0, self.do_start),
         ).start()
 
@@ -317,7 +332,7 @@ class MenuScene(object):
             if self.fade_poem is not None:
                 for anim in app.animation:
                     if getattr(anim, 'name', '') == 'fade_poem':
-                        anim.elapsed += 2.0
+                        anim.elapsed += 20.0
                         break
                 else:
                     self.end_poem()
@@ -344,6 +359,25 @@ class MenuScene(object):
             animation.WaitAnimation(0.2, app.controller.switch_scene, applib.scenes.level.LevelScene, applib.model.level.EndlessLevel),
         ).start()
 
+    def draw_poem_overlay(self, x, y):
+        if self.fade_poem is not None:
+            w, h = self.poem_text.get_content_size()
+            fwid = self.fade_width * h
+            flen = h + fwid
+            ftop = y + h - (self.fade_poem * flen - fwid)
+            fbot = ftop - fwid
+            pyglet.graphics.draw(12, GL_QUADS,
+                ('v2f', [
+                    x, y, x + w, y, x + w, fbot, x, fbot,
+                    x, fbot, x + w, fbot, x + w, ftop, x, ftop,
+                    x, ftop, x + w, ftop, x + w, y + h, x, y + h,
+                ]),
+                ('c4B',
+                    [225, 208, 183, 255] * 6 +
+                    [225, 208, 183, 0] * 6
+                ),
+            )
+
     def draw_apple_overlay(self, draw_x, draw_y):
         if self._hover_panel:
             px, py = self._hover_panel.get_offset()
@@ -364,7 +398,7 @@ class MenuScene(object):
     def on_draw(self):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glClearColor(0.0, 0.0, 0.0, 0.0)
+        glClearColor(0.9529, 0.8941, 0.8118, 1.0)
         glClear(GL_COLOR_BUFFER_BIT)
         
         x, y = map(int, self.interface.get_offset())
@@ -372,7 +406,7 @@ class MenuScene(object):
         glEnable(GL_SCISSOR_TEST)
         glScissor(x, y, w, h)
 
-        color = [255, 255, 255, 255]
+        color = [225, 208, 183, 255]
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', [x, y, x+w, y, x+w, y+h, x, y+h]), ('c4B', color * 4))
 
         self.interface.draw(draw_x=self.interface_x, draw_y=self.interface_y)
