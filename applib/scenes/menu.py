@@ -344,7 +344,7 @@ class MenuScene(object):
         w, h = app.window.get_size()
         vertex_data = [x, y, x + w, y, x + w, y + h, x, y + h]
         texture_data = [v / self.overlay.width for v in [tx, ty, tx + w, ty, tx + w, ty + h, tx, ty + h]]
-        color_data = [255, 255, 255, 255] * 4
+        color_data = [255, 255, 255, 200] * 4
         pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t2f', texture_data), ('c4B', color_data))
         glPopAttrib()
 

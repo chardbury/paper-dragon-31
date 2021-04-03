@@ -124,7 +124,7 @@ class LevelScene(object):
         # Create the root interface panel.
         self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
-            background_color = (100, 100, 220, 255),
+            background_color = (255, 255, 255, 255),
         )
 
         self.overlay = self.interface.add(
@@ -464,7 +464,7 @@ class LevelScene(object):
             height = 1.0,
             align_x = 0.5,
             align_y = 0.5,
-            background_color = (255, 255, 255, 200),
+            background_color = (255, 255, 255, 150),
             visible = False,
         )
 
@@ -488,7 +488,7 @@ class LevelScene(object):
             text_wrap = False,
             font_size = 0.03,
             visible = False,
-            background_color = (230, 230, 230, 255),
+            background_color = (244, 236, 186, 255),
             frame_texture = pyglet.resource.texture('interface/border_plain.png'),
             frame_width = 0.15,
         )
@@ -513,7 +513,7 @@ class LevelScene(object):
             text_wrap = False,
             font_size = 0.03,
             visible = False,
-            background_color = (230, 230, 230, 255),
+            background_color = (244, 236, 186, 255),
             frame_texture = pyglet.resource.texture('interface/border_plain.png'),
             frame_width = 0.15,
         )
@@ -525,7 +525,7 @@ class LevelScene(object):
             align_x = 0.5,
             align_y = 0.3,
             anchor_y = 1.0,
-            background_color = (230, 230, 230, 255),
+            background_color = (244, 236, 186, 255),
             frame_texture = pyglet.resource.texture('interface/border.png'),
             frame_width = 0.15,
         )

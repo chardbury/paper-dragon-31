@@ -22,7 +22,7 @@ class VictoryScene(object):
         
         self.interface = applib.engine.panel.Panel(
             aspect = (16, 9),
-            background_color = (100, 100, 220, 255),
+            background_color = (255, 255, 255, 255),
         )
 
         self.dialogue_overlay = self.interface.add(
@@ -30,7 +30,7 @@ class VictoryScene(object):
             height = 1.0,
             align_x = 0.5,
             align_y = 0.5,
-            background_color = (255, 255, 255, 200),
+            background_color = (255, 255, 255, 255),
         )
 
         self.character_left = self.dialogue_overlay.add(
@@ -53,7 +53,7 @@ class VictoryScene(object):
             text_wrap = False,
             font_size = 0.03,
             visible = False,
-            background_color = (230, 230, 230, 255),
+            background_color = (244, 236, 186, 255),
             frame_texture = pyglet.resource.texture('interface/border_plain.png'),
             frame_width = 0.15,
         )
@@ -78,7 +78,7 @@ class VictoryScene(object):
             text_wrap = False,
             font_size = 0.03,
             visible = False,
-            background_color = (230, 230, 230, 255),
+            background_color = (244, 236, 186, 255),
             frame_texture = pyglet.resource.texture('interface/border_plain.png'),
             frame_width = 0.15,
         )
@@ -90,7 +90,7 @@ class VictoryScene(object):
             align_x = 0.5,
             align_y = 0.3,
             anchor_y = 1.0,
-            background_color = (230, 230, 230, 255),
+            background_color = (244, 236, 186, 255),
             frame_texture = pyglet.resource.texture('interface/border.png'),
             frame_width = 0.15,
         )
