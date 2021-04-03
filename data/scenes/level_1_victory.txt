@@ -1,9 +1,11 @@
-set_left_image : scrumper_patches
-set_left_name : Patches
-set_right_image : cook_flynn
-set_right_name : Flynn
-say_left : I did it! I got an apple!
-say_left : Mmm, Golden Delicious.
-say_right : Wait, what about me? Where's my apple?
-say_left : Oh, sorry. Make another distraction.
+set_right_image : scrumper_patches
+set_right_name : Patches
+set_left_image : cook_flynn
+set_left_name : Flynn
+say_right : I did it! I scrumped an apple!
+say_right : Mmm, so red and shiny.
+say_left : Wait, what about me? Where's my apple?
+say_right : I was supposed to get more than one?
+say_left : Get as many as you can.
+say_right : Righto. Make another distraction.
 next_level : LevelTwo

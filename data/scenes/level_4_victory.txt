@@ -2,7 +2,10 @@ set_left_image : cook_flynn
 set_left_name_left : Flynn
 set_right_image : scrumper_patches
 set_right_name : Patches
-say_left : Patches, we need to stop.
-say_right : Why? are the cops too suspicous?
-say_left : No, but we've run out of room for apples in the wagon
+say_right : There are so many apple trees here. It seems like they never end.
+say_left : Patches no, we need to stop.
+say_right : But why. Did someone spot me?
+say_right : Did the cops get suspicious?
+say_right : Did the bin catch fire... again?
+say_left : Better! The wagon is so full of apples there's no more room.
 win_game :
