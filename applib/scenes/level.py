@@ -297,12 +297,12 @@ class LevelScene(object):
 
         if self.dialogue_overlay.visible:
             # Do dialogue things here.
-            return
+            pass
+        else:
+            # Update the level first.
+            self.level.tick()
 
         view_width, view_height = self.interface.get_content_size()
-
-        # Update the level first.
-        self.level.tick()
 
         # Update the sprites for all entities in the level.
         for entity in self.level.entities:

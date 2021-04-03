@@ -364,9 +364,9 @@ class TestLevel(Level):
 
     customer_specification = [
         (0, 'cop_rabbit', [item.DoughnutUncooked] * 1),
-        (5, 'friend_patches', [item.DoughnutUncooked] * 2),
-        (10, 'cop_rabbit', [item.DoughnutUncooked] * 3),
-        (15, 'friend_patches', [item.DoughnutUncooked] * 3),
+        (50, 'friend_patches', [item.DoughnutUncooked] * 2),
+        (100, 'cop_rabbit', [item.DoughnutUncooked] * 3),
+        (150, 'friend_patches', [item.DoughnutUncooked] * 3),
     ]
 
     customer_spaces_specification = 4
