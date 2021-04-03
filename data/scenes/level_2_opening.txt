@@ -2,8 +2,11 @@ set_left_image : cop_dog
 set_left_name : Sgt. Dognut
 set_right_image : cop_rabbit
 set_right_name : Constable Iced Bun
+play_sound : dog_dialogue_one
 say_left : I don't trust those raccoons. This must be a trick.
+play_sound : rabbit_dialogue_long
 say_right : I thought so too, but these 'cakes' are rather good.
+play_sound : dog_neg
 say_left : Hmm... We'll see about that.
 set_left_image : 
 set_left_name : 
@@ -14,9 +17,14 @@ set_left_image: cook_flynn
 set_left_name: Flynn
 set_right_image : cop_dog
 set_right_name : Sgt. Dognut
+play_sound : flynn_hello
 say_left : Hello, Dognut.
+play_sound : dog_dialogue_two
 say_right : That's Sergeant Dognut to you. Now what's all this about cakes?
+play_sound : flynn_dialogue_longquestion
 say_left : They're very good cakes. Not distractions at all. Would you like one?
+play_sound : dog_dialogue_question
 say_right : Do they come with icing?
 set_left_image : doughnut_flynn
+play_sound : flynn_dialogue_short
 say_left : For you? Absolutely!

@@ -2,12 +2,19 @@ set_right_image : cook_flynn
 set_right_name : Flynn
 set_left_image : scrumper_patches
 set_left_name : Patches
+play_sound : patches_dialogue_whine
 say_left : Total success, victory is ours!
+play_sound : flynn_dialogue_question
 say_right : You got the apples?
+play_sound : patches_dialogue_short
 say_left : A scrumptious sackful indeed.
+play_sound : flynn_dialogue_longquestion
 say_right : Excellent. But why did you need a distraction cake?
+play_sound : patches_dialogue_long
 say_left : I wanted to see what they taste like... it was really chewy.
+play_sound : flynn_dialogue_long
 say_right : Well you did order an uncooked one.
 set_left_image : ohno_patches
+play_sound : patches_dialogue_ohno
 say_left : You can cook them!?
 next_level : LevelThree
