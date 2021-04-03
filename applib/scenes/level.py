@@ -5,6 +5,7 @@
 import math
 import pprint
 import random
+import time
 
 import applib
 import pyglet
@@ -400,7 +401,8 @@ class LevelScene(object):
                 # Set alternative texture
                 has_alt_sprite = False
                 if type(entity.current_item) in entity.alt_sprites:
-                    alt_texture_path = entity.alt_sprites[type(entity.current_item)][0]
+                    alt_index = int(time.time() * 5) % len(entity.alt_sprites[type(entity.current_item)])
+                    alt_texture_path = entity.alt_sprites[type(entity.current_item)][alt_index]
                     texture = pyglet.resource.texture(alt_texture_path)
                     sprite._texture.anchor_x = sprite._texture.width // 2
                     sprite._texture.anchor_y = sprite._texture.height // 2
