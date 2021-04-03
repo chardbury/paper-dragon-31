@@ -340,7 +340,8 @@ class Level(pyglet.event.EventDispatcher):
         elif self.tick_running >= self.duration_ticks:
             # we have run out of time
             # any reminaing customers in queue or at counter show score max sus (and we should probably fail?)
-            self.score += (len(self.customers) + len(self.customer_specification)) * MAX_SCORE_FROM_CUSTOMER
+            if not self.alt_suspicion_mode:
+                self.score += (len(self.customers) + len(self.customer_specification)) * MAX_SCORE_FROM_CUSTOMER
             self.end_level(False)
             return True
         elif len(self.customers) + len(self.customer_specification) == 0:
