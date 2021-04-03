@@ -242,12 +242,13 @@ class Plating(Device):
         (None, item.Plate): (item.Plate, None, applib.engine.sound.plate_pickup),
     }
 
-# def _populate_plating_recipes():
-#     for item_name, item_class in entity.Entity.index['items'].items():
-#         Plating.recipes[item_class, None] = (None, item_class)
+def _populate_plating_recipes():
+    for item_name, item_class in entity.Entity.index['items'].items():
+        if item_name.startswith('doughnut_'):
+            Plating.recipes[item_class, None] = (None, item_class)
 
-# _populate_plating_recipes()
-# del _populate_plating_recipes
+_populate_plating_recipes()
+del _populate_plating_recipes
 
 
 class MultiPlating(Device):
