@@ -721,15 +721,16 @@ class EndlessLevel(Level):
 
     device_specification = [
         (device.Dough, -0.5, -0.14),
-        (device.Cooking, 0.25, -0.11),
-        (device.Cooking, 0.35, -0.275),
+        (device.Cooking, 0.28, -0.11),
+        (device.Cooking, 0.37, -0.275),
         (device.IcingPink, 0.5, -0.05),
         (device.IcingBlue, 0.6, -0.15),
-        (device.MultiPlating, 0.0, -0.1),
+        (device.MultiPlatingHalf, 0.065, -0.1),
+        (device.MultiPlatingHalf, -0.065, -0.1),
         (device.Plate, 0.0, -0.28),
         (device.Bin, 0.65, -0.44),
-        (device.SprinklesPurple, -0.22, -0.17),
-        (device.SprinklesYellow, -0.35, -0.27),
+        (device.SprinklesPurple, -0.3, -0.17),
+        (device.SprinklesYellow, -0.45, -0.27),
     ]
 
     def check_and_add_customer(self):
