@@ -1,9 +1,10 @@
-set_left_image: cop_dog
-set_left_name: Sgt. Dognut
-set_right_image: cook_flynn
-set_right_name: Flynn
-say_left: Cook the cake, put icing on it, hand it to me.
-say_left: It isn't difficult. Are you distracted?
-say_left: Where's Patches? Is she stealing Granny Smith's apples again?
-say_right: No...
+set_right_image: cop_dog
+set_right_name: Sgt. Dognut
+set_left_image: cook_flynn
+set_left_name: Flynn
+say_right : I knew it! You have no idea what you are doing.
+say_left : But the icing machine is so complicated.
+say_right : Where's Patches? Is she stealing Granny Smith's apples again?
+say_left : No... she's sick?
+say_right : You tried that one last week.
 repeat_level :

@@ -2,8 +2,12 @@ set_left_image : cook_flynn
 set_left_name : Flynn
 set_right_image : scrumper_patches
 set_right_name : Patches
-say_left : What were you doing, you were supposed to be scrumping me an apple?
-say_right : I wanted to see what the cakes tasted like.
-say_left : Did you at least get me an apple?
-say_right : Here, a nice crunchy Braeburn.
+say_right : Total success, victory is ours!
+say_left : You got the apples?
+say_right : A scrumptious sackfull indeed.
+say_left : Excellent. But why did you need a distraction cake?
+say_right : I wanted to see what they taste like... it was really chewy.
+say_left : Well you did order an uncooked one.
+set_right_image : ohno_patches
+say_right : You can cook them!?
 next_level : LevelThree

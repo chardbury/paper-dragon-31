@@ -1,10 +1,17 @@
 set_left_image : cop_rabbit
 set_left_name : Constable Iced Bun
-say_left : I see you climbing over the garden fence!
-set_left_image : cop_dog
-set_left_name : Sgt. Dognut
-say_left : Stop right there!
-set_left_image : ohno_patches
+say_left : Patches! I see you climbing over the garden fence!
+set_right_image : cop_dog
+set_right_name : Sgt. Dognut
+say_right : Flynn, where's my order?
+set_right_image : scrumper_patches
+set_right_name : Patches
+set_left_image : cook_flynn
+set_left_name : Flynn
+say_right : They saw me!
+say_left : They caught on!
+set_right_image : none
+set_left_image : both
 set_left_name : Patches & Flynn
-say_left : Run for it!
+say_left : Abandon the wagon!
 repeat_level :
