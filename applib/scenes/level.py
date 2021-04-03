@@ -615,6 +615,17 @@ class LevelScene(object):
                 self.scene_ready = False
                 break
 
+            if command == 'end_game':
+                self.fade_animation = animation.QueuedAnimation(
+                    animation.ParallelAnimation(
+                        animation.AttributeAnimation(self.bg_player, 'volume', 0.0, 2.0),
+                        animation.AttributeAnimation(self, 'scene_fade', 1.0, 2.0),
+                    ),
+                    animation.WaitAnimation(0.5, app.controller.switch_scene, applib.scenes.menu.MenuScene),
+                ).start()
+                self.scene_ready = False
+                break
+
         else:
             self.scene_lines = None
             self.dialogue_overlay.visible = False

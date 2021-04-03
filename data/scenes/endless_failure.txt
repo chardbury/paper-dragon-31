@@ -8,4 +8,4 @@ set_right_image : ohno_patches
 set_right_name : Patches
 play_sound : patches_dialogue_uhoh
 say_right : Oh no!
-repeat_level :
+end_game : menu
