@@ -673,17 +673,22 @@ class LevelScene(object):
             if (0 <= texture_x < texture.width) and (0 <= texture_y < texture.height):
                 alpha_index = (texture_y * texture.width + texture_x) * 4 + 3
                 if self._texture_data[texture][alpha_index] > 0:
-                    return sprite
+                    relative_x = texture_x / texture.width
+                    relative_y = texture_y / texture.height
+                    return sprite, relative_x, relative_y
+        return None, 0.0, 0.0
     
     def _update_mouse_position(self, mouse_x, mouse_y):
         '''Update the mouse position and record the targeted sprite.
 
         '''
         self._mouse_x, self._mouse_y = mouse_x, mouse_y
-        new_target_sprite = self._get_sprite_at(mouse_x, mouse_y)
+        new_target_sprite, relative_x, relative_y = self._get_sprite_at(mouse_x, mouse_y)
         if new_target_sprite != self._target_sprite:
             self._change_sprite_focus(new_target_sprite, self._target_sprite)
             self._target_sprite = new_target_sprite
+        self._target_relative_x = relative_x
+        self._target_relative_y = relative_y
 
     def on_mouse_enter(self, x, y):
         if self.dialogue_overlay.visible:
@@ -732,6 +737,17 @@ class LevelScene(object):
                     # Zhu Li, do the thing!
                     target = self.entities_by_sprite[self._clicked_sprite]
                     if self._is_interactable(target):
+                        # Check for plating subpositions.
+                        if isinstance(target, applib.model.device.MultiPlating):
+                            relative_x = self._target_relative_x
+                            relative_y = self._target_relative_y
+                            best_index = best_distance = None
+                            for index, (pos_x, pos_y) in enumerate(target.subpositions):
+                                distance = math.hypot(pos_x + 0.5 - relative_x, pos_y + 0.5 - relative_y)
+                                if (best_distance is None) or (distance < best_distance):
+                                    best_distance = distance
+                                    best_index = index
+                            target = target.subdevices[best_index]
                         self.level.interact(target)
                 self._clicked_sprite = None
 

@@ -195,6 +195,8 @@ class Level(pyglet.event.EventDispatcher):
         for device, location_x, location_y in self.device_specification:
             new_device = device(self)
             self.device_locations[new_device] = (location_x, location_y)
+            for subdevice in getattr(new_device, 'subdevices', []):
+                self.device_locations[subdevice] = (location_x, location_y)
 
         self.happy_customer = 0
         self.sad_customer = 0
@@ -232,7 +234,7 @@ class Level(pyglet.event.EventDispatcher):
                 print(f'    item: {item.name}')
                 found_items.append(item)
         for device in self.devices:
-            print(f'  device: {device.name}')
+            print(f'  device: {type(device).__name__}')
             if device.current_item:
                 print(f'    item: {device.current_item.name}')
                 found_items.append(device.current_item)
@@ -355,7 +357,7 @@ class TestLevel(Level):
         (device.Cooking, 0.0, -0.1),
         (device.IcingBlue, 0.5, -0.1),
         (device.Bin, -0.8, -0.4),
-        (device.Plating, -0.5, -0.3),
+        (device.MultiPlating, -0.5, -0.3),
         (device.Plate, 0.0, -0.3),
         (device.SprinklesPurple, 0.5, -0.3),
     ]
@@ -436,7 +438,7 @@ class LevelThree(Level):
         (device.Cooking, 0.25, -0.15),
         (device.IcingBlue, 0.5, -0.05),
         (device.IcingPink, 0.6, -0.15),
-        (device.Plating, 0.0, -0.1),
+        (device.MultiPlating, 0.0, -0.1),
         (device.Plate, 0.0, -0.29),
         (device.Bin, 0.75, -0.4),
     ]
@@ -468,7 +470,7 @@ class LevelFour(Level):
         (device.Cooking, 0.35, -0.275),
         (device.IcingBlue, 0.5, -0.05),
         (device.IcingPink, 0.6, -0.15),
-        (device.Plating, 0.0, -0.1),
+        (device.MultiPlating, 0.0, -0.1),
         (device.Plate, 0.075, -0.28),
         (device.Bin, 0.75, -0.4),
         (device.SprinklesPurple, -0.25, -0.1),
@@ -542,7 +544,7 @@ class LevelThreeTutorial(Level):
         (device.Cooking, 0.25, -0.15),
         (device.IcingBlue, 0.5, -0.05),
         (device.IcingPink, 0.6, -0.15),
-        (device.Plating, 0.0, -0.1),
+        (device.MultiPlating, 0.0, -0.1),
         (device.Plate, 0.0, -0.29),
         (device.Bin, 0.75, -0.4),
     ]
@@ -568,7 +570,7 @@ class LevelFourTutorial(Level):
         (device.Cooking, 0.35, -0.275),
         (device.IcingBlue, 0.5, -0.05),
         (device.IcingPink, 0.6, -0.15),
-        (device.Plating, 0.0, -0.1),
+        (device.MultiPlating, 0.0, -0.1),
         (device.Plate, 0.075, -0.28),
         (device.Bin, 0.75, -0.4),
         (device.SprinklesPurple, -0.25, -0.1),

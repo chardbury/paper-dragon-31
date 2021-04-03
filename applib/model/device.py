@@ -219,10 +219,9 @@ class Plate(AutomaticDevice):
 
     sound = applib.engine.sound.plate_pickup
 
-
 class Plating(Device):
 
-    name = 'station_plating'
+    name = 'station_none'
 
     duration = 0.0
 
@@ -245,6 +244,38 @@ def _populate_plating_recipes():
 
 _populate_plating_recipes()
 del _populate_plating_recipes
+
+
+class MultiPlating(Device):
+
+    name = 'station_plating'
+
+    duration = 0.0
+
+    subpositions = [
+        (0.0, -0.15),
+        (0.0, 0.2),
+    ]
+
+    # subpositions = [
+    #     (-0.25, 0.2),
+    #     (-0.32, -0.15),
+    #     (0.25, 0.2),
+    #     (0.3, -0.15),
+    # ]
+
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.subdevices = []
+        for x, y in self.subpositions:
+            self.subdevices.append(Plating(self.level))
+            self.subdevices[-1].item_position = (x, y)
+        
+
+    def destroy(self):
+        super().destroy()
+        for device in self.subdevices:
+            device.destroy()
 
 
 class Dough(AutomaticDevice):
