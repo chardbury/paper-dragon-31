@@ -7,4 +7,4 @@ say_left : Stop right there!
 set_left_image : ohno_patches
 set_left_name : Patches & Flynn
 say_left : Run for it!
-repeat_level :
+next_level : LevelThreeTutorial

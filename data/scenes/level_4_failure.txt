@@ -10,4 +10,4 @@ say left: And I'm telling your parents.
 set_right_image : ohno_patches
 set_right_name : Patches
 say_right : Oh no!
-repeat_level :
+next_level : LevelFourTutorial

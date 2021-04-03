@@ -6,4 +6,4 @@ say_left : I did it! I got an apple!
 say_left : Mmm, Golden Delicious.
 say_right : Wait, what about me? Where's my apple?
 say_left : Oh, sorry. Make another distraction.
-next_level :
+next_level : LevelTwo
