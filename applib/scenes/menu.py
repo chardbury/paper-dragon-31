@@ -17,20 +17,20 @@ from applib.engine import sound
 from pyglet.gl import *
 
 POEM_TEXT = '''
-Craig and Tom are the bane of the wood
-They get up to all the mischief they could
-They scrump from Sam's orchard and litter the cores
-They filch from poor Mrs Nutkin's stores
+Patches and Flynn were the bane of the wood;
+They got up to all of the mischief they could.
+They scrumped from Sam's orchard and litter the cores.
+They filched them from poor Mrs Appleby's stores.
 
-But now the fuzz has had enough;
-Craig and Tom are finding it rough
-to get away with all their hi-jinks.
-"We need a decoy, Craig", Tom thinks.
+But now that the fuzz is on to their stuff;
+Patches and Flynn are finding it rough
+To steal the apples and all their hi-jinks.
+"We need a decoy", say Patches. Flynn thinks.
 
-Craig says, "Hey! I've just the plan!"
-So Craig and Tom set up a stand
-In front of the place they're doing a job
-So rather than chase them, The Blue fill their gobs!
+Then Flynn says, "Hey! I've got just the plan!"
+So Patches and Flynn did set up a stand
+In front of the places they're pulling a jobs
+So rather than chase them, The Blue stuff their gobs!
 '''
 
 
