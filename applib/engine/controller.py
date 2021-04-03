@@ -45,6 +45,7 @@ class Controller(pyglet.event.EventDispatcher):
             height=(DEFAULT_SCREEN_SIZE[1] if not app.settings.fullscreen else None),
             visible=False,
         )
+        app.window.set_icon(pyglet.resource.image('icons/icon.ico'))
 
 
         #: The global key state handler.

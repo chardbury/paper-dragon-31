@@ -11,6 +11,7 @@ del temp_application_name
 venv\Scripts\pyi-makespec ^
     --onefile --windowed --noupx ^
     --add-data data;data ^
+    --icon data\icons\icon.ico ^
     --name "%APPLICATION_NAME%" ^
     scripts\pyinstaller_start.py
 
