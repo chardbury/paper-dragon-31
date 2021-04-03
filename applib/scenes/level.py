@@ -323,7 +323,7 @@ class LevelScene(object):
     def on_tick(self):
 
         score_ratio = self.level.get_score_ratio()
-        self._score_ratio += (score_ratio - self._score_ratio) * 0.01
+        self._score_ratio += (score_ratio - self._score_ratio) * 0.03
 
         if self.dialogue_overlay.visible:
             # Do dialogue things here.
@@ -853,7 +853,7 @@ class LevelScene(object):
         top_right_slope_threshold = 0.22
         progress = max(0.0, min(1.0, self._score_ratio))
         fill_width = max(0, (width - (left_offset + right_offset) * height) * progress)
-        progress_2 = max(0.0, min(1.0, self.level.get_score_ratio()))
+        progress_2 = max(0.0, min(progress, self.level.get_score_ratio()))
         fill_width_2 = max(0, (width - (left_offset + right_offset) * height) * progress_2)
         vertex_data_filled = make_rect(
             left + left_offset * height,
@@ -878,48 +878,48 @@ class LevelScene(object):
 
         # Heist on right!
 
-        bg_texture = pyglet.resource.texture('interface/heist_bg.png')
-        fg_texture = pyglet.resource.texture('interface/heist_fg.png')
-        width = PROGRESS_BAR_WIDTH * view_width
-        height = width * bg_texture.height / bg_texture.width
-        left = draw_x + view_width - width
-        bottom = draw_y + view_height - height
-        vertex_data = make_rect(left, bottom, width, height)
+        # bg_texture = pyglet.resource.texture('interface/heist_bg.png')
+        # fg_texture = pyglet.resource.texture('interface/heist_fg.png')
+        # width = PROGRESS_BAR_WIDTH * view_width
+        # height = width * bg_texture.height / bg_texture.width
+        # left = draw_x + view_width - width
+        # bottom = draw_y + view_height - height
+        # vertex_data = make_rect(left, bottom, width, height)
 
-        tx = bg_texture.tex_coords
-        tex_coords = [
-            tx[3], tx[4], tx[5],
-            tx[0], tx[1], tx[2],
-            tx[9], tx[10], tx[11],
-            tx[6], tx[7], tx[8],
-        ]
-        glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
-        glEnable(bg_texture.target)
-        glBindTexture(bg_texture.target, bg_texture.id)
-        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t3f', tex_coords), ('c4B', [255] * 16))
-        glPopAttrib()
+        # tx = bg_texture.tex_coords
+        # tex_coords = [
+        #     tx[3], tx[4], tx[5],
+        #     tx[0], tx[1], tx[2],
+        #     tx[9], tx[10], tx[11],
+        #     tx[6], tx[7], tx[8],
+        # ]
+        # glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+        # glEnable(bg_texture.target)
+        # glBindTexture(bg_texture.target, bg_texture.id)
+        # pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t3f', tex_coords), ('c4B', [255] * 16))
+        # glPopAttrib()
 
-        progress = max(0.0, min(1.0, self.level.get_time_ratio()))
-        right_offset = 0.15
-        bottom_offset = 0.25
-        left_offset = 0.12
-        top_offset = 0.25
-        top_left_slope_threshold = 0.22
-        fill_width = max(0, (width - (left_offset + right_offset) * height) * progress)
-        vertex_data_filled = make_rect(
-            left + width - right_offset * height - fill_width,
-            bottom + bottom_offset * height,
-            fill_width,
-            height - (bottom_offset + top_offset) * height,
-        )
-        vertex_data_filled[6] = max(vertex_data_filled[6], left + top_left_slope_threshold * width)
-        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', [80, 200, 50, 255] * 4))
+        # progress = max(0.0, min(1.0, self.level.get_time_ratio()))
+        # right_offset = 0.15
+        # bottom_offset = 0.25
+        # left_offset = 0.12
+        # top_offset = 0.25
+        # top_left_slope_threshold = 0.22
+        # fill_width = max(0, (width - (left_offset + right_offset) * height) * progress)
+        # vertex_data_filled = make_rect(
+        #     left + width - right_offset * height - fill_width,
+        #     bottom + bottom_offset * height,
+        #     fill_width,
+        #     height - (bottom_offset + top_offset) * height,
+        # )
+        # vertex_data_filled[6] = max(vertex_data_filled[6], left + top_left_slope_threshold * width)
+        # pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data_filled), ('c4B', [80, 200, 50, 255] * 4))
 
-        glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
-        glEnable(fg_texture.target)
-        glBindTexture(fg_texture.target, fg_texture.id)
-        pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t3f', tex_coords), ('c4B', [255] * 16))
-        glPopAttrib()
+        # glPushAttrib(GL_ENABLE_BIT | GL_TEXTURE_BIT)
+        # glEnable(fg_texture.target)
+        # glBindTexture(fg_texture.target, fg_texture.id)
+        # pyglet.graphics.draw(4, GL_QUADS, ('v2f', vertex_data), ('t3f', tex_coords), ('c4B', [255] * 16))
+        # glPopAttrib()
 
     def draw_customer_overlay(self, sprite):
         customer = self.entities_by_sprite.get(sprite)
