@@ -2,7 +2,7 @@ set_left_image : cop_dog
 set_left_name : Sgt. Dognut
 set_right_image : cop_rabbit
 set_right_name : Constable Iced Bun
-say_left : I don't trust those racoons. This must be a trick.
+say_left : I don't trust those raccoons. This must be a trick.
 say_right : I thought so too, but these 'cakes' are rather good.
 say_left : Hmm... We'll see about that.
 set_left_image : 

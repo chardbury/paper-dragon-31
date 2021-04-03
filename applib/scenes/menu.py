@@ -127,10 +127,10 @@ class MenuScene(object):
             align_y = 0.55,
             anchor_x = 0.5,
             anchor_y = 0.0,
-            text = 'Cop Cake Caper',
+            text = 'Copcake Caper',
             text_color = (0, 0, 0, 255),
             text_bold = True,
-            font_size = 0.08,
+            font_size = 0.07,
         )
 
         self.play_button = self.interface.add(
@@ -243,7 +243,7 @@ class MenuScene(object):
         width, height = self.interface.get_content_size()
         animations = []
         animation.ParallelAnimation(
-            animation.WaitAnimation(1.0, app.music.switch, pyglet.resource.media('music/ketsa_love.mp3')),
+            animation.WaitAnimation(0.0, app.music.switch, pyglet.resource.media('music/scott_gratton_rocket_boat.mp3')),
             SpiralAnimation(self, 'interface_x', 'interface_y', 0.0, 0.0, 0.85 * math.pi, 2.0),
         ).start()
 

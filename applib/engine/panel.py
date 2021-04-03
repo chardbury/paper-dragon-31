@@ -30,7 +30,7 @@ class Panel(object):
         text_color = (255, 255, 255, 255),
         text_bold = False,
         text_wrap = False,
-        font_name = 'Lato',
+        font_name = 'Fredoka One',
         font_size = 0.1,
         image_texture = None,
         image_color = (255, 255, 255, 255),
