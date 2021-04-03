@@ -1,2 +1,2 @@
 say_left : You... won?
-repeat_level :
+end_game : menu
