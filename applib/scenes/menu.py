@@ -332,7 +332,7 @@ class MenuScene(object):
             if self.fade_poem is not None:
                 for anim in app.animation:
                     if getattr(anim, 'name', '') == 'fade_poem':
-                        anim.elapsed += 2.0
+                        anim.elapsed += 20.0
                         break
                 else:
                     self.end_poem()
