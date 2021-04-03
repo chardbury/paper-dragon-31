@@ -18,6 +18,8 @@ class Item(entity.Entity):
 
     holds_position = None
 
+    center_position = (0.0, 0.0)
+
     def destroy(self):
         if self.holds is not None:
             self.holds.destroy()

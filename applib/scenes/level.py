@@ -297,6 +297,11 @@ class LevelScene(object):
                 other_customer.sprite.layer = -1
                 other_customer.sprite._target_offset_x = move_x * view_height
 
+    def _stop_device_sounds(self):
+        for device in self.level.devices:
+            if device._sound_player:
+                device._sound_player.next_source()
+
     def on_level_success(self):
         self.start_scene(self.level.victory_scene, 1.0)
         sound.success()
@@ -480,6 +485,7 @@ class LevelScene(object):
 
     def start_scene(self, name, slowly=None):
         if name is not None:
+            self._stop_device_sounds()
             self.name_left.text_update(None)
             self.name_right.text_update(None)
             self.name_left.visible = False
