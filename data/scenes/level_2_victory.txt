@@ -4,7 +4,7 @@ set_right_image : scrumper_patches
 set_right_name : Patches
 say_right : Total success, victory is ours!
 say_left : You got the apples?
-say_right : A scrumptious sackfull indeed.
+say_right : A scrumptious sackful indeed.
 say_left : Excellent. But why did you need a distraction cake?
 say_right : I wanted to see what they taste like... it was really chewy.
 say_left : Well you did order an uncooked one.
