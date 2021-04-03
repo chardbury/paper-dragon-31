@@ -593,12 +593,12 @@ class LevelTwoTutorial(Level):
     device_specification = [
         (device.Dough, -0.5, -0.2),
         (device.Cooking, 0.25, -0.15),
-        (device.IcingBlue, 0.5, -0.05),
+        (device.IcingPink, 0.5, -0.05),
         (device.Bin, 0.75, -0.4),
     ]
 
     customer_specification = [
-        (0, 'friend_patches' ,[item.DoughnutIcedBlue]),
+        (0, 'friend_patches' ,[item.DoughnutIcedPink]),
     ]
 
 class LevelThreeTutorial(Level):

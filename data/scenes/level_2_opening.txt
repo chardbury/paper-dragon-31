@@ -9,12 +9,12 @@ set_left_image :
 set_left_name : 
 set_right_image :
 set_right_name :
-say_left : 
+say_left : (Later, at the wagon...)
 set_left_image: cook_flynn
 set_left_name: Flynn
 set_right_image : cop_dog
 set_right_name : Sgt. Dognut
-say_left : Hello Dognut
+say_left : Hello, Dognut.
 say_right : That's Sergeant Dognut to you. Now what's all this about cakes?
 say_left : They're very good cakes. Not distractions at all. Would you like one?
 say_right : Do they come with icing?
