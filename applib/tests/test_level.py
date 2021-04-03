@@ -612,27 +612,11 @@ def test_alt_leaving_does_not_reduce_suspicion(alt_level):
     alt_level.tick()
     assert alt_level.score == pytest.approx(84.0)
 
-def test_alt_level_score_bracket_0(alt_level):
-    alt_level.customer_specification = [
-        (5, 'cop_rabbit', [item.DoughnutCooked]),
-    ]
-    alt_level.wait_for(5.0)
-    assert len(alt_level.customers) == 1
-    customer = alt_level.customers[0]
-    alt_level.wait_for(28.5, 1)
-    assert customer.get_score_bracket() == 0
-    ordered_item = item.DoughnutCooked(alt_level)
-    alt_level.held_item = ordered_item
-    assert alt_level.score == pytest.approx(80.44)
-    alt_level.interact(customer)
-    alt_level.tick()
-    assert alt_level.score == pytest.approx(75.48)
-
 
 @pytest.mark.parametrize(['bracket', 'time', 'score'], [
-    [0, 28.5, 5.0],
-    [1, 24.0, 5.0],
-    [2, 18.0, 10.0],
+    [0, 28.5, 10.0],
+    [1, 24.0, 10.0],
+    [2, 18.0, 15.0],
     [3, 6.0, 20.0],
     [4, 0.0, 30.0],
 ])
