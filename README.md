@@ -73,4 +73,5 @@ The following assets are licensed or attributed thusly:
 - Sound, "Wind, Soft. Cricket.wav by Leandros.Ntounis", https://freesound.org/people/Leandros.Ntounis/sounds/163607/, CC BY 3.0
 - Sound, "Cock.wav by Hotlavaman", https://freesound.org/people/Hotlavaman/sounds/108670/ CC0
 - Sound, "Cock.wav by ariat", https://freesound.org/people/ariat/sounds/164786/ CC BY 3.0
+- Sound, "police2.wav by guitarguy1985", https://freesound.org/people/guitarguy1985/sounds/70938/ CC0
 - Font, "Lato". https://fonts.google.com/specimen/Lato, OFL
