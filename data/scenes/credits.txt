@@ -14,5 +14,5 @@ say_left : ...
 say_both : Thanks for playing!
 set_left_image :
 set_right_image :
-show_image : interface/title
+show_image : interface/end
 end_game :
